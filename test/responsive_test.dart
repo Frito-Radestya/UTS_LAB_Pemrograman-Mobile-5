@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kuis_app/main.dart';
 import 'package:kuis_app/pages/login_page.dart';
 import 'package:kuis_app/pages/main_shell.dart';
+import 'package:kuis_app/pages/profile_page.dart';
 import 'package:kuis_app/pages/quiz_list_page.dart';
 import 'package:kuis_app/pages/quiz_page.dart';
 import 'package:kuis_app/pages/register_page.dart';
@@ -84,6 +85,7 @@ void main() {
       const MainShell(),
       QuizListPage(onCategoryTap: (_) {}),
       const ScorePage(),
+      ProfilePage(onLogout: () {}),
       const WelcomePage(),
       const QuizPage(),
       const ResultPage(),
