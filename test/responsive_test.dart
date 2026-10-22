@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kuis_app/main.dart';
+import 'package:kuis_app/pages/login_page.dart';
 import 'package:kuis_app/pages/quiz_page.dart';
+import 'package:kuis_app/pages/register_page.dart';
 import 'package:kuis_app/pages/result_page.dart';
+import 'package:kuis_app/pages/splash_page.dart';
 import 'package:kuis_app/pages/welcome_page.dart';
+import 'package:kuis_app/providers/auth_provider.dart';
 import 'package:kuis_app/providers/quiz_provider.dart';
 import 'package:kuis_app/theme/app_theme.dart';
 import 'package:kuis_app/widgets/option_button.dart';
@@ -18,12 +22,20 @@ void main() {
   ) async {
     tester.view.physicalSize = size;
     await tester.pumpWidget(
-      ChangeNotifierProvider<QuizProvider>.value(
-        value: provider,
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<QuizProvider>.value(value: provider),
+          ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+        ],
         child: MaterialApp(theme: AppTheme.dark, home: page),
       ),
     );
-    await tester.pumpAndSettle();
+    // Splash memiliki progress indicator berulang, jadi cukup satu frame.
+    if (page is SplashPage) {
+      await tester.pump();
+    } else {
+      await tester.pumpAndSettle();
+    }
   }
 
   testWidgets('aplikasi menunggu ukuran layar valid sebelum membangun UI', (
@@ -38,10 +50,14 @@ void main() {
     expect(tester.takeException(), isNull);
 
     tester.view.physicalSize = const Size(360, 800);
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Mulai Kuis'), findsOneWidget);
+    expect(find.byType(SplashPage), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pumpAndSettle();
+    expect(find.byType(LoginPage), findsOneWidget);
   });
 
   testWidgets('semua halaman aman di portrait dan landscape', (
@@ -59,6 +75,9 @@ void main() {
     }
 
     final pages = <Widget>[
+      const SplashPage(),
+      const LoginPage(),
+      const RegisterPage(),
       const WelcomePage(),
       const QuizPage(),
       const ResultPage(),
