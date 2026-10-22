@@ -83,12 +83,15 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - [x] Task 8 — `ResultPage` dan riwayat skor
 - [x] Task 9 — Profil, logout, dan perbaikan alur navigasi
 - [x] Task 10 — Pemeriksaan responsif dan rotasi untuk alur baru
-- [ ] Task 11 — Polesan akhir dan pembaruan dokumentasi
+- [x] Task 11 — Polesan akhir, pembersihan kode lama, dan pembaruan dokumentasi
 
 ## Pengujian Akhir (manual)
-- [ ] Nama kosong tidak bisa lanjut
-- [ ] Jawab semua soal, skor benar
-- [ ] Rotasi di tengah kuis, progres tetap
-- [ ] Pindah halaman dan kembali, progres tetap
-- [ ] Main Lagi mereset semuanya
-- [ ] Tampilan oke di layar kecil dan besar
+- [ ] Login kosong atau format email salah tidak bisa lanjut
+- [ ] Registrasi dengan data valid langsung masuk ke `MainShell`
+- [ ] Kuis bisa dimulai dari Beranda dan tab Kuis
+- [ ] Jawab semua soal, skor dan riwayat muncul dengan benar
+- [ ] Rotasi di tengah kuis, soal aktif dan jawaban tetap
+- [ ] Pindah tab dan halaman lalu kembali, progres tetap
+- [ ] Main Lagi mereset progres tanpa menghapus riwayat
+- [ ] Logout kembali ke Login dan tombol back tidak membuka sesi lama
+- [ ] Tampilan oke di layar kecil, portrait, landscape, dan tablet

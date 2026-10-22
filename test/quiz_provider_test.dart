@@ -5,7 +5,7 @@ import 'package:kuis_app/providers/quiz_provider.dart';
 void main() {
   test('provider menyimpan nama, jawaban, dan menghitung skor', () {
     final provider = QuizProvider();
-    provider.setName('  Frito  ');
+    provider.startCategory(quizCategories.first, playerName: '  Frito  ');
     expect(provider.playerName, 'Frito');
 
     provider.selectAnswer(provider.currentQuestion.correctIndex);
@@ -57,18 +57,5 @@ void main() {
     expect(provider.currentIndex, 0);
     expect(provider.playerName, 'Frito');
     expect(provider.history, hasLength(1));
-  });
-
-  test('reset mengosongkan seluruh progres', () {
-    final provider = QuizProvider();
-    provider.setName('Frito');
-    provider.selectAnswer(1);
-    provider.next();
-    provider.reset();
-
-    expect(provider.playerName, isEmpty);
-    expect(provider.currentIndex, 0);
-    expect(provider.answers.every((answer) => answer == null), isTrue);
-    expect(provider.score, 0);
   });
 }

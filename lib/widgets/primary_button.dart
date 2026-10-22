@@ -20,6 +20,7 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
     final textStyle = TextStyle(
+      fontFamily: 'Onest',
       fontSize: responsive.bodySize * 1.05,
       fontWeight: FontWeight.w400,
       letterSpacing: responsive.headingSize * -0.006,
