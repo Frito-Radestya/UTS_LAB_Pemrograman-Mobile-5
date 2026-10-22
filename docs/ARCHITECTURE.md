@@ -27,6 +27,7 @@ kuis_app/
     │   ├── dummy_users.dart
     │   └── questions_data.dart
     ├── providers/
+    │   ├── auth_provider.dart
     │   └── quiz_provider.dart
     ├── pages/
     │   ├── welcome_page.dart
@@ -46,26 +47,45 @@ kuis_app/
 ```
 
 ## State Management: Provider
-Dipilih karena sederhana dan cukup untuk tugas ini. `QuizProvider` (`ChangeNotifier`) dipasang di root (`main.dart`), di atas `MaterialApp`, sehingga state tidak ikut hilang saat rotasi layar atau pindah halaman.
+Dipilih karena sederhana dan cukup untuk tugas ini. `AuthProvider` dan `QuizProvider` (keduanya `ChangeNotifier`) dipasang di root (`main.dart`) memakai `MultiProvider`, di atas `MaterialApp`, sehingga sesi login dan state kuis tidak hilang saat rotasi layar atau pindah halaman.
+
+### State di `AuthProvider`
+| Field | Tipe | Keterangan |
+|---|---|---|
+| `currentUser` | `User?` | Akun yang sedang login (`null` = belum login) |
+| `users` | `List<User>` | Akun dummy dan hasil register selama aplikasi berjalan |
+| `isLoggedIn` | `bool` | Status sesi aktif |
+
+| Method | Fungsi |
+|---|---|
+| `login(email, password)` | Cek kredensial, simpan `currentUser`, kembalikan pesan error atau `null` |
+| `register(...)` | Validasi data, cegah email/NIM ganda, lalu otomatis login |
+| `logout()` | Hapus sesi aktif tanpa menghapus akun di memori |
+| `isEmailRegistered` / `isNimRegistered` | Cek duplikat untuk validasi form |
 
 ### State di `QuizProvider`
 | Field | Tipe | Keterangan |
 |---|---|---|
+| `activeCategory` | `Category` | Kategori yang sedang dikerjakan |
+| `questions` | `List<Question>` | Soal dari kategori aktif |
 | `playerName` | `String` | Nama pengguna |
-| `questions` | `List<Question>` | Daftar soal (dari data dummy) |
 | `currentIndex` | `int` | Indeks soal aktif |
 | `answers` | `List<int?>` | Jawaban terpilih per soal (`null` = belum dijawab) |
+| `history` | `List<ScoreRecord>` | Riwayat skor selama aplikasi berjalan, terbaru di awal |
+| `lastScore` | `ScoreRecord?` | Hasil percobaan terakhir |
 
-### Method dan getter
-| Nama | Fungsi |
+| Method dan getter | Fungsi |
 |---|---|
+| `startCategory(Category, {playerName})` | Ganti kategori dan kosongkan progres |
 | `setName(String)` | Simpan nama |
 | `selectAnswer(int)` | Simpan jawaban untuk soal aktif |
 | `next()` | Pindah ke soal berikutnya |
 | `isLastQuestion` | Apakah soal terakhir |
 | `score` | Jumlah jawaban benar |
 | `percentage` | Persentase skor |
-| `reset()` | Kosongkan semua state |
+| `saveResult()` | Simpan hasil ke `history` dan `lastScore` |
+| `resetQuiz()` | Ulangi kategori tanpa menghapus riwayat |
+| `reset()` | Kosongkan seluruh progres kuis |
 
 Setiap perubahan memanggil `notifyListeners()`.
 
@@ -78,8 +98,8 @@ Setiap perubahan memanggil `notifyListeners()`.
 | `Category` | `id`, `title`, `description`, `icon`, `questions` | Satu kategori berisi 10 soal |
 | `ScoreRecord` | `playerName`, `categoryTitle`, `score`, `total`, `dateTime` | Riwayat satu percobaan kuis |
 
-`QuizProvider` saat ini masih membaca `questionsData` (kategori Flutter Dasar).
-Pada task provider, daftar soal akan diganti memakai `Category` aktif.
+`QuizProvider` memilih kategori lewat `startCategory()`. Data kategori dan
+akun dummy berada di `lib/data/`.
 
 ## Pembagian Stateless dan Stateful
 | Widget | Jenis | Alasan |
