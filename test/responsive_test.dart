@@ -10,7 +10,6 @@ import 'package:kuis_app/pages/register_page.dart';
 import 'package:kuis_app/pages/result_page.dart';
 import 'package:kuis_app/pages/score_page.dart';
 import 'package:kuis_app/pages/splash_page.dart';
-import 'package:kuis_app/pages/welcome_page.dart';
 import 'package:kuis_app/providers/auth_provider.dart';
 import 'package:kuis_app/providers/quiz_provider.dart';
 import 'package:kuis_app/theme/app_theme.dart';
@@ -72,7 +71,7 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       final provider = QuizProvider();
-      provider.setName('Frito');
+      provider.startCategory(provider.activeCategory, playerName: 'Frito');
       for (var i = 0; i < provider.totalQuestions; i++) {
         provider.selectAnswer(provider.currentQuestion.correctIndex);
         provider.next();
@@ -86,7 +85,6 @@ void main() {
         QuizListPage(onCategoryTap: (_) {}),
         const ScorePage(),
         ProfilePage(onLogout: () {}),
-        const WelcomePage(),
         const QuizPage(),
         const ResultPage(),
       ];
@@ -118,7 +116,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final provider = QuizProvider();
-    provider.setName('Frito');
+    provider.startCategory(provider.activeCategory, playerName: 'Frito');
     provider.selectAnswer(1);
 
     await pumpPage(tester, provider, const QuizPage(), const Size(360, 800));

@@ -38,7 +38,6 @@ kuis_app/
     │   ├── quiz_list_page.dart   # daftar kategori di tab Kuis
     │   ├── score_page.dart       # tab Skor
     │   ├── profile_page.dart     # tab Profil dan logout
-    │   ├── welcome_page.dart
     │   ├── quiz_page.dart
     │   └── result_page.dart
     ├── widgets/
@@ -89,16 +88,14 @@ Dipilih karena sederhana dan cukup untuk tugas ini. `AuthProvider` dan `QuizProv
 
 | Method dan getter | Fungsi |
 |---|---|
-| `startCategory(Category, {playerName})` | Ganti kategori dan kosongkan progres |
-| `setName(String)` | Simpan nama |
+| `startCategory(Category, {required playerName})` | Ganti kategori, kosongkan progres, dan simpan nama pemain |
 | `selectAnswer(int)` | Simpan jawaban untuk soal aktif |
 | `next()` | Pindah ke soal berikutnya |
 | `isLastQuestion` | Apakah soal terakhir |
 | `score` | Jumlah jawaban benar |
 | `percentage` | Persentase skor |
 | `saveResult()` | Simpan hasil ke `history` dan `lastScore` |
-| `resetQuiz()` | Ulangi kategori tanpa menghapus riwayat |
-| `reset()` | Kosongkan seluruh progres kuis |
+| `resetQuiz()` | Ulangi kategori tanpa menghapus nama atau riwayat |
 
 Setiap perubahan memanggil `notifyListeners()`.
 
@@ -128,7 +125,6 @@ akun dummy berada di `lib/data/`.
 | `ProfilePage` | Stateless | Membaca akun aktif dari `AuthProvider`; aksi logout diteruskan lewat callback |
 | `ResultPage` | Stateful | Menyimpan hasil sekali lewat post-frame callback di `initState` |
 | `QuizPage` | Stateless | Membaca data dari Provider |
-| `WelcomePage` | Stateful | Halaman lama, tidak dipakai alur auth |
 | `MyApp` | Stateless | Root aplikasi |
 
 ## Navigasi

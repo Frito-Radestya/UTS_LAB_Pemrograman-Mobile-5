@@ -55,23 +55,13 @@ class QuizProvider extends ChangeNotifier {
   double get percentage =>
       _questions.isEmpty ? 0 : (score / _questions.length) * 100;
 
-  void setName(String name) {
-    _playerName = name.trim();
-    notifyListeners();
-  }
-
-  /// Memulai kategori baru dengan progres kosong.
-  ///
-  /// Nama hanya diganti bila [playerName] diberikan, sehingga pemanggil lama
-  /// yang sudah memakai [setName] tetap kompatibel.
-  void startCategory(Category category, {String? playerName}) {
+  /// Memulai kategori baru dengan progres kosong dan nama pemain aktif.
+  void startCategory(Category category, {required String playerName}) {
     _activeCategory = category;
     _questions = List<Question>.unmodifiable(category.questions);
     _currentIndex = 0;
     _answers = List<int?>.filled(_questions.length, null);
-    if (playerName != null) {
-      _playerName = playerName.trim();
-    }
+    _playerName = playerName.trim();
     notifyListeners();
   }
 
@@ -106,17 +96,8 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Mengulang kategori yang sama tanpa menghapus riwayat.
+  /// Mengulang kategori yang sama tanpa menghapus nama atau riwayat.
   void resetQuiz() {
-    _currentIndex = 0;
-    _answers = List<int?>.filled(_questions.length, null);
-    notifyListeners();
-  }
-
-  /// Reset seluruh progres sebelum pengguna bermain lagi.
-  /// Riwayat skor tetap disimpan selama aplikasi berjalan.
-  void reset() {
-    _playerName = '';
     _currentIndex = 0;
     _answers = List<int?>.filled(_questions.length, null);
     notifyListeners();

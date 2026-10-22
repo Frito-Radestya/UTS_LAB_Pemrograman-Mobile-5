@@ -76,14 +76,17 @@ class ProfilePage extends StatelessWidget {
               SizedBox(height: responsive.gap * 1.5),
               _LogoutButton(onPressed: onLogout),
               SizedBox(height: responsive.smallGap * 0.8),
-              Text(
-                'Kamu akan kembali ke halaman login setelah keluar.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: responsive.bodySize * 0.76,
-                  height: 1.4,
-                  fontWeight: FontWeight.w300,
-                  color: AppColors.textSecondary,
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Kamu akan kembali ke halaman login setelah keluar.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: responsive.bodySize * 0.76,
+                    height: 1.4,
+                    fontWeight: FontWeight.w300,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ),
               SizedBox(height: responsive.gap),
@@ -380,6 +383,7 @@ class _LogoutButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(responsive.radius),
           ),
           textStyle: TextStyle(
+            fontFamily: 'Onest',
             fontSize: responsive.bodySize * 1.02,
             fontWeight: FontWeight.w400,
           ),

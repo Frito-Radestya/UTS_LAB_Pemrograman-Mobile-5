@@ -148,8 +148,3 @@ const List<Category> quizCategories = [
     questions: dartQuestions,
   ),
 ];
-
-/// Alias sementara untuk QuizProvider versi lama.
-///
-/// Akan dihapus setelah provider diubah memakai kategori pada task berikutnya.
-const List<Question> questionsData = flutterQuestions;

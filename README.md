@@ -1,23 +1,57 @@
 # Kuis Pemrograman Mobile
 
 Aplikasi kuis pilihan ganda berbasis Flutter untuk UTS Lab Pemrograman Mobile.
-Pengguna memasukkan nama, menjawab 10 soal dasar Flutter & Dart, lalu melihat
-skor akhir. Tampilan memakai tema gelap dengan aksen merah vermilion dan font
-Onest.
+Pengguna membuat akun atau login, memilih kategori, menjawab 10 soal, lalu
+melihat skor dan riwayat percobaan. Tampilan memakai tema gelap dengan aksen
+merah vermilion dan font Onest.
 
 ## Fitur
 
-- Input nama dengan validasi (tidak boleh kosong).
-- 10 soal pilihan ganda dummy (A–D) tanpa database/API.
-- Jawaban terpilih ditandai, tombol **Lanjut** aktif setelah memilih.
-- Indikator "Soal x dari 10" dan progress bar beranimasi.
-- Skor akhir berupa jumlah benar, persentase, dan pesan sesuai nilai.
-- Tombol **Main Lagi** mereset seluruh progres.
-- State kuis disimpan di `QuizProvider` pada root aplikasi, sehingga aman saat
-  rotasi layar atau pindah halaman.
-- Layout responsif untuk portrait dan landscape, dengan scroll bila konten
-  melebihi layar.
-- Transisi fade antar-halaman dan animasi pergantian soal.
+- Login dengan email dan password, lengkap dengan validasi, pesan error, dan
+  tombol tampilkan/sembunyikan password.
+- Registrasi akun dengan nama, NIM, email, program studi, password, dan
+  konfirmasi password.
+- Akun dummy dan akun hasil registrasi disimpan di memori selama aplikasi
+  berjalan, tanpa database atau API.
+- `MainShell` dengan 4 tab yang state-nya tetap hidup melalui `IndexedStack`:
+  Beranda, Kuis, Skor, dan Profil.
+- Dua kategori kuis, masing-masing berisi 10 soal pilihan ganda (A–D).
+- Kuis dibuka sebagai layar penuh tanpa bottom navigation. Jawaban terpilih
+  ditandai dan tombol **Lanjut** aktif setelah memilih.
+- Indikator "Soal x dari 10", progress bar, dan animasi pergantian soal.
+- Halaman hasil berisi jumlah benar, persentase, dan pesan sesuai skor.
+- Riwayat skor tersimpan di `QuizProvider` selama aplikasi berjalan.
+- Profil menampilkan data akun dan info aplikasi, serta tombol logout.
+- State sesi dan kuis berada di Provider pada root aplikasi, sehingga aman saat
+  rotasi atau pindah halaman.
+- Layout responsif untuk portrait, landscape, layar kecil, dan tablet.
+- Transisi fade antar-halaman.
+
+## Alur Aplikasi
+
+```text
+Splash
+  └── Login <──> Register
+        └── MainShell (Beranda | Kuis | Skor | Profil)
+              └── QuizPage (layar penuh)
+                    └── ResultPage
+                          └── Main Lagi -> QuizPage
+```
+
+- Login atau registrasi berhasil membuka `MainShell` dan membersihkan halaman
+  auth dari tumpukan navigasi.
+- Tombol back dari hasil tidak membuka kembali kuis yang sudah selesai.
+- Logout menghapus sesi dan kembali ke Login dengan tumpukan navigasi yang
+  bersih.
+
+## Akun Demo
+
+| Email | Password | Nama |
+|---|---|---|
+| `demo@mail.com` | `123456` | Demo Mahasiswa |
+| `budi@mail.com` | `123456` | Budi Santoso |
+
+Akun hasil registrasi juga dapat dipakai sampai aplikasi ditutup.
 
 ## Teknologi
 
@@ -27,13 +61,16 @@ Onest.
 
 ## Struktur Singkat
 
-```
+```text
 lib/
-├── main.dart                 # root aplikasi + ChangeNotifierProvider
-├── data/questions_data.dart  # 10 soal dummy
-├── models/question.dart      # model soal
-├── pages/                    # WelcomePage, QuizPage, ResultPage
-├── providers/quiz_provider.dart
+├── main.dart                 # root aplikasi + MultiProvider
+├── data/
+│   ├── dummy_users.dart      # akun demo
+│   └── questions_data.dart   # 2 kategori × 10 soal
+├── models/                   # User, Category, Question, ScoreRecord
+├── pages/                    # Splash, Login, Register, MainShell, Beranda,
+│                             # Kuis, Quiz, Result, Skor, Profil
+├── providers/                # AuthProvider dan QuizProvider
 ├── theme/app_theme.dart      # warna dan tema
 ├── utils/                    # responsive helper + route fade
 └── widgets/                  # widget reusable
@@ -62,15 +99,25 @@ flutter analyze
 flutter test
 ```
 
+Pengujian mencakup validasi auth, alur login/register, navigasi, penyimpanan
+skor, logout, serta layout pada ukuran layar kecil, portrait, landscape, dan
+tablet.
+
 ## Screenshot
 
-| Halaman Nama | Halaman Kuis | Halaman Hasil |
+| Login | Beranda | Kuis |
 |---|---|---|
-| ![Halaman nama](docs/screenshots/welcome.png) | ![Halaman kuis](docs/screenshots/quiz.png) | ![Halaman hasil](docs/screenshots/result.png) |
+| ![Halaman login](docs/screenshots/login.png) | ![Halaman beranda](docs/screenshots/home.png) | ![Halaman kuis](docs/screenshots/quiz.png) |
+
+| Hasil | Skor | Profil |
+|---|---|---|
+| ![Halaman hasil](docs/screenshots/result.png) | ![Halaman skor](docs/screenshots/score.png) | ![Halaman profil](docs/screenshots/profile.png) |
 
 ## Catatan
 
 - Data soal ada di `lib/data/questions_data.dart` sesuai `docs/QUESTIONS.md`.
+- Semua data akun dan skor hanya tersimpan selama aplikasi berjalan. Tidak ada
+  database, API, atau penyimpanan permanen.
 - Panduan visual ada di `DESIGN.md`. Beberapa warna dan spacing ditandai
   *(asumsi)* karena screenshot referensi belum tersedia; nilainya perlu
   diverifikasi pemilik project.
