@@ -30,11 +30,11 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `feat: tambah QuizProvider untuk state kuis`
 
 ### Task 4 — Reusable widget
-- [ ] `lib/widgets/primary_button.dart`
-- [ ] `lib/widgets/option_button.dart`
-- [ ] `lib/widgets/question_card.dart`
-- [ ] `lib/widgets/quiz_progress_bar.dart`
-- [ ] `lib/widgets/app_background.dart` (latar gambar dengan overlay gelap)
+- [x] `lib/widgets/primary_button.dart`
+- [x] `lib/widgets/option_button.dart`
+- [x] `lib/widgets/question_card.dart`
+- [x] `lib/widgets/quiz_progress_bar.dart`
+- [x] `lib/widgets/app_background.dart` (latar gambar dengan overlay gelap)
 - Commit: `feat: tambah reusable widget (tombol, opsi, kartu soal, progress bar)`
 
 ### Task 5 — Halaman Nama (WelcomePage)
