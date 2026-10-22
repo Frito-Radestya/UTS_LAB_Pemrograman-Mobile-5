@@ -25,8 +25,8 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `feat: tambah model dan data soal dummy`
 
 ### Task 3 — State management (Provider)
-- [ ] Buat `lib/providers/quiz_provider.dart`: nama, indeks soal, daftar jawaban, hitung skor, reset
-- [ ] Pasang `ChangeNotifierProvider` di root `main.dart`
+- [x] Buat `lib/providers/quiz_provider.dart`: nama, indeks soal, daftar jawaban, hitung skor, reset
+- [x] Pasang `ChangeNotifierProvider` di root `main.dart`
 - Commit: `feat: tambah QuizProvider untuk state kuis`
 
 ### Task 4 — Reusable widget

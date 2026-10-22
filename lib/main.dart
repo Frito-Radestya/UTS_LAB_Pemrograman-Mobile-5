@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'providers/quiz_provider.dart';
 import 'theme/app_theme.dart';
 import 'utils/responsive.dart';
 
@@ -7,17 +9,21 @@ void main() {
   runApp(const MyApp());
 }
 
-/// Root aplikasi. Tema dan font Onest dipasang di sini.
+/// Root aplikasi. QuizProvider dipasang di atas MaterialApp supaya
+/// state kuis tidak hilang saat rotasi atau pindah halaman.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Kuis Pemrograman Mobile',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      home: const _SetupPreview(),
+    return ChangeNotifierProvider(
+      create: (_) => QuizProvider(),
+      child: MaterialApp(
+        title: 'Kuis Pemrograman Mobile',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.dark,
+        home: const _SetupPreview(),
+      ),
     );
   }
 }
