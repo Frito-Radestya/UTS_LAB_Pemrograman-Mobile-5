@@ -1,0 +1,31 @@
+name: kuis_app
+description: "Aplikasi kuis pilihan ganda bertema gelap dengan font Onest."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.5+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: Onest
+      fonts:
+        - asset: assets/fonts/Onest-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Onest-Regular.ttf
+          weight: 400

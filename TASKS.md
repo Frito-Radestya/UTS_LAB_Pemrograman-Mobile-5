@@ -1,0 +1,80 @@
+# TASKS.md — Checklist Fitur dan Commit
+
+Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jalankan `flutter analyze`, lalu commit dengan pesan yang disarankan.
+
+## Persiapan (dikerjakan manual oleh pemilik)
+- [ ] `flutter create kuis_app` lalu `git init`
+- [ ] Buat repository GitHub dan hubungkan remote
+- [ ] Taruh dokumen: `PRD.md`, `DESIGN.md`, `AGENTS.md`, `TASKS.md`, `docs/`
+- [ ] Siapkan `assets/fonts/`, `assets/images/`, `assets/references/`
+- Commit: `docs: tambah PRD, DESIGN, AGENTS, dan TASKS`
+
+## Task Pengembangan
+
+### Task 1 — Setup project, aset, dan font
+- [x] Tambah dependency `provider` di `pubspec.yaml`
+- [x] Daftarkan folder aset dan font Onest (Light 300, Regular 400)
+- [x] Buat struktur folder `lib/pages`, `lib/widgets`, `lib/providers`, `lib/data`, `lib/models`, `lib/utils`
+- [x] Buat `lib/utils/responsive.dart` (helper ukuran dari `MediaQuery`)
+- [x] Buat `lib/theme/app_theme.dart` (warna dan font dari `DESIGN.md`)
+- Commit: `chore: setup struktur folder, font Onest, aset, dan tema`
+
+### Task 2 — Model dan data soal dummy
+- [ ] Buat `lib/models/question.dart`
+- [ ] Buat `lib/data/questions_data.dart` berisi 10 soal dari `docs/QUESTIONS.md`
+- Commit: `feat: tambah model dan data soal dummy`
+
+### Task 3 — State management (Provider)
+- [ ] Buat `lib/providers/quiz_provider.dart`: nama, indeks soal, daftar jawaban, hitung skor, reset
+- [ ] Pasang `ChangeNotifierProvider` di root `main.dart`
+- Commit: `feat: tambah QuizProvider untuk state kuis`
+
+### Task 4 — Reusable widget
+- [ ] `lib/widgets/primary_button.dart`
+- [ ] `lib/widgets/option_button.dart`
+- [ ] `lib/widgets/question_card.dart`
+- [ ] `lib/widgets/quiz_progress_bar.dart`
+- [ ] `lib/widgets/app_background.dart` (latar gambar dengan overlay gelap)
+- Commit: `feat: tambah reusable widget (tombol, opsi, kartu soal, progress bar)`
+
+### Task 5 — Halaman Nama (WelcomePage)
+- [ ] Logo, judul, input nama dengan validasi, tombol Mulai
+- [ ] Simpan nama ke provider
+- Commit: `feat: halaman input nama`
+
+### Task 6 — Halaman Kuis (QuizPage)
+- [ ] Tampilkan soal, opsi, progres, dan nama pengguna
+- [ ] Pilih jawaban tersimpan di provider; tombol Lanjut/Selesai
+- [ ] `AnimatedSwitcher` untuk pergantian soal
+- Commit: `feat: halaman kuis dengan pilihan jawaban dan progres`
+
+### Task 7 — Halaman Hasil (ResultPage)
+- [ ] Tampilkan nama, skor, persentase, dan pesan sesuai skor
+- [ ] Tombol Main Lagi (reset provider dan kembali ke Halaman Nama)
+- Commit: `feat: halaman hasil skor akhir dan reset`
+
+### Task 8 — Navigasi dan transisi
+- [ ] Navigasi Nama → Kuis → Hasil dengan transisi fade
+- [ ] Cegah tombol back membuka halaman yang tidak semestinya
+- Commit: `feat: navigasi antar-halaman dengan transisi fade`
+
+### Task 9 — Responsif dan rotasi
+- [ ] Uji portrait dan landscape di semua halaman
+- [ ] Pastikan progres dan jawaban tidak hilang saat rotasi
+- [ ] Tambahkan scroll bila konten melebihi layar
+- [ ] Periksa tidak ada ukuran hardcode tersisa
+- Commit: `fix: layout responsif dan keamanan state saat rotasi`
+
+### Task 10 — Polesan akhir
+- [ ] Sesuaikan warna dan spacing dengan screenshot referensi
+- [ ] Rapikan komentar dan hapus kode tak terpakai
+- [ ] Buat `README.md` (deskripsi, cara menjalankan, screenshot) dan `docs/CREDITS.md`
+- Commit: `docs: tambah README, credits, dan polesan akhir`
+
+## Pengujian Akhir (manual)
+- [ ] Nama kosong tidak bisa lanjut
+- [ ] Jawab semua soal, skor benar
+- [ ] Rotasi di tengah kuis, progres tetap
+- [ ] Pindah halaman dan kembali, progres tetap
+- [ ] Main Lagi mereset semuanya
+- [ ] Tampilan oke di layar kecil dan besar
