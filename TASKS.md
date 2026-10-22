@@ -43,9 +43,9 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `feat: halaman input nama`
 
 ### Task 6 — Halaman Kuis (QuizPage)
-- [ ] Tampilkan soal, opsi, progres, dan nama pengguna
-- [ ] Pilih jawaban tersimpan di provider; tombol Lanjut/Selesai
-- [ ] `AnimatedSwitcher` untuk pergantian soal
+- [x] Tampilkan soal, opsi, progres, dan nama pengguna
+- [x] Pilih jawaban tersimpan di provider; tombol Lanjut/Selesai
+- [x] `AnimatedSwitcher` untuk pergantian soal
 - Commit: `feat: halaman kuis dengan pilihan jawaban dan progres`
 
 ### Task 7 — Halaman Hasil (ResultPage)

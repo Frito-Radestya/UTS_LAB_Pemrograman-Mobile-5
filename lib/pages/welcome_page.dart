@@ -6,6 +6,7 @@ import '../theme/app_theme.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/primary_button.dart';
+import 'quiz_page.dart';
 
 /// Halaman pertama: pengguna memasukkan nama sebelum mulai kuis.
 class WelcomePage extends StatefulWidget {
@@ -34,9 +35,10 @@ class _WelcomePageState extends State<WelcomePage> {
     final provider = context.read<QuizProvider>();
     provider.setName(_nameController.text);
 
-    // Navigasi ke QuizPage ditambahkan pada Task 6.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Halo, ${provider.playerName}!')),
+    // Navigasi sederhana; transisi fade ditambahkan pada Task 8.
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(builder: (_) => const QuizPage()),
     );
   }
 
