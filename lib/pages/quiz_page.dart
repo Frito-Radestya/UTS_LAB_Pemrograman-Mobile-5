@@ -37,12 +37,16 @@ class QuizPage extends StatelessWidget {
       body: AppBackground(
         child: LayoutBuilder(
           builder: (context, constraints) {
+            final minHeight = (constraints.maxHeight -
+                    responsive.pagePadding * 2)
+                .clamp(0.0, double.infinity);
+
             return SingleChildScrollView(
               // Key berubah tiap soal agar posisi scroll kembali ke atas.
               key: ValueKey<int>(provider.currentIndex),
               padding: EdgeInsets.all(responsive.pagePadding),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                constraints: BoxConstraints(minHeight: minHeight),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(

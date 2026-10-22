@@ -55,10 +55,14 @@ class ResultPage extends StatelessWidget {
       body: AppBackground(
         child: LayoutBuilder(
           builder: (context, constraints) {
+            final minHeight = (constraints.maxHeight -
+                    responsive.pagePadding * 2)
+                .clamp(0.0, double.infinity);
+
             return SingleChildScrollView(
               padding: EdgeInsets.all(responsive.pagePadding),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                constraints: BoxConstraints(minHeight: minHeight),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(

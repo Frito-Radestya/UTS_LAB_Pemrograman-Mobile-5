@@ -59,10 +59,10 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `feat: navigasi antar-halaman dengan transisi fade`
 
 ### Task 9 — Responsif dan rotasi
-- [ ] Uji portrait dan landscape di semua halaman
-- [ ] Pastikan progres dan jawaban tidak hilang saat rotasi
-- [ ] Tambahkan scroll bila konten melebihi layar
-- [ ] Periksa tidak ada ukuran hardcode tersisa
+- [x] Uji portrait dan landscape di semua halaman
+- [x] Pastikan progres dan jawaban tidak hilang saat rotasi
+- [x] Tambahkan scroll bila konten melebihi layar
+- [x] Periksa tidak ada ukuran hardcode tersisa
 - Commit: `fix: layout responsif dan keamanan state saat rotasi`
 
 ### Task 10 — Polesan akhir
