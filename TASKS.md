@@ -54,8 +54,8 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `feat: halaman hasil skor akhir dan reset`
 
 ### Task 8 — Navigasi dan transisi
-- [ ] Navigasi Nama → Kuis → Hasil dengan transisi fade
-- [ ] Cegah tombol back membuka halaman yang tidak semestinya
+- [x] Navigasi Nama → Kuis → Hasil dengan transisi fade
+- [x] Cegah tombol back membuka halaman yang tidak semestinya
 - Commit: `feat: navigasi antar-halaman dengan transisi fade`
 
 ### Task 9 — Responsif dan rotasi

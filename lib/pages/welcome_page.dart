@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/primary_button.dart';
@@ -35,11 +36,9 @@ class _WelcomePageState extends State<WelcomePage> {
     final provider = context.read<QuizProvider>();
     provider.setName(_nameController.text);
 
-    // Navigasi sederhana; transisi fade ditambahkan pada Task 8.
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(builder: (_) => const QuizPage()),
-    );
+    // Ganti halaman nama dengan halaman kuis memakai transisi fade.
+    // pushReplacement mencegah tombol back kembali ke input nama.
+    Navigator.pushReplacement(context, AppRoute.fade(const QuizPage()));
   }
 
   OutlineInputBorder _border(Color color) {

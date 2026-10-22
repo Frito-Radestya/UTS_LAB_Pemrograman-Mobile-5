@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/primary_button.dart';
@@ -33,11 +34,12 @@ class ResultPage extends StatelessWidget {
   }
 
   void _playAgain(BuildContext context, QuizProvider provider) {
-    // Reset seluruh state sebelum kembali ke halaman nama.
+    // Reset seluruh state lalu hapus semua halaman sebelumnya,
+    // supaya back tidak membuka halaman kuis yang sudah selesai.
     provider.reset();
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute<void>(builder: (_) => const WelcomePage()),
+      AppRoute.fade(const WelcomePage()),
       (route) => false,
     );
   }

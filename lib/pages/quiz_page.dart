@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/option_button.dart';
@@ -18,11 +19,8 @@ class QuizPage extends StatelessWidget {
 
   void _handleNext(BuildContext context, QuizProvider provider) {
     if (provider.isLastQuestion) {
-      // Selesai: ganti halaman kuis dengan halaman hasil.
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute<void>(builder: (_) => const ResultPage()),
-      );
+      // Selesai: ganti halaman kuis dengan halaman hasil memakai fade.
+      Navigator.pushReplacement(context, AppRoute.fade(const ResultPage()));
       return;
     }
 
