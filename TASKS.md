@@ -82,7 +82,7 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - [x] Task 7 — Daftar kategori dan `QuizPage` berbasis kategori
 - [x] Task 8 — `ResultPage` dan riwayat skor
 - [x] Task 9 — Profil, logout, dan perbaikan alur navigasi
-- [ ] Task 10 — Pemeriksaan responsif dan rotasi untuk alur baru
+- [x] Task 10 — Pemeriksaan responsif dan rotasi untuk alur baru
 - [ ] Task 11 — Polesan akhir dan pembaruan dokumentasi
 
 ## Pengujian Akhir (manual)

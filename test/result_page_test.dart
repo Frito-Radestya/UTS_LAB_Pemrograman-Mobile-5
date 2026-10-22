@@ -44,4 +44,34 @@ void main() {
     expect(provider.currentIndex, 0);
     expect(provider.selectedAnswer, isNull);
   });
+
+  testWidgets('riwayat tidak bertambah saat halaman hasil dirotasi', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final provider = QuizProvider();
+    provider.startCategory(quizCategories.first, playerName: 'Demo');
+    provider.selectAnswer(provider.currentQuestion.correctIndex);
+
+    await tester.pumpWidget(_wrap(provider));
+    await tester.pumpAndSettle();
+    expect(provider.history, hasLength(1));
+
+    // Rotasi ke landscape tidak boleh menjalankan initState ulang atau
+    // menggandakan riwayat.
+    tester.view.physicalSize = const Size(800, 360);
+    await tester.pumpAndSettle();
+    expect(find.byType(ResultPage), findsOneWidget);
+    expect(find.text('HASIL AKHIR'), findsOneWidget);
+    expect(provider.history, hasLength(1));
+
+    tester.view.physicalSize = const Size(360, 800);
+    await tester.pumpAndSettle();
+    expect(find.byType(ResultPage), findsOneWidget);
+    expect(provider.history, hasLength(1));
+  });
 }

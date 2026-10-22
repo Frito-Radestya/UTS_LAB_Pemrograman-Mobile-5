@@ -64,44 +64,51 @@ void main() {
     expect(find.byType(LoginPage), findsOneWidget);
   });
 
-  testWidgets('semua halaman aman di portrait dan landscape', (
-    WidgetTester tester,
-  ) async {
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+  testWidgets(
+    'semua halaman aman di layar kecil, portrait, landscape, dan tablet',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-    final provider = QuizProvider();
-    provider.setName('Frito');
-    for (var i = 0; i < provider.totalQuestions; i++) {
-      provider.selectAnswer(provider.currentQuestion.correctIndex);
-      provider.next();
-    }
-
-    final pages = <Widget>[
-      const SplashPage(),
-      const LoginPage(),
-      const RegisterPage(),
-      const MainShell(),
-      QuizListPage(onCategoryTap: (_) {}),
-      const ScorePage(),
-      ProfilePage(onLogout: () {}),
-      const WelcomePage(),
-      const QuizPage(),
-      const ResultPage(),
-    ];
-
-    for (final size in const [Size(360, 800), Size(800, 360)]) {
-      for (final page in pages) {
-        await pumpPage(tester, provider, page, size);
-        expect(
-          tester.takeException(),
-          isNull,
-          reason: '${page.runtimeType} gagal pada ukuran $size',
-        );
+      final provider = QuizProvider();
+      provider.setName('Frito');
+      for (var i = 0; i < provider.totalQuestions; i++) {
+        provider.selectAnswer(provider.currentQuestion.correctIndex);
+        provider.next();
       }
-    }
-  });
+
+      final pages = <Widget>[
+        const SplashPage(),
+        const LoginPage(),
+        const RegisterPage(),
+        const MainShell(),
+        QuizListPage(onCategoryTap: (_) {}),
+        const ScorePage(),
+        ProfilePage(onLogout: () {}),
+        const WelcomePage(),
+        const QuizPage(),
+        const ResultPage(),
+      ];
+
+      for (final size in const [
+        Size(320, 568),
+        Size(360, 800),
+        Size(800, 360),
+        Size(768, 1024),
+        Size(1024, 768),
+      ]) {
+        for (final page in pages) {
+          await pumpPage(tester, provider, page, size);
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: '${page.runtimeType} gagal pada ukuran $size',
+          );
+        }
+      }
+    },
+  );
 
   testWidgets('jawaban tetap terpilih setelah rotasi', (
     WidgetTester tester,
