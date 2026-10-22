@@ -35,10 +35,14 @@ kuis_app/
     │   └── result_page.dart
     ├── widgets/
     │   ├── app_background.dart
-    │   ├── primary_button.dart
+    │   ├── app_bottom_nav.dart
+    │   ├── app_text_field.dart
+    │   ├── category_card.dart
     │   ├── option_button.dart
+    │   ├── primary_button.dart
     │   ├── question_card.dart
-    │   └── quiz_progress_bar.dart
+    │   ├── quiz_progress_bar.dart
+    │   └── score_tile.dart
     ├── theme/
     │   └── app_theme.dart
     ├── utils/
@@ -105,6 +109,7 @@ akun dummy berada di `lib/data/`.
 | Widget | Jenis | Alasan |
 |---|---|---|
 | `PrimaryButton`, `OptionButton`, `QuestionCard`, `QuizProgressBar`, `AppBackground` | Stateless | Tampilan murni, data dari parameter |
+| `AppTextField`, `CategoryCard`, `ScoreTile`, `AppBottomNav` | Stateless | Widget reusable; state form dan tab tetap di halaman/provider |
 | `ResultPage`, `QuizPage` | Stateless | Membaca data dari Provider |
 | `WelcomePage` | Stateful | Memiliki `TextEditingController` dan form key |
 | `MyApp` | Stateless | Root aplikasi |
@@ -126,6 +131,7 @@ class Responsive {
   double get headingSize => w * 0.115;
   double get bodySize => w * 0.0425;
   double get pagePadding => w * 0.06;
+  double get iconSize => w * 0.06;
 }
 ```
 Beri `clamp` pada ukuran font agar wajar di tablet dan landscape.
