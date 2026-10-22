@@ -33,6 +33,8 @@ kuis_app/
     │   ├── splash_page.dart
     │   ├── login_page.dart
     │   ├── register_page.dart
+    │   ├── main_shell.dart       # 4 tab dengan IndexedStack
+    │   ├── home_page.dart        # Beranda
     │   ├── welcome_page.dart
     │   ├── quiz_page.dart
     │   └── result_page.dart
@@ -115,6 +117,8 @@ akun dummy berada di `lib/data/`.
 | `AppTextField`, `CategoryCard`, `ScoreTile`, `AppBottomNav` | Stateless | Widget reusable; state form dan tab tetap di halaman/provider |
 | `SplashPage` | Stateful | Memiliki timer untuk pindah ke Login |
 | `LoginPage`, `RegisterPage` | Stateful | Memiliki `TextEditingController`, form key, dan toggle password |
+| `MainShell` | Stateful | Menyimpan indeks tab aktif; `IndexedStack` menjaga state tiap tab |
+| `HomePage` | Stateless | Membaca `AuthProvider` dan `QuizProvider`, lalu menampilkan Beranda |
 | `ResultPage`, `QuizPage` | Stateless | Membaca data dari Provider |
 | `WelcomePage` | Stateful | Halaman lama, tidak dipakai alur auth |
 | `MyApp` | Stateless | Root aplikasi |
@@ -123,8 +127,12 @@ akun dummy berada di `lib/data/`.
 `Navigator.push` / `pushReplacement` dengan `PageRouteBuilder` + `FadeTransition`:
 - `SplashPage` → `LoginPage` (setelah 2 detik)
 - `LoginPage` ↔ `RegisterPage` (tautan daftar/masuk)
-- Login atau register berhasil → SnackBar konfirmasi; navigasi ke `MainShell`
-  ditambahkan pada Task 6.
+- Login atau register berhasil → `MainShell` dengan `pushAndRemoveUntil`, sehingga
+  tombol back tidak kembali ke Login/Splash.
+- Di `MainShell`, 4 tab (Beranda, Kuis, Skor, Profil) ditampilkan lewat
+  `IndexedStack` dan dipilih dari `AppBottomNav`.
+- Kartu kategori di Beranda saat ini membuka tab Kuis. Navigasi ke `QuizPage`
+  ditambahkan pada Task 7.
 - `WelcomePage` → `QuizPage` (alur lama, tidak dipakai lagi)
 - `QuizPage` → `ResultPage`
 - `ResultPage` → `WelcomePage` (alur lama, akan diganti pada task berikutnya)

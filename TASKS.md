@@ -71,6 +71,20 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - [x] Buat `README.md` (deskripsi, cara menjalankan, screenshot) dan `docs/CREDITS.md`
 - Commit: `docs: tambah README, credits, dan polesan akhir`
 
+## Revisi Aplikasi (Login, 4 Tab, Kategori, dan Riwayat)
+
+- [x] Task 1 — Setup dependency, aset, font, struktur folder, `responsive.dart`, dan tema
+- [x] Task 2 — Model `User`, `Category`, `ScoreRecord`, data 2 kategori × 10 soal, dan akun demo
+- [x] Task 3 — `AuthProvider`, perluasan `QuizProvider`, dan pemasangan `MultiProvider`
+- [x] Task 4 — Widget reusable: `AppTextField`, `CategoryCard`, `ScoreTile`, `AppBottomNav`
+- [x] Task 5 — Halaman Splash, Login, dan Register dengan validasi
+- [x] Task 6 — `MainShell`, bottom navigation 4 tab, dan halaman Beranda
+- [ ] Task 7 — Daftar kategori dan `QuizPage` berbasis kategori
+- [ ] Task 8 — `ResultPage` dan riwayat skor
+- [ ] Task 9 — Profil, logout, dan perbaikan alur navigasi
+- [ ] Task 10 — Pemeriksaan responsif dan rotasi untuk alur baru
+- [ ] Task 11 — Polesan akhir dan pembaruan dokumentasi
+
 ## Pengujian Akhir (manual)
 - [ ] Nama kosong tidak bisa lanjut
 - [ ] Jawab semua soal, skor benar

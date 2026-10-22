@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/primary_button.dart';
+import 'main_shell.dart';
 
 /// Halaman pendaftaran akun dummy.
 class RegisterPage extends StatefulWidget {
@@ -117,10 +119,10 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    // AuthProvider langsung membuat sesi setelah register.
-    // Navigasi ke MainShell ditambahkan pada Task 6.
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Pendaftaran berhasil.')));
+    // AuthProvider langsung membuat sesi setelah register. Hapus Login dari
+    // tumpukan navigasi agar pengguna tidak bisa kembali ke form pendaftaran.
+    Navigator.of(context)
+        .pushAndRemoveUntil(AppRoute.fade(const MainShell()), (route) => false);
   }
 
   void _backToLogin() {

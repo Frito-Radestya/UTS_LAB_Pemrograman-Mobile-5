@@ -8,6 +8,7 @@ import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/primary_button.dart';
+import 'main_shell.dart';
 import 'register_page.dart';
 
 /// Halaman login dengan akun dummy yang tersimpan di AuthProvider.
@@ -69,9 +70,10 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // Navigasi ke MainShell ditambahkan pada Task 6.
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Login berhasil.')));
+    // Masuk ke shell dan hapus Login/Splash dari tumpukan navigasi agar
+    // tombol back tidak kembali ke halaman login.
+    Navigator.of(context)
+        .pushAndRemoveUntil(AppRoute.fade(const MainShell()), (route) => false);
   }
 
   void _openRegister() {
