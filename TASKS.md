@@ -20,8 +20,8 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `chore: setup struktur folder, font Onest, aset, dan tema`
 
 ### Task 2 — Model dan data soal dummy
-- [ ] Buat `lib/models/question.dart`
-- [ ] Buat `lib/data/questions_data.dart` berisi 10 soal dari `docs/QUESTIONS.md`
+- [x] Buat `lib/models/question.dart`
+- [x] Buat `lib/data/questions_data.dart` berisi 10 soal dari `docs/QUESTIONS.md`
 - Commit: `feat: tambah model dan data soal dummy`
 
 ### Task 3 — State management (Provider)
