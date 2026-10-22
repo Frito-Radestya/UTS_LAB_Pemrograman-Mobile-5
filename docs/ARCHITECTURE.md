@@ -30,6 +30,9 @@ kuis_app/
     │   ├── auth_provider.dart
     │   └── quiz_provider.dart
     ├── pages/
+    │   ├── splash_page.dart
+    │   ├── login_page.dart
+    │   ├── register_page.dart
     │   ├── welcome_page.dart
     │   ├── quiz_page.dart
     │   └── result_page.dart
@@ -110,15 +113,21 @@ akun dummy berada di `lib/data/`.
 |---|---|---|
 | `PrimaryButton`, `OptionButton`, `QuestionCard`, `QuizProgressBar`, `AppBackground` | Stateless | Tampilan murni, data dari parameter |
 | `AppTextField`, `CategoryCard`, `ScoreTile`, `AppBottomNav` | Stateless | Widget reusable; state form dan tab tetap di halaman/provider |
+| `SplashPage` | Stateful | Memiliki timer untuk pindah ke Login |
+| `LoginPage`, `RegisterPage` | Stateful | Memiliki `TextEditingController`, form key, dan toggle password |
 | `ResultPage`, `QuizPage` | Stateless | Membaca data dari Provider |
-| `WelcomePage` | Stateful | Memiliki `TextEditingController` dan form key |
+| `WelcomePage` | Stateful | Halaman lama, tidak dipakai alur auth |
 | `MyApp` | Stateless | Root aplikasi |
 
 ## Navigasi
 `Navigator.push` / `pushReplacement` dengan `PageRouteBuilder` + `FadeTransition`:
-- `WelcomePage` → `QuizPage` (setelah nama valid)
-- `QuizPage` → `ResultPage` (setelah soal terakhir)
-- `ResultPage` → `WelcomePage` (Main Lagi, setelah `reset()`)
+- `SplashPage` → `LoginPage` (setelah 2 detik)
+- `LoginPage` ↔ `RegisterPage` (tautan daftar/masuk)
+- Login atau register berhasil → SnackBar konfirmasi; navigasi ke `MainShell`
+  ditambahkan pada Task 6.
+- `WelcomePage` → `QuizPage` (alur lama, tidak dipakai lagi)
+- `QuizPage` → `ResultPage`
+- `ResultPage` → `WelcomePage` (alur lama, akan diganti pada task berikutnya)
 
 ## Responsif
 Semua ukuran melalui helper `lib/utils/responsive.dart` (berbasis `MediaQuery`), contoh:

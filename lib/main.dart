@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'pages/welcome_page.dart';
+import 'pages/splash_page.dart';
 import 'providers/auth_provider.dart';
 import 'providers/quiz_provider.dart';
 import 'theme/app_theme.dart';
@@ -48,6 +48,6 @@ class _EntryGate extends StatelessWidget {
         child: SizedBox.expand(),
       );
     }
-    return const WelcomePage();
+    return const SplashPage();
   }
 }
