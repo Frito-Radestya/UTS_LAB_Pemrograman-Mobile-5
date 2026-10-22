@@ -44,6 +44,10 @@ class Responsive {
   double get radius =>
       (w * 0.03).clamp(shortestSide * 0.02, shortestSide * 0.05);
 
+  /// Ukuran ikon: 24 / 400 dari lebar layar, dibatasi agar proporsional.
+  double get iconSize =>
+      (w * 0.06).clamp(shortestSide * 0.04, shortestSide * 0.08);
+
   /// Lebar konten maksimum supaya tidak melebar di landscape/tablet.
   double get contentWidth => isLandscape ? w * 0.68 : w;
 
