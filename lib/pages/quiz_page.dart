@@ -140,28 +140,34 @@ class QuizPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            const _QuizBackButton(),
+                            SizedBox(width: responsive.pagePadding * 0.35),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'PEMAIN',
-                                    style: TextStyle(
-                                      fontSize: responsive.bodySize * 0.7,
-                                      letterSpacing: responsive.bodySize * 0.14,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                  SizedBox(height: responsive.smallGap * 0.4),
-                                  Text(
-                                    provider.playerName,
+                                    provider.activeCategory.title,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      fontSize: responsive.bodySize * 1.25,
+                                      fontSize: responsive.bodySize * 0.7,
+                                      letterSpacing: responsive.bodySize * 0.08,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.accent,
+                                    ),
+                                  ),
+                                  SizedBox(height: responsive.smallGap * 0.3),
+                                  Text(
+                                    provider.playerName.isEmpty
+                                        ? 'Pemain'
+                                        : provider.playerName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: responsive.bodySize * 1.15,
                                       fontWeight: FontWeight.w400,
                                       color: AppColors.textPrimary,
                                     ),
@@ -169,14 +175,14 @@ class QuizPage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            SizedBox(width: responsive.gap),
+                            SizedBox(width: responsive.smallGap),
                             Text(
                               'Soal ${provider.currentIndex + 1} dari '
                               '${provider.totalQuestions}',
                               style: TextStyle(
-                                fontSize: responsive.bodySize * 0.9,
+                                fontSize: responsive.bodySize * 0.82,
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.accent,
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -213,6 +219,47 @@ class QuizPage extends StatelessWidget {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+/// Tombol kembali di layar kuis.
+class _QuizBackButton extends StatelessWidget {
+  const _QuizBackButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+    final size = responsive.bodySize * 2.4;
+    final radius = responsive.radius * 0.7;
+
+    return Semantics(
+      button: true,
+      label: 'Kembali',
+      child: Material(
+        color: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+          side: BorderSide(
+            color: AppColors.border,
+            width: responsive.shortestSide * 0.004,
+          ),
+        ),
+        child: InkWell(
+          key: const Key('quiz-back'),
+          onTap: () => Navigator.of(context).maybePop(),
+          borderRadius: BorderRadius.circular(radius),
+          child: SizedBox(
+            width: size,
+            height: size,
+            child: Icon(
+              Icons.arrow_back_rounded,
+              size: responsive.bodySize * 1.05,
+              color: AppColors.textPrimary,
+            ),
+          ),
         ),
       ),
     );

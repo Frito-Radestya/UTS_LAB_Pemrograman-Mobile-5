@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../models/category.dart';
+import '../providers/auth_provider.dart';
+import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_bottom_nav.dart';
 import 'home_page.dart';
+import 'quiz_list_page.dart';
+import 'quiz_page.dart';
 
 /// Kerangka utama setelah login dengan 4 tab yang state-nya tetap hidup.
 class MainShell extends StatefulWidget {
@@ -24,6 +31,19 @@ class _MainShellState extends State<MainShell> {
     setState(() => _currentIndex = index);
   }
 
+  /// Menyiapkan kategori dan membuka kuis sebagai layar penuh.
+  ///
+  /// Route baru berada di atas MainShell, jadi bottom navigation tidak
+  /// terlihat selama kuis. Tombol back kembali ke tab asal.
+  void _startQuiz(Category category) {
+    final playerName = context.read<AuthProvider>().currentUser?.name ?? '';
+    context.read<QuizProvider>().startCategory(
+      category,
+      playerName: playerName,
+    );
+    Navigator.of(context).push(AppRoute.fade(const QuizPage()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,13 +54,9 @@ class _MainShellState extends State<MainShell> {
           children: [
             HomePage(
               onOpenQuizTab: () => _selectTab(1),
-              onCategoryTap: (_) => _selectTab(1),
+              onCategoryTap: _startQuiz,
             ),
-            const _PlaceholderTab(
-              icon: Icons.quiz_outlined,
-              title: 'Daftar Kuis',
-              message: 'Daftar kategori kuis akan tampil di sini.',
-            ),
+            QuizListPage(onCategoryTap: _startQuiz),
             const _PlaceholderTab(
               icon: Icons.bar_chart_rounded,
               title: 'Riwayat Skor',

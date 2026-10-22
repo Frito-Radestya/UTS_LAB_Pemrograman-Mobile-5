@@ -35,6 +35,7 @@ kuis_app/
     │   ├── register_page.dart
     │   ├── main_shell.dart       # 4 tab dengan IndexedStack
     │   ├── home_page.dart        # Beranda
+    │   ├── quiz_list_page.dart   # daftar kategori di tab Kuis
     │   ├── welcome_page.dart
     │   ├── quiz_page.dart
     │   └── result_page.dart
@@ -119,6 +120,7 @@ akun dummy berada di `lib/data/`.
 | `LoginPage`, `RegisterPage` | Stateful | Memiliki `TextEditingController`, form key, dan toggle password |
 | `MainShell` | Stateful | Menyimpan indeks tab aktif; `IndexedStack` menjaga state tiap tab |
 | `HomePage` | Stateless | Membaca `AuthProvider` dan `QuizProvider`, lalu menampilkan Beranda |
+| `QuizListPage` | Stateless | Menampilkan daftar kategori; aksi mulai kuis diteruskan lewat callback |
 | `ResultPage`, `QuizPage` | Stateless | Membaca data dari Provider |
 | `WelcomePage` | Stateful | Halaman lama, tidak dipakai alur auth |
 | `MyApp` | Stateless | Root aplikasi |
@@ -131,10 +133,12 @@ akun dummy berada di `lib/data/`.
   tombol back tidak kembali ke Login/Splash.
 - Di `MainShell`, 4 tab (Beranda, Kuis, Skor, Profil) ditampilkan lewat
   `IndexedStack` dan dipilih dari `AppBottomNav`.
-- Kartu kategori di Beranda saat ini membuka tab Kuis. Navigasi ke `QuizPage`
-  ditambahkan pada Task 7.
-- `WelcomePage` → `QuizPage` (alur lama, tidak dipakai lagi)
-- `QuizPage` → `ResultPage`
+- Tab Kuis menampilkan `QuizListPage`. Kartu kategori di Beranda maupun tab Kuis
+  memanggil `QuizProvider.startCategory()` dengan nama pengguna aktif, lalu
+  membuka `QuizPage` lewat `Navigator.push` sebagai layar penuh tanpa bottom
+  navigation. Tombol back kembali ke tab asal.
+- `QuizPage` → `ResultPage` dengan `pushReplacement`, sehingga back dari hasil
+  tidak membuka kuis yang sudah selesai.
 - `ResultPage` → `WelcomePage` (alur lama, akan diganti pada task berikutnya)
 
 ## Responsif
