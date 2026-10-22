@@ -3,8 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kuis_app/main.dart';
 import 'package:kuis_app/pages/login_page.dart';
 import 'package:kuis_app/pages/main_shell.dart';
+import 'package:kuis_app/pages/quiz_list_page.dart';
+import 'package:kuis_app/pages/quiz_page.dart';
 import 'package:kuis_app/pages/register_page.dart';
+import 'package:kuis_app/pages/result_page.dart';
 import 'package:kuis_app/pages/splash_page.dart';
+import 'package:kuis_app/widgets/app_bottom_nav.dart';
+import 'package:kuis_app/widgets/option_button.dart';
 
 Future<void> _openLogin(WidgetTester tester) async {
   await tester.pumpWidget(const MyApp());
@@ -135,10 +140,8 @@ void main() {
 
     await tester.tap(find.text('Kuis'));
     await tester.pumpAndSettle();
-    expect(
-      find.text('Daftar kategori kuis akan tampil di sini.'),
-      findsOneWidget,
-    );
+    expect(find.byType(QuizListPage), findsOneWidget);
+    expect(find.text('Pilih Kategori'), findsOneWidget);
 
     await tester.tap(find.text('Skor'));
     await tester.pumpAndSettle();
@@ -158,5 +161,91 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Halo, Demo Mahasiswa'), findsOneWidget);
     expect(find.text('Kategori Kuis'), findsOneWidget);
+  });
+
+  testWidgets('kategori di Beranda membuka kuis layar penuh', (tester) async {
+    await _loginDemo(tester);
+
+    final category = find.text('Flutter Dasar');
+    await tester.ensureVisible(category);
+    await tester.tap(category);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(QuizPage), findsOneWidget);
+    expect(find.text('Soal 1 dari 10'), findsOneWidget);
+    expect(find.text('Demo Mahasiswa'), findsOneWidget);
+    expect(find.text('Flutter Dasar'), findsWidgets);
+    expect(find.byType(AppBottomNav), findsNothing);
+    expect(
+      find.text('Bahasa pemrograman yang digunakan Flutter adalah...'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const Key('quiz-back')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MainShell), findsOneWidget);
+    expect(find.text('Halo, Demo Mahasiswa'), findsOneWidget);
+  });
+
+  testWidgets('tab Kuis memulai kategori dan kembali ke daftar', (
+    tester,
+  ) async {
+    await _loginDemo(tester);
+
+    await tester.tap(find.text('Kuis'));
+    await tester.pumpAndSettle();
+    expect(find.byType(QuizListPage), findsOneWidget);
+
+    final category = find.text('Dart & Pemrograman');
+    await tester.ensureVisible(category);
+    await tester.tap(category);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(QuizPage), findsOneWidget);
+    expect(find.text('Dart & Pemrograman'), findsWidgets);
+    expect(find.text('Demo Mahasiswa'), findsOneWidget);
+    expect(find.text('Soal 1 dari 10'), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(QuizListPage), findsOneWidget);
+    expect(find.text('Pilih Kategori'), findsOneWidget);
+  });
+
+  testWidgets('menyelesaikan kuis membuka hasil tanpa kembali ke kuis', (
+    tester,
+  ) async {
+    await _loginDemo(tester);
+
+    final category = find.text('Flutter Dasar');
+    await tester.ensureVisible(category);
+    await tester.tap(category);
+    await tester.pumpAndSettle();
+    expect(find.byType(QuizPage), findsOneWidget);
+
+    for (var i = 0; i < 10; i++) {
+      final option = find.byType(OptionButton).first;
+      await tester.ensureVisible(option);
+      await tester.tap(option);
+      await tester.pump();
+
+      final action = find.text(i == 9 ? 'Selesai' : 'Lanjut');
+      await tester.ensureVisible(action);
+      await tester.tap(action);
+      await tester.pumpAndSettle();
+    }
+
+    expect(find.byType(ResultPage), findsOneWidget);
+    expect(find.text('HASIL AKHIR'), findsOneWidget);
+    expect(find.byType(QuizPage), findsNothing);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MainShell), findsOneWidget);
+    expect(find.byType(QuizPage), findsNothing);
+    expect(find.byType(ResultPage), findsNothing);
   });
 }

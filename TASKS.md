@@ -79,7 +79,7 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - [x] Task 4 — Widget reusable: `AppTextField`, `CategoryCard`, `ScoreTile`, `AppBottomNav`
 - [x] Task 5 — Halaman Splash, Login, dan Register dengan validasi
 - [x] Task 6 — `MainShell`, bottom navigation 4 tab, dan halaman Beranda
-- [ ] Task 7 — Daftar kategori dan `QuizPage` berbasis kategori
+- [x] Task 7 — Daftar kategori dan `QuizPage` berbasis kategori
 - [ ] Task 8 — `ResultPage` dan riwayat skor
 - [ ] Task 9 — Profil, logout, dan perbaikan alur navigasi
 - [ ] Task 10 — Pemeriksaan responsif dan rotasi untuk alur baru
