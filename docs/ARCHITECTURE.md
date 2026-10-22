@@ -36,8 +36,9 @@ kuis_app/
     │   └── quiz_progress_bar.dart
     ├── theme/
     │   └── app_theme.dart
-    └── utils/
-        └── responsive.dart
+    ├── utils/
+    │   ├── app_route.dart      # transisi fade
+    │   └── responsive.dart
 ```
 
 ## State Management: Provider

@@ -44,23 +44,211 @@ class ResultPage extends StatelessWidget {
     );
   }
 
+  Widget _buildSummary(
+    Responsive responsive,
+    QuizProvider provider,
+    double percentage,
+    double iconSize,
+  ) {
+    // Di landscape jarak antarbagian dirapatkan supaya badge persentase
+    // tidak terpotong di layar pendek.
+    final gap = responsive.isLandscape
+        ? responsive.smallGap * 1.2
+        : responsive.gap;
+    final scoreSize =
+        responsive.headingSize * (responsive.isLandscape ? 1.3 : 1.8);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Center(
+          child: Image.asset(
+            'assets/images/trophy.png',
+            width: iconSize,
+            height: iconSize,
+            fit: BoxFit.contain,
+          ),
+        ),
+        SizedBox(height: gap),
+        Text(
+          'HASIL AKHIR',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: responsive.bodySize * 0.72,
+            fontWeight: FontWeight.w400,
+            letterSpacing: responsive.bodySize * 0.18,
+            color: AppColors.accent,
+          ),
+        ),
+        SizedBox(height: responsive.smallGap),
+        Text(
+          provider.playerName,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: responsive.headingSize * 0.8,
+            fontWeight: FontWeight.w400,
+            letterSpacing: responsive.letterSpacing,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        SizedBox(height: gap),
+        // Angka skor dianimasikan naik dari 0.
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0, end: provider.score.toDouble()),
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Text(
+              value.round().toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: scoreSize,
+                height: 1,
+                fontWeight: FontWeight.w400,
+                letterSpacing: responsive.letterSpacing * 1.5,
+                color: AppColors.accent,
+              ),
+            );
+          },
+        ),
+        Text(
+          'dari ${provider.totalQuestions} soal',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: responsive.bodySize,
+            fontWeight: FontWeight.w300,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        SizedBox(height: gap),
+        Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: responsive.pagePadding * 0.5,
+              vertical: responsive.smallGap,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(responsive.radius),
+              border: Border.all(
+                color: AppColors.border,
+                width: responsive.shortestSide * 0.005,
+              ),
+            ),
+            child: Text(
+              '${percentage.round()}% benar',
+              style: TextStyle(
+                fontSize: responsive.bodySize,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFeedback(
+    BuildContext context,
+    Responsive responsive,
+    QuizProvider provider,
+    double percentage,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          _messageFor(percentage),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: responsive.headingSize * 0.5,
+            fontWeight: FontWeight.w400,
+            letterSpacing: responsive.letterSpacing,
+            color: AppColors.correct,
+          ),
+        ),
+        SizedBox(height: responsive.smallGap),
+        Text(
+          _descriptionFor(percentage),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: responsive.bodySize,
+            height: 1.5,
+            fontWeight: FontWeight.w300,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        SizedBox(height: responsive.gap * 1.6),
+        PrimaryButton(
+          label: 'Main Lagi',
+          icon: Icons.replay_rounded,
+          onPressed: () => _playAgain(context, provider),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
     final provider = context.watch<QuizProvider>();
     final percentage = provider.percentage;
-    final iconSize = responsive.shortestSide * 0.26;
+    final iconSize =
+        responsive.shortestSide * (responsive.isLandscape ? 0.14 : 0.26);
 
     return Scaffold(
       body: AppBackground(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final minHeight = (constraints.maxHeight -
-                    responsive.pagePadding * 2)
+            final verticalPadding =
+                responsive.pagePadding * (responsive.isLandscape ? 0.45 : 1);
+            final minHeight = (constraints.maxHeight - verticalPadding * 2)
                 .clamp(0.0, double.infinity);
 
+            final summary = _buildSummary(
+              responsive,
+              provider,
+              percentage,
+              iconSize,
+            );
+            final feedback = _buildFeedback(
+              context,
+              responsive,
+              provider,
+              percentage,
+            );
+
+            // Di landscape, ringkasan skor dan pesan disusun berdampingan
+            // agar tombol Main Lagi tetap terlihat tanpa scroll.
+            final content = responsive.isLandscape
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(child: summary),
+                      SizedBox(width: responsive.pagePadding),
+                      Expanded(child: feedback),
+                    ],
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      summary,
+                      SizedBox(height: responsive.gap),
+                      feedback,
+                    ],
+                  );
+
             return SingleChildScrollView(
-              padding: EdgeInsets.all(responsive.pagePadding),
+              padding: EdgeInsets.symmetric(
+                horizontal: responsive.pagePadding,
+                vertical: verticalPadding,
+              ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: minHeight),
                 child: Center(
@@ -68,131 +256,7 @@ class ResultPage extends StatelessWidget {
                     constraints: BoxConstraints(
                       maxWidth: responsive.contentWidth,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Center(
-                          child: Image.asset(
-                            'assets/images/trophy.png',
-                            width: iconSize,
-                            height: iconSize,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        SizedBox(height: responsive.gap),
-                        Text(
-                          'HASIL AKHIR',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: responsive.bodySize * 0.72,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: responsive.bodySize * 0.18,
-                            color: AppColors.accent,
-                          ),
-                        ),
-                        SizedBox(height: responsive.smallGap),
-                        Text(
-                          provider.playerName,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: responsive.headingSize * 0.8,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: responsive.letterSpacing,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        SizedBox(height: responsive.gap),
-                        // Angka skor dianimasikan naik dari 0.
-                        TweenAnimationBuilder<double>(
-                          tween: Tween<double>(
-                            begin: 0,
-                            end: provider.score.toDouble(),
-                          ),
-                          duration: const Duration(milliseconds: 800),
-                          curve: Curves.easeOutCubic,
-                          builder: (context, value, child) {
-                            return Text(
-                              value.round().toString(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: responsive.headingSize * 1.8,
-                                height: 1,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: responsive.letterSpacing * 1.5,
-                                color: AppColors.accent,
-                              ),
-                            );
-                          },
-                        ),
-                        Text(
-                          'dari ${provider.totalQuestions} soal',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: responsive.bodySize,
-                            fontWeight: FontWeight.w300,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        SizedBox(height: responsive.gap),
-                        Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: responsive.pagePadding * 0.5,
-                              vertical: responsive.smallGap,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.surface,
-                              borderRadius: BorderRadius.circular(
-                                responsive.radius,
-                              ),
-                              border: Border.all(
-                                color: AppColors.border,
-                                width: responsive.shortestSide * 0.005,
-                              ),
-                            ),
-                            child: Text(
-                              '${percentage.round()}% benar',
-                              style: TextStyle(
-                                fontSize: responsive.bodySize,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: responsive.gap * 1.2),
-                        Text(
-                          _messageFor(percentage),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: responsive.headingSize * 0.5,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: responsive.letterSpacing,
-                            color: AppColors.correct,
-                          ),
-                        ),
-                        SizedBox(height: responsive.smallGap),
-                        Text(
-                          _descriptionFor(percentage),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: responsive.bodySize,
-                            height: 1.5,
-                            fontWeight: FontWeight.w300,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        SizedBox(height: responsive.gap * 1.6),
-                        PrimaryButton(
-                          label: 'Main Lagi',
-                          icon: Icons.replay_rounded,
-                          onPressed: () => _playAgain(context, provider),
-                        ),
-                      ],
-                    ),
+                    child: content,
                   ),
                 ),
               ),

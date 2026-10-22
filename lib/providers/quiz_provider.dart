@@ -7,7 +7,7 @@ import '../models/question.dart';
 /// Dengan Provider, state tetap aman saat rotasi atau pindah halaman.
 class QuizProvider extends ChangeNotifier {
   QuizProvider({List<Question>? questions})
-      : _questions = List<Question>.unmodifiable(questions ?? questionsData) {
+    : _questions = List<Question>.unmodifiable(questions ?? questionsData) {
     assert(_questions.isNotEmpty, 'Daftar soal tidak boleh kosong');
     _answers = List<int?>.filled(_questions.length, null);
   }

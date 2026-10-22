@@ -22,8 +22,27 @@ class MyApp extends StatelessWidget {
         title: 'Kuis Pemrograman Mobile',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.dark,
-        home: const WelcomePage(),
+        home: const _EntryGate(),
       ),
     );
+  }
+}
+
+/// Menunggu ukuran layar tersedia sebelum membangun halaman.
+/// Pada frame pertama MediaQuery bisa berukuran 0, dan ukuran font 0
+/// tidak valid untuk TextField.
+class _EntryGate extends StatelessWidget {
+  const _EntryGate();
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    if (size.width <= 0 || size.height <= 0) {
+      return const ColoredBox(
+        color: AppColors.background,
+        child: SizedBox.expand(),
+      );
+    }
+    return const WelcomePage();
   }
 }

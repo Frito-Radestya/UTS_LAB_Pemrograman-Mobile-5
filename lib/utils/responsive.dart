@@ -19,13 +19,18 @@ class Responsive {
 
   bool get isLandscape => w > h;
 
-  /// Heading: 46 / 400 dari lebar layar, dibatasi tinggi layar.
-  double get headingSize => (w * 0.115).clamp(h * 0.07, h * 0.12);
+  /// Heading: 46 / 400 dari lebar layar, dibatasi tinggi layar
+  /// agar tidak berlebihan di landscape.
+  double get headingSize => math.min(w * 0.115, h * 0.12);
 
   /// Body: 17 / 400 dari lebar layar, dibatasi tinggi layar.
-  double get bodySize => (w * 0.0425).clamp(h * 0.026, h * 0.05);
+  double get bodySize => math.min(w * 0.0425, h * 0.05);
 
   double get letterSpacing => headingSize * -0.012;
+
+  /// Ukuran judul halaman. Di landscape sedikit diperkecil karena
+  /// kolom branding hanya memakai separuh lebar layar.
+  double get titleSize => headingSize * (isLandscape ? 0.82 : 1);
 
   double get pagePadding => w * 0.06;
   double get gap => h * 0.02;
@@ -36,7 +41,8 @@ class Responsive {
       (h * 0.07).clamp(shortestSide * 0.115, shortestSide * 0.16);
 
   /// Radius sudut dari lebar layar, dibatasi agar proporsional.
-  double get radius => (w * 0.03).clamp(shortestSide * 0.02, shortestSide * 0.05);
+  double get radius =>
+      (w * 0.03).clamp(shortestSide * 0.02, shortestSide * 0.05);
 
   /// Lebar konten maksimum supaya tidak melebar di landscape/tablet.
   double get contentWidth => isLandscape ? w * 0.68 : w;

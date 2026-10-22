@@ -11,19 +11,13 @@ class AppBackground extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.asset(
-          'assets/images/bg_temple.jpg',
-          fit: BoxFit.cover,
-        ),
+        Image.asset('assets/images/bg_temple.jpg', fit: BoxFit.cover),
         const DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Color(0xCC0D0D0D),
-                Color(0xF20D0D0D),
-              ],
+              colors: [Color(0xA60D0D0D), Color(0xE60D0D0D)],
             ),
           ),
         ),

@@ -36,12 +36,30 @@ class AppTheme {
       colorScheme: colorScheme,
       splashFactory: InkSparkle.splashFactory,
       textTheme: const TextTheme(
-        displayLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w400),
-        headlineLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w400),
-        titleLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w400),
-        bodyLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w300),
-        bodyMedium: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w300),
-        labelLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w400),
+        displayLarge: TextStyle(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w400,
+        ),
+        headlineLarge: TextStyle(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w400,
+        ),
+        titleLarge: TextStyle(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w400,
+        ),
+        bodyLarge: TextStyle(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w300,
+        ),
+        bodyMedium: TextStyle(
+          color: AppColors.textSecondary,
+          fontWeight: FontWeight.w300,
+        ),
+        labelLarge: TextStyle(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w400,
+        ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
         filled: true,

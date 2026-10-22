@@ -46,7 +46,9 @@ class OptionButton extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: responsive.pagePadding * 0.45,
-              vertical: responsive.gap * 1.1,
+              // Di landscape ruang vertikal lebih sempit, jadi padding
+              // dibuat lebih ringkas agar semua opsi tetap terlihat.
+              vertical: responsive.gap * (responsive.isLandscape ? 0.55 : 1.1),
             ),
             child: Row(
               children: [

@@ -27,24 +27,108 @@ class QuizPage extends StatelessWidget {
     provider.next();
   }
 
+  Widget _buildOptions(Responsive responsive, QuizProvider provider) {
+    final question = provider.currentQuestion;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < question.options.length; i++)
+          Padding(
+            // Jarak antaropsi dirapatkan sedikit di landscape.
+            padding: EdgeInsets.only(
+              bottom: responsive.smallGap * (responsive.isLandscape ? 0.6 : 1),
+            ),
+            child: OptionButton(
+              optionLabel: String.fromCharCode(65 + i),
+              label: question.options[i],
+              selected: provider.selectedAnswer == i,
+              onTap: () => provider.selectAnswer(i),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildQuestionContent(
+    BuildContext context,
+    Responsive responsive,
+    QuizProvider provider,
+  ) {
+    final question = provider.currentQuestion;
+    final options = _buildOptions(responsive, provider);
+    final nextButton = PrimaryButton(
+      label: provider.isLastQuestion ? 'Selesai' : 'Lanjut',
+      icon: provider.isLastQuestion
+          ? Icons.flag_rounded
+          : Icons.arrow_forward_rounded,
+      onPressed: provider.selectedAnswer == null
+          ? null
+          : () => _handleNext(context, provider),
+    );
+
+    // Di landscape, kartu soal dan pilihan jawaban berdampingan
+    // supaya seluruh konten muat tanpa scroll panjang.
+    if (responsive.isLandscape) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: QuestionCard(text: question.text)),
+          SizedBox(width: responsive.gap),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                options,
+                // Jarak ke tombol dirapatkan agar tombol tetap terlihat.
+                SizedBox(height: responsive.smallGap * 1.2),
+                nextButton,
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        QuestionCard(text: question.text),
+        SizedBox(height: responsive.gap),
+        options,
+        SizedBox(height: responsive.gap * 1.4),
+        nextButton,
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
     final provider = context.watch<QuizProvider>();
-    final question = provider.currentQuestion;
 
     return Scaffold(
       body: AppBackground(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final minHeight = (constraints.maxHeight -
-                    responsive.pagePadding * 2)
+            final verticalPadding =
+                responsive.pagePadding * (responsive.isLandscape ? 0.45 : 1);
+            final minHeight = (constraints.maxHeight - verticalPadding * 2)
                 .clamp(0.0, double.infinity);
+            // Jarak antarbagian sedikit dirapatkan di landscape agar
+            // tombol Lanjut tetap terlihat tanpa scroll.
+            final sectionGap = responsive.isLandscape
+                ? responsive.smallGap * 1.2
+                : responsive.gap;
 
             return SingleChildScrollView(
               // Key berubah tiap soal agar posisi scroll kembali ke atas.
               key: ValueKey<int>(provider.currentIndex),
-              padding: EdgeInsets.all(responsive.pagePadding),
+              padding: EdgeInsets.symmetric(
+                horizontal: responsive.pagePadding,
+                vertical: verticalPadding,
+              ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: minHeight),
                 child: Center(
@@ -97,12 +181,12 @@ class QuizPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: responsive.gap),
+                        SizedBox(height: sectionGap),
                         QuizProgressBar(
                           current: provider.currentIndex + 1,
                           total: provider.totalQuestions,
                         ),
-                        SizedBox(height: responsive.gap),
+                        SizedBox(height: sectionGap),
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 300),
                           switchInCurve: Curves.easeOut,
@@ -113,36 +197,14 @@ class QuizPage extends StatelessWidget {
                               child: child,
                             );
                           },
-                          child: Column(
+                          child: KeyedSubtree(
                             key: ValueKey<int>(provider.currentIndex),
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              QuestionCard(text: question.text),
-                              SizedBox(height: responsive.gap),
-                              for (var i = 0; i < question.options.length; i++)
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: responsive.smallGap,
-                                  ),
-                                  child: OptionButton(
-                                    optionLabel: String.fromCharCode(65 + i),
-                                    label: question.options[i],
-                                    selected: provider.selectedAnswer == i,
-                                    onTap: () => provider.selectAnswer(i),
-                                  ),
-                                ),
-                            ],
+                            child: _buildQuestionContent(
+                              context,
+                              responsive,
+                              provider,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: responsive.gap * 1.4),
-                        PrimaryButton(
-                          label: provider.isLastQuestion ? 'Selesai' : 'Lanjut',
-                          icon: provider.isLastQuestion
-                              ? Icons.flag_rounded
-                              : Icons.arrow_forward_rounded,
-                          onPressed: provider.selectedAnswer == null
-                              ? null
-                              : () => _handleNext(context, provider),
                         ),
                       ],
                     ),

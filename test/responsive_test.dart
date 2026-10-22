@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kuis_app/main.dart';
 import 'package:kuis_app/pages/quiz_page.dart';
 import 'package:kuis_app/pages/result_page.dart';
 import 'package:kuis_app/pages/welcome_page.dart';
@@ -24,6 +25,24 @@ void main() {
     );
     await tester.pumpAndSettle();
   }
+
+  testWidgets('aplikasi menunggu ukuran layar valid sebelum membangun UI', (
+    WidgetTester tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = Size.zero;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const MyApp());
+    expect(tester.takeException(), isNull);
+
+    tester.view.physicalSize = const Size(360, 800);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Mulai Kuis'), findsOneWidget);
+  });
 
   testWidgets('semua halaman aman di portrait dan landscape', (
     WidgetTester tester,
@@ -70,9 +89,9 @@ void main() {
 
     await pumpPage(tester, provider, const QuizPage(), const Size(360, 800));
     expect(
-      tester.widgetList<OptionButton>(find.byType(OptionButton)).where(
-        (option) => option.selected,
-      ),
+      tester
+          .widgetList<OptionButton>(find.byType(OptionButton))
+          .where((option) => option.selected),
       hasLength(1),
     );
 
@@ -83,9 +102,9 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Soal 1 dari 10'), findsOneWidget);
     expect(
-      tester.widgetList<OptionButton>(find.byType(OptionButton)).where(
-        (option) => option.selected,
-      ),
+      tester
+          .widgetList<OptionButton>(find.byType(OptionButton))
+          .where((option) => option.selected),
       hasLength(1),
     );
   });

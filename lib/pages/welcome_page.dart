@@ -72,7 +72,8 @@ class _WelcomePageState extends State<WelcomePage> {
           style: TextStyle(
             fontSize: responsive.bodySize * 0.72,
             fontWeight: FontWeight.w400,
-            letterSpacing: responsive.bodySize * 0.18,
+            letterSpacing:
+                responsive.bodySize * (responsive.isLandscape ? 0.1 : 0.18),
             color: AppColors.accent,
           ),
         ),
@@ -81,7 +82,7 @@ class _WelcomePageState extends State<WelcomePage> {
           'Uji pemahaman\nFlutter & Dart',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: responsive.headingSize,
+            fontSize: responsive.titleSize,
             height: 1.08,
             letterSpacing: responsive.letterSpacing,
             fontWeight: FontWeight.w400,
@@ -90,11 +91,13 @@ class _WelcomePageState extends State<WelcomePage> {
         ),
         SizedBox(height: responsive.gap),
         Text(
-          'Sepuluh soal pilihan ganda. Pilih jawaban yang benar, '
-          'lalu lihat skor akhirmu.',
+          responsive.isLandscape
+              ? 'Sepuluh soal. Jawab, lalu lihat skormu.'
+              : 'Sepuluh soal pilihan ganda. Pilih jawaban yang benar, '
+                    'lalu lihat skor akhirmu.',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: responsive.bodySize,
+            fontSize: responsive.bodySize * (responsive.isLandscape ? 0.9 : 1),
             height: 1.5,
             fontWeight: FontWeight.w300,
             color: AppColors.textSecondary,
@@ -179,9 +182,11 @@ class _WelcomePageState extends State<WelcomePage> {
       body: AppBackground(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final minHeight = (constraints.maxHeight -
-                    responsive.pagePadding * 2)
-                .clamp(0.0, double.infinity);
+            final minHeight =
+                (constraints.maxHeight - responsive.pagePadding * 2).clamp(
+                  0.0,
+                  double.infinity,
+                );
 
             final branding = _buildBranding(responsive, logoSize);
             final form = _buildForm(responsive);

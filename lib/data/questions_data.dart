@@ -10,7 +10,12 @@ const List<Question> questionsData = [
   ),
   Question(
     text: 'Widget yang tampilannya tidak berubah setelah dibuat disebut...',
-    options: ['StatefulWidget', 'InheritedWidget', 'StatelessWidget', 'StatefulBuilder'],
+    options: [
+      'StatefulWidget',
+      'InheritedWidget',
+      'StatelessWidget',
+      'StatefulBuilder',
+    ],
     correctIndex: 2,
   ),
   Question(
@@ -20,7 +25,12 @@ const List<Question> questionsData = [
   ),
   Question(
     text: 'File yang digunakan untuk mendaftarkan aset dan font di Flutter adalah...',
-    options: ['main.dart', 'pubspec.yaml', 'AndroidManifest.xml', 'analysis_options.yaml'],
+    options: [
+      'main.dart',
+      'pubspec.yaml',
+      'AndroidManifest.xml',
+      'analysis_options.yaml',
+    ],
     correctIndex: 1,
   ),
   Question(
@@ -35,7 +45,12 @@ const List<Question> questionsData = [
   ),
   Question(
     text: 'Perintah untuk menjalankan aplikasi Flutter adalah...',
-    options: ['flutter build', 'flutter run', 'flutter start', 'flutter launch'],
+    options: [
+      'flutter build',
+      'flutter run',
+      'flutter start',
+      'flutter launch',
+    ],
     correctIndex: 1,
   ),
   Question(
@@ -45,7 +60,12 @@ const List<Question> questionsData = [
   ),
   Question(
     text: 'Method untuk berpindah ke halaman baru adalah...',
-    options: ['Navigator.push()', 'Navigator.pop()', 'Navigator.exit()', 'Navigator.open()'],
+    options: [
+      'Navigator.push()',
+      'Navigator.pop()',
+      'Navigator.exit()',
+      'Navigator.open()',
+    ],
     correctIndex: 0,
   ),
   Question(

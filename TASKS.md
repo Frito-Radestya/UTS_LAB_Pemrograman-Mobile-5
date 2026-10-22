@@ -66,9 +66,9 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `fix: layout responsif dan keamanan state saat rotasi`
 
 ### Task 10 — Polesan akhir
-- [ ] Sesuaikan warna dan spacing dengan screenshot referensi
-- [ ] Rapikan komentar dan hapus kode tak terpakai
-- [ ] Buat `README.md` (deskripsi, cara menjalankan, screenshot) dan `docs/CREDITS.md`
+- [x] Sesuaikan warna dan spacing dengan screenshot referensi
+- [x] Rapikan komentar dan hapus kode tak terpakai
+- [x] Buat `README.md` (deskripsi, cara menjalankan, screenshot) dan `docs/CREDITS.md`
 - Commit: `docs: tambah README, credits, dan polesan akhir`
 
 ## Pengujian Akhir (manual)
