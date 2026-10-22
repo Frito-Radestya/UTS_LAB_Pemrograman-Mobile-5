@@ -37,6 +37,7 @@ kuis_app/
     │   ├── home_page.dart        # Beranda
     │   ├── quiz_list_page.dart   # daftar kategori di tab Kuis
     │   ├── score_page.dart       # tab Skor
+    │   ├── profile_page.dart     # tab Profil dan logout
     │   ├── welcome_page.dart
     │   ├── quiz_page.dart
     │   └── result_page.dart
@@ -124,6 +125,7 @@ akun dummy berada di `lib/data/`.
 | `HomePage` | Stateless | Membaca `AuthProvider` dan `QuizProvider`, lalu menampilkan Beranda |
 | `QuizListPage` | Stateless | Menampilkan daftar kategori; aksi mulai kuis diteruskan lewat callback |
 | `ScorePage` | Stateless | Membaca `lastScore` dan `history` dari `QuizProvider` |
+| `ProfilePage` | Stateless | Membaca akun aktif dari `AuthProvider`; aksi logout diteruskan lewat callback |
 | `ResultPage` | Stateful | Menyimpan hasil sekali lewat post-frame callback di `initState` |
 | `QuizPage` | Stateless | Membaca data dari Provider |
 | `WelcomePage` | Stateful | Halaman lama, tidak dipakai alur auth |
@@ -147,6 +149,10 @@ akun dummy berada di `lib/data/`.
   Tombol Main Lagi memanggil `resetQuiz()` lalu mengganti halaman dengan
   `QuizPage` kategori yang sama; riwayat tetap tersimpan.
 - Tab Skor menampilkan `lastScore` dan sisa `history` (terbaru di atas).
+- Tab Profil menampilkan nama, email, NIM, program studi, dan info aplikasi.
+  Tombol Keluar memanggil `AuthProvider.logout()`, lalu membuka `LoginPage`
+  dengan `pushAndRemoveUntil` agar `MainShell` tidak tersisa di tumpukan
+  navigasi dan tombol back tidak membuka sesi lama.
 
 ## Responsif
 Semua ukuran melalui helper `lib/utils/responsive.dart` (berbasis `MediaQuery`), contoh:

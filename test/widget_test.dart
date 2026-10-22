@@ -3,12 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kuis_app/main.dart';
 import 'package:kuis_app/pages/login_page.dart';
 import 'package:kuis_app/pages/main_shell.dart';
+import 'package:kuis_app/pages/profile_page.dart';
 import 'package:kuis_app/pages/quiz_list_page.dart';
 import 'package:kuis_app/pages/quiz_page.dart';
 import 'package:kuis_app/pages/register_page.dart';
 import 'package:kuis_app/pages/result_page.dart';
 import 'package:kuis_app/pages/score_page.dart';
 import 'package:kuis_app/pages/splash_page.dart';
+import 'package:kuis_app/providers/auth_provider.dart';
 import 'package:kuis_app/providers/quiz_provider.dart';
 import 'package:kuis_app/widgets/app_bottom_nav.dart';
 import 'package:kuis_app/widgets/option_button.dart';
@@ -87,6 +89,10 @@ void main() {
 
     expect(find.byType(MainShell), findsOneWidget);
     expect(find.text('Halo, Demo Mahasiswa'), findsOneWidget);
+    expect(
+      Navigator.of(tester.element(find.byType(MainShell))).canPop(),
+      isFalse,
+    );
   });
 
   testWidgets('login menolak password yang salah', (tester) async {
@@ -156,10 +162,11 @@ void main() {
 
     await tester.tap(find.text('Profil'));
     await tester.pumpAndSettle();
-    expect(
-      find.text('Informasi akun dan tombol keluar akan tampil di sini.'),
-      findsOneWidget,
-    );
+    expect(find.byType(ProfilePage), findsOneWidget);
+    expect(find.text('Demo Mahasiswa'), findsOneWidget);
+    expect(find.text('demo@mail.com'), findsOneWidget);
+    expect(find.text('Kuis Pemrograman Mobile'), findsOneWidget);
+    expect(find.text('Versi 1.0.0'), findsOneWidget);
 
     await tester.tap(find.text('Beranda'));
     await tester.pumpAndSettle();
@@ -271,5 +278,37 @@ void main() {
     expect(find.text('Skor Terakhir'), findsOneWidget);
     expect(find.byType(ScoreTile), findsOneWidget);
     expect(find.textContaining('/10 benar'), findsOneWidget);
+  });
+
+  testWidgets('logout dari Profil menghapus sesi dan kembali ke Login', (
+    tester,
+  ) async {
+    await _loginDemo(tester);
+
+    await tester.tap(find.text('Profil'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ProfilePage), findsOneWidget);
+    expect(find.text('12345678'), findsOneWidget);
+    expect(find.text('Teknik Informatika'), findsOneWidget);
+
+    final logout = find.byKey(const Key('logout-button'));
+    await tester.ensureVisible(logout);
+    await tester.tap(logout);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LoginPage), findsOneWidget);
+    expect(find.byType(MainShell), findsNothing);
+
+    final auth = Provider.of<AuthProvider>(
+      tester.element(find.byType(LoginPage)),
+      listen: false,
+    );
+    expect(auth.currentUser, isNull);
+    expect(auth.isLoggedIn, isFalse);
+    expect(
+      Navigator.of(tester.element(find.byType(LoginPage))).canPop(),
+      isFalse,
+    );
   });
 }
