@@ -2,12 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kuis_app/main.dart';
 import 'package:kuis_app/pages/login_page.dart';
+import 'package:kuis_app/pages/main_shell.dart';
 import 'package:kuis_app/pages/register_page.dart';
 import 'package:kuis_app/pages/splash_page.dart';
 
 Future<void> _openLogin(WidgetTester tester) async {
   await tester.pumpWidget(const MyApp());
   await tester.pump(const Duration(seconds: 2));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _loginDemo(WidgetTester tester) async {
+  await _openLogin(tester);
+  await tester.enterText(find.byType(TextFormField).at(0), 'demo@mail.com');
+  await tester.enterText(find.byType(TextFormField).at(1), '123456');
+
+  final submit = find.byKey(const Key('login-submit'));
+  await tester.ensureVisible(submit);
+  await tester.tap(submit);
   await tester.pumpAndSettle();
 }
 
@@ -62,10 +74,10 @@ void main() {
     await tester.enterText(passwordField, '123456');
     await tester.ensureVisible(submit);
     await tester.tap(submit);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
 
-    expect(find.text('Login berhasil.'), findsOneWidget);
+    expect(find.byType(MainShell), findsOneWidget);
+    expect(find.text('Halo, Demo Mahasiswa'), findsOneWidget);
   });
 
   testWidgets('login menolak password yang salah', (tester) async {
@@ -82,7 +94,7 @@ void main() {
     expect(find.text('Email atau password salah.'), findsOneWidget);
   });
 
-  testWidgets('register valid menampilkan pesan berhasil', (tester) async {
+  testWidgets('register valid langsung masuk ke MainShell', (tester) async {
     await _openLogin(tester);
 
     final registerLink = find.text('Daftar');
@@ -104,9 +116,47 @@ void main() {
     final submit = find.byKey(const Key('register-submit'));
     await tester.ensureVisible(submit);
     await tester.tap(submit);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
 
-    expect(find.text('Pendaftaran berhasil.'), findsOneWidget);
+    expect(find.byType(MainShell), findsOneWidget);
+    expect(find.text('Halo, Siti Aminah'), findsOneWidget);
+  });
+
+  testWidgets('bottom nav berpindah tab dan kembali ke Beranda', (
+    tester,
+  ) async {
+    await _loginDemo(tester);
+
+    expect(find.text('Halo, Demo Mahasiswa'), findsOneWidget);
+    expect(find.text('Kategori Kuis'), findsOneWidget);
+    expect(find.text('Flutter Dasar'), findsOneWidget);
+    expect(find.text('Dart & Pemrograman'), findsOneWidget);
+    expect(find.text('Belum ada skor'), findsOneWidget);
+
+    await tester.tap(find.text('Kuis'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Daftar kategori kuis akan tampil di sini.'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Skor'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Skor terakhir dan riwayat akan tampil di sini.'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Profil'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Informasi akun dan tombol keluar akan tampil di sini.'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Beranda'));
+    await tester.pumpAndSettle();
+    expect(find.text('Halo, Demo Mahasiswa'), findsOneWidget);
+    expect(find.text('Kategori Kuis'), findsOneWidget);
   });
 }
