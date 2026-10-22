@@ -311,4 +311,130 @@ void main() {
       isFalse,
     );
   });
+
+  testWidgets('sesi login dan tab aktif tetap setelah rotasi', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await _openLogin(tester);
+    await tester.enterText(find.byType(TextFormField).at(0), 'demo@mail.com');
+    await tester.enterText(find.byType(TextFormField).at(1), '123456');
+
+    // Rotasi form login: teks yang sudah diketik tetap tersimpan.
+    tester.view.physicalSize = const Size(800, 360);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LoginPage), findsOneWidget);
+    final loginFields = tester
+        .widgetList<EditableText>(find.byType(EditableText))
+        .toList(growable: false);
+    expect(loginFields, hasLength(2));
+    expect(loginFields[0].controller.text, 'demo@mail.com');
+    expect(loginFields[1].controller.text, '123456');
+
+    final submit = find.byKey(const Key('login-submit'));
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(find.byType(MainShell), findsOneWidget);
+
+    await tester.tap(find.text('Kuis'));
+    await tester.pumpAndSettle();
+    expect(find.byType(QuizListPage), findsOneWidget);
+
+    // Kembali ke portrait: tab Kuis dan sesi login tetap aktif.
+    tester.view.physicalSize = const Size(360, 800);
+    await tester.pumpAndSettle();
+    expect(find.text('Pilih Kategori'), findsOneWidget);
+    expect(
+      tester.widget<AppBottomNav>(find.byType(AppBottomNav)).currentIndex,
+      1,
+    );
+
+    await tester.tap(find.text('Skor'));
+    await tester.pumpAndSettle();
+    tester.view.physicalSize = const Size(800, 360);
+    await tester.pumpAndSettle();
+    expect(find.byType(ScorePage), findsOneWidget);
+    expect(
+      tester.widget<AppBottomNav>(find.byType(AppBottomNav)).currentIndex,
+      2,
+    );
+
+    await tester.tap(find.text('Profil'));
+    await tester.pumpAndSettle();
+    tester.view.physicalSize = const Size(360, 800);
+    await tester.pumpAndSettle();
+    expect(find.byType(ProfilePage), findsOneWidget);
+    expect(find.text('Demo Mahasiswa'), findsOneWidget);
+    expect(
+      tester.widget<AppBottomNav>(find.byType(AppBottomNav)).currentIndex,
+      3,
+    );
+  });
+
+  testWidgets('soal aktif dan jawaban tetap setelah rotasi', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await _loginDemo(tester);
+
+    final category = find.text('Flutter Dasar');
+    await tester.ensureVisible(category);
+    await tester.tap(category);
+    await tester.pumpAndSettle();
+    expect(find.byType(QuizPage), findsOneWidget);
+
+    // Jawab soal pertama lalu pindah ke soal kedua.
+    final firstOption = find.byType(OptionButton).first;
+    await tester.ensureVisible(firstOption);
+    await tester.tap(firstOption);
+    await tester.pump();
+
+    final next = find.text('Lanjut');
+    await tester.ensureVisible(next);
+    await tester.tap(next);
+    await tester.pumpAndSettle();
+    expect(find.text('Soal 2 dari 10'), findsOneWidget);
+
+    // Pilih jawaban C pada soal kedua.
+    final thirdOption = find.byType(OptionButton).at(2);
+    await tester.ensureVisible(thirdOption);
+    await tester.tap(thirdOption);
+    await tester.pump();
+
+    final quiz = Provider.of<QuizProvider>(
+      tester.element(find.byType(QuizPage)),
+      listen: false,
+    );
+    expect(quiz.currentIndex, 1);
+    expect(quiz.selectedAnswer, 2);
+
+    // Rotasi di tengah kuis tidak boleh menghapus soal aktif atau jawaban.
+    tester.view.physicalSize = const Size(800, 360);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(QuizPage), findsOneWidget);
+    expect(find.text('Soal 2 dari 10'), findsOneWidget);
+    expect(quiz.currentIndex, 1);
+    expect(quiz.selectedAnswer, 2);
+
+    final selectedOptions = tester
+        .widgetList<OptionButton>(find.byType(OptionButton))
+        .where((option) => option.selected)
+        .toList(growable: false);
+    expect(selectedOptions, hasLength(1));
+    expect(selectedOptions.single.optionLabel, 'C');
+
+    // Rotasi kembali ke portrait tetap mempertahankan state yang sama.
+    tester.view.physicalSize = const Size(360, 800);
+    await tester.pumpAndSettle();
+    expect(find.text('Soal 2 dari 10'), findsOneWidget);
+    expect(quiz.currentIndex, 1);
+    expect(quiz.selectedAnswer, 2);
+  });
 }

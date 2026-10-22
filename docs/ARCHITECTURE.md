@@ -169,3 +169,10 @@ class Responsive {
 }
 ```
 Beri `clamp` pada ukuran font agar wajar di tablet dan landscape.
+
+Pengujian layout mencakup ukuran 320×568, 360×800, 800×360, 768×1024,
+dan 1024×768. `test/widget_test.dart` juga merotasi layar saat form Login sedang
+diisi, saat berpindah tab di `MainShell`, dan di tengah kuis. Pengujian ini
+memastikan `AuthProvider`, `QuizProvider`, indeks tab, soal aktif, serta
+jawaban tetap tersimpan. `test/result_page_test.dart` memastikan rotasi di
+halaman hasil tidak menggandakan riwayat.
