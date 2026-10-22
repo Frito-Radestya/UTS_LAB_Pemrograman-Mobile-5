@@ -8,6 +8,7 @@ import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive.dart';
 import '../widgets/category_card.dart';
+import '../widgets/empty_score_card.dart';
 import '../widgets/score_tile.dart';
 
 /// Tab Beranda: sapaan, banner, daftar kategori, skor terakhir, dan tips.
@@ -82,7 +83,7 @@ class HomePage extends StatelessWidget {
               if (lastScore != null)
                 ScoreTile(record: lastScore)
               else
-                const _EmptyScoreCard(),
+                const EmptyScoreCard(),
               SizedBox(height: responsive.gap * 1.5),
               const _TipsCard(),
               SizedBox(height: responsive.gap),
@@ -216,62 +217,6 @@ class _SectionHeader extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-}
-
-class _EmptyScoreCard extends StatelessWidget {
-  const _EmptyScoreCard();
-
-  @override
-  Widget build(BuildContext context) {
-    final responsive = Responsive(context);
-
-    return Container(
-      padding: EdgeInsets.all(responsive.pagePadding * 0.5),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(responsive.radius),
-        border: Border.all(
-          color: AppColors.border,
-          width: responsive.shortestSide * 0.005,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.emoji_events_outlined,
-            size: responsive.iconSize * 1.25,
-            color: AppColors.accent,
-          ),
-          SizedBox(width: responsive.pagePadding * 0.45),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Belum ada skor',
-                  style: TextStyle(
-                    fontSize: responsive.bodySize * 0.95,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: responsive.smallGap * 0.3),
-                Text(
-                  'Selesaikan kuis pertamamu untuk melihat skor di sini.',
-                  style: TextStyle(
-                    fontSize: responsive.bodySize * 0.76,
-                    height: 1.35,
-                    fontWeight: FontWeight.w300,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

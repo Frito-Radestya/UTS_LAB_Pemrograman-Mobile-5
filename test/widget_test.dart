@@ -7,9 +7,13 @@ import 'package:kuis_app/pages/quiz_list_page.dart';
 import 'package:kuis_app/pages/quiz_page.dart';
 import 'package:kuis_app/pages/register_page.dart';
 import 'package:kuis_app/pages/result_page.dart';
+import 'package:kuis_app/pages/score_page.dart';
 import 'package:kuis_app/pages/splash_page.dart';
+import 'package:kuis_app/providers/quiz_provider.dart';
 import 'package:kuis_app/widgets/app_bottom_nav.dart';
 import 'package:kuis_app/widgets/option_button.dart';
+import 'package:kuis_app/widgets/score_tile.dart';
+import 'package:provider/provider.dart';
 
 Future<void> _openLogin(WidgetTester tester) async {
   await tester.pumpWidget(const MyApp());
@@ -145,10 +149,10 @@ void main() {
 
     await tester.tap(find.text('Skor'));
     await tester.pumpAndSettle();
-    expect(
-      find.text('Skor terakhir dan riwayat akan tampil di sini.'),
-      findsOneWidget,
-    );
+    expect(find.byType(ScorePage), findsOneWidget);
+    expect(find.text('Skor Terakhir'), findsOneWidget);
+    expect(find.text('Belum ada skor'), findsOneWidget);
+    expect(find.byType(ScoreTile), findsNothing);
 
     await tester.tap(find.text('Profil'));
     await tester.pumpAndSettle();
@@ -241,11 +245,31 @@ void main() {
     expect(find.text('HASIL AKHIR'), findsOneWidget);
     expect(find.byType(QuizPage), findsNothing);
 
+    // Hasil disimpan sekali setelah halaman hasil tampil.
+    final quiz = Provider.of<QuizProvider>(
+      tester.element(find.byType(ResultPage)),
+      listen: false,
+    );
+    expect(quiz.history, hasLength(1));
+    expect(quiz.lastScore?.categoryTitle, 'Flutter Dasar');
+    expect(quiz.lastScore?.playerName, 'Demo Mahasiswa');
+    expect(quiz.lastScore?.total, 10);
+
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
 
     expect(find.byType(MainShell), findsOneWidget);
     expect(find.byType(QuizPage), findsNothing);
     expect(find.byType(ResultPage), findsNothing);
+    expect(find.text('Belum ada skor'), findsNothing);
+    expect(find.byType(ScoreTile), findsOneWidget);
+
+    await tester.tap(find.text('Skor'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ScorePage), findsOneWidget);
+    expect(find.text('Skor Terakhir'), findsOneWidget);
+    expect(find.byType(ScoreTile), findsOneWidget);
+    expect(find.textContaining('/10 benar'), findsOneWidget);
   });
 }
