@@ -7,11 +7,31 @@ import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/primary_button.dart';
-import 'welcome_page.dart';
+import 'quiz_page.dart';
 
-/// Halaman hasil: menampilkan nama, skor, persentase, dan pesan.
-class ResultPage extends StatelessWidget {
+/// Halaman hasil: menyimpan skor, lalu menampilkan ringkasan dan pesan.
+class ResultPage extends StatefulWidget {
   const ResultPage({super.key});
+
+  @override
+  State<ResultPage> createState() => _ResultPageState();
+}
+
+class _ResultPageState extends State<ResultPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Simpan tepat sekali setelah frame pertama. Dengan begitu perubahan
+    // provider tidak terjadi saat pohon widget sedang dibangun, dan rotasi
+    // atau rebuild tidak menggandakan riwayat.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      context.read<QuizProvider>().saveResult();
+    });
+  }
 
   String _messageFor(double percentage) {
     if (percentage >= 80) {
@@ -34,14 +54,10 @@ class ResultPage extends StatelessWidget {
   }
 
   void _playAgain(BuildContext context, QuizProvider provider) {
-    // Reset seluruh state lalu hapus semua halaman sebelumnya,
-    // supaya back tidak membuka halaman kuis yang sudah selesai.
-    provider.reset();
-    Navigator.pushAndRemoveUntil(
-      context,
-      AppRoute.fade(const WelcomePage()),
-      (route) => false,
-    );
+    // Ulangi kategori yang sama dengan progres kosong. Riwayat skor tetap
+    // tersimpan karena hanya resetQuiz() yang dipanggil.
+    provider.resetQuiz();
+    Navigator.pushReplacement(context, AppRoute.fade(const QuizPage()));
   }
 
   Widget _buildSummary(
@@ -81,7 +97,19 @@ class ResultPage extends StatelessWidget {
             color: AppColors.accent,
           ),
         ),
-        SizedBox(height: responsive.smallGap),
+        SizedBox(height: responsive.smallGap * 0.6),
+        Text(
+          provider.activeCategory.title,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: responsive.bodySize * 0.82,
+            fontWeight: FontWeight.w300,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        SizedBox(height: responsive.smallGap * 0.8),
         Text(
           provider.playerName,
           textAlign: TextAlign.center,

@@ -7,6 +7,7 @@ import 'package:kuis_app/pages/quiz_list_page.dart';
 import 'package:kuis_app/pages/quiz_page.dart';
 import 'package:kuis_app/pages/register_page.dart';
 import 'package:kuis_app/pages/result_page.dart';
+import 'package:kuis_app/pages/score_page.dart';
 import 'package:kuis_app/pages/splash_page.dart';
 import 'package:kuis_app/pages/welcome_page.dart';
 import 'package:kuis_app/providers/auth_provider.dart';
@@ -82,6 +83,7 @@ void main() {
       const RegisterPage(),
       const MainShell(),
       QuizListPage(onCategoryTap: (_) {}),
+      const ScorePage(),
       const WelcomePage(),
       const QuizPage(),
       const ResultPage(),

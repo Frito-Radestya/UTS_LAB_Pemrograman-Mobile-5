@@ -12,6 +12,7 @@ import '../widgets/app_bottom_nav.dart';
 import 'home_page.dart';
 import 'quiz_list_page.dart';
 import 'quiz_page.dart';
+import 'score_page.dart';
 
 /// Kerangka utama setelah login dengan 4 tab yang state-nya tetap hidup.
 class MainShell extends StatefulWidget {
@@ -57,11 +58,7 @@ class _MainShellState extends State<MainShell> {
               onCategoryTap: _startQuiz,
             ),
             QuizListPage(onCategoryTap: _startQuiz),
-            const _PlaceholderTab(
-              icon: Icons.bar_chart_rounded,
-              title: 'Riwayat Skor',
-              message: 'Skor terakhir dan riwayat akan tampil di sini.',
-            ),
+            const ScorePage(),
             const _PlaceholderTab(
               icon: Icons.person_outline_rounded,
               title: 'Profil',

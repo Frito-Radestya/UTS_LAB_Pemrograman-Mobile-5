@@ -36,6 +36,7 @@ kuis_app/
     │   ├── main_shell.dart       # 4 tab dengan IndexedStack
     │   ├── home_page.dart        # Beranda
     │   ├── quiz_list_page.dart   # daftar kategori di tab Kuis
+    │   ├── score_page.dart       # tab Skor
     │   ├── welcome_page.dart
     │   ├── quiz_page.dart
     │   └── result_page.dart
@@ -44,6 +45,7 @@ kuis_app/
     │   ├── app_bottom_nav.dart
     │   ├── app_text_field.dart
     │   ├── category_card.dart
+    │   ├── empty_score_card.dart
     │   ├── option_button.dart
     │   ├── primary_button.dart
     │   ├── question_card.dart
@@ -121,7 +123,9 @@ akun dummy berada di `lib/data/`.
 | `MainShell` | Stateful | Menyimpan indeks tab aktif; `IndexedStack` menjaga state tiap tab |
 | `HomePage` | Stateless | Membaca `AuthProvider` dan `QuizProvider`, lalu menampilkan Beranda |
 | `QuizListPage` | Stateless | Menampilkan daftar kategori; aksi mulai kuis diteruskan lewat callback |
-| `ResultPage`, `QuizPage` | Stateless | Membaca data dari Provider |
+| `ScorePage` | Stateless | Membaca `lastScore` dan `history` dari `QuizProvider` |
+| `ResultPage` | Stateful | Menyimpan hasil sekali lewat post-frame callback di `initState` |
+| `QuizPage` | Stateless | Membaca data dari Provider |
 | `WelcomePage` | Stateful | Halaman lama, tidak dipakai alur auth |
 | `MyApp` | Stateless | Root aplikasi |
 
@@ -139,7 +143,10 @@ akun dummy berada di `lib/data/`.
   navigation. Tombol back kembali ke tab asal.
 - `QuizPage` → `ResultPage` dengan `pushReplacement`, sehingga back dari hasil
   tidak membuka kuis yang sudah selesai.
-- `ResultPage` → `WelcomePage` (alur lama, akan diganti pada task berikutnya)
+- `ResultPage` menyimpan hasil sekali ke `QuizProvider` setelah frame pertama.
+  Tombol Main Lagi memanggil `resetQuiz()` lalu mengganti halaman dengan
+  `QuizPage` kategori yang sama; riwayat tetap tersimpan.
+- Tab Skor menampilkan `lastScore` dan sisa `history` (terbaru di atas).
 
 ## Responsif
 Semua ukuran melalui helper `lib/utils/responsive.dart` (berbasis `MediaQuery`), contoh:
