@@ -38,8 +38,8 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `feat: tambah reusable widget (tombol, opsi, kartu soal, progress bar)`
 
 ### Task 5 — Halaman Nama (WelcomePage)
-- [ ] Logo, judul, input nama dengan validasi, tombol Mulai
-- [ ] Simpan nama ke provider
+- [x] Logo, judul, input nama dengan validasi, tombol Mulai
+- [x] Simpan nama ke provider
 - Commit: `feat: halaman input nama`
 
 ### Task 6 — Halaman Kuis (QuizPage)
