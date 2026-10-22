@@ -9,6 +9,7 @@ import '../widgets/option_button.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/question_card.dart';
 import '../widgets/quiz_progress_bar.dart';
+import 'result_page.dart';
 
 /// Halaman kuis: satu soal ditampilkan setiap kali.
 /// Seluruh data dibaca dari QuizProvider supaya aman saat rotasi.
@@ -17,13 +18,10 @@ class QuizPage extends StatelessWidget {
 
   void _handleNext(BuildContext context, QuizProvider provider) {
     if (provider.isLastQuestion) {
-      // Navigasi ke ResultPage ditambahkan pada Task 7.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Skor kamu ${provider.score} dari ${provider.totalQuestions}',
-          ),
-        ),
+      // Selesai: ganti halaman kuis dengan halaman hasil.
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute<void>(builder: (_) => const ResultPage()),
       );
       return;
     }

@@ -49,8 +49,8 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - Commit: `feat: halaman kuis dengan pilihan jawaban dan progres`
 
 ### Task 7 — Halaman Hasil (ResultPage)
-- [ ] Tampilkan nama, skor, persentase, dan pesan sesuai skor
-- [ ] Tombol Main Lagi (reset provider dan kembali ke Halaman Nama)
+- [x] Tampilkan nama, skor, persentase, dan pesan sesuai skor
+- [x] Tombol Main Lagi (reset provider dan kembali ke Halaman Nama)
 - Commit: `feat: halaman hasil skor akhir dan reset`
 
 ### Task 8 — Navigasi dan transisi
