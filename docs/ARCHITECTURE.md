@@ -19,8 +19,12 @@ kuis_app/
 └── lib/
     ├── main.dart
     ├── models/
-    │   └── question.dart
+    │   ├── category.dart
+    │   ├── question.dart
+    │   ├── score_record.dart
+    │   └── user.dart
     ├── data/
+    │   ├── dummy_users.dart
     │   └── questions_data.dart
     ├── providers/
     │   └── quiz_provider.dart
@@ -66,13 +70,16 @@ Dipilih karena sederhana dan cukup untuk tugas ini. `QuizProvider` (`ChangeNotif
 Setiap perubahan memanggil `notifyListeners()`.
 
 ## Model
-```dart
-class Question {
-  final String text;
-  final List<String> options;
-  final int correctIndex;
-}
-```
+
+| Model | Field utama | Keterangan |
+|---|---|---|
+| `User` | `name`, `nim`, `email`, `prodi`, `password` | Akun dummy di memori |
+| `Question` | `text`, `options`, `correctIndex` | Tepat 4 opsi (A–D) |
+| `Category` | `id`, `title`, `description`, `icon`, `questions` | Satu kategori berisi 10 soal |
+| `ScoreRecord` | `playerName`, `categoryTitle`, `score`, `total`, `dateTime` | Riwayat satu percobaan kuis |
+
+`QuizProvider` saat ini masih membaca `questionsData` (kategori Flutter Dasar).
+Pada task provider, daftar soal akan diganti memakai `Category` aktif.
 
 ## Pembagian Stateless dan Stateful
 | Widget | Jenis | Alasan |

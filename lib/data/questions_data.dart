@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
+
+import '../models/category.dart';
 import '../models/question.dart';
 
-/// Data soal dummy sesuai docs/QUESTIONS.md.
-/// Tidak ada database/API; seluruh soal disimpan di file ini.
-const List<Question> questionsData = [
+/// Soal kategori "Flutter Dasar".
+const List<Question> flutterQuestions = [
   Question(
     text: 'Bahasa pemrograman yang digunakan Flutter adalah...',
     options: ['Kotlin', 'Dart', 'Swift', 'JavaScript'],
@@ -74,3 +76,80 @@ const List<Question> questionsData = [
     correctIndex: 1,
   ),
 ];
+
+/// Soal kategori "Dart & Pemrograman".
+const List<Question> dartQuestions = [
+  Question(
+    text: 'Tipe data untuk bilangan bulat di Dart adalah...',
+    options: ['double', 'String', 'int', 'bool'],
+    correctIndex: 2,
+  ),
+  Question(
+    text: 'Kata kunci untuk variabel yang hanya boleh diberi nilai satu kali adalah...',
+    options: ['var', 'final', 'dynamic', 'late'],
+    correctIndex: 1,
+  ),
+  Question(
+    text: 'Simbol untuk komentar satu baris di Dart adalah...',
+    options: ['//', '/* */', '#', '--'],
+    correctIndex: 0,
+  ),
+  Question(
+    text: 'Bagian class yang dipanggil saat objek dibuat adalah...',
+    options: ['destructor', 'main', 'initState', 'constructor'],
+    correctIndex: 3,
+  ),
+  Question(
+    text: 'Operator untuk memeriksa apakah dua nilai sama adalah...',
+    options: ['=', '==', '!=', '=>'],
+    correctIndex: 1,
+  ),
+  Question(
+    text: 'Tipe data Dart yang menyimpan pasangan key-value adalah...',
+    options: ['List', 'Set', 'Map', 'Queue'],
+    correctIndex: 2,
+  ),
+  Question(
+    text: 'Perulangan yang minimal dijalankan satu kali adalah...',
+    options: ['for', 'while', 'for-in', 'do-while'],
+    correctIndex: 3,
+  ),
+  Question(
+    text: 'Tipe data untuk nilai benar atau salah adalah...',
+    options: ['bool', 'int', 'String', 'double'],
+    correctIndex: 0,
+  ),
+  Question(
+    text: 'Method List untuk menambah elemen di akhir adalah...',
+    options: ['push()', 'append()', 'add()', 'insertLast()'],
+    correctIndex: 2,
+  ),
+  Question(
+    text: 'Kata kunci untuk membuat class turunan adalah...',
+    options: ['implements', 'extends', 'with', 'override'],
+    correctIndex: 1,
+  ),
+];
+
+/// Dua kategori kuis dummy yang dipakai aplikasi.
+const List<Category> quizCategories = [
+  Category(
+    id: 'flutter-dasar',
+    title: 'Flutter Dasar',
+    description: 'Widget, layout, dan alur dasar aplikasi Flutter.',
+    icon: Icons.phone_android_rounded,
+    questions: flutterQuestions,
+  ),
+  Category(
+    id: 'dart-pemrograman',
+    title: 'Dart & Pemrograman',
+    description: 'Tipe data, fungsi, dan logika dasar bahasa Dart.',
+    icon: Icons.code_rounded,
+    questions: dartQuestions,
+  ),
+];
+
+/// Alias sementara untuk QuizProvider versi lama.
+///
+/// Akan dihapus setelah provider diubah memakai kategori pada task berikutnya.
+const List<Question> questionsData = flutterQuestions;
