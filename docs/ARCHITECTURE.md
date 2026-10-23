@@ -16,6 +16,7 @@ kuis_app/
 │   ├── ARCHITECTURE.md
 │   ├── QUESTIONS.md
 │   └── CREDITS.md
+├── web/                  # entry point Flutter Web (index.html, manifest, ikon)
 └── lib/
     ├── main.dart
     ├── models/

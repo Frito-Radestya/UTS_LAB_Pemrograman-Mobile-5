@@ -74,6 +74,8 @@ lib/
 ├── theme/app_theme.dart      # warna dan tema
 ├── utils/                    # responsive helper + route fade
 └── widgets/                  # widget reusable
+
+web/                          # entry point Flutter Web (Chrome)
 ```
 
 ## Menjalankan
@@ -83,6 +85,12 @@ Pastikan Flutter sudah terpasang, lalu:
 ```bash
 flutter pub get
 flutter run
+```
+
+Untuk menjalankan di Chrome:
+
+```bash
+flutter run -d chrome
 ```
 
 Untuk memilih perangkat tertentu:
