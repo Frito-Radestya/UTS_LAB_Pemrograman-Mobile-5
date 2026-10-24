@@ -1,163 +1,241 @@
-# KAGE — The Quiz Sanctuary
+<div align="center">
 
-Aplikasi kuis pilihan ganda berbasis Flutter untuk UTS Lab Pemrograman Mobile.
-Pengguna membuat akun atau login, memilih kategori, menjawab soal, lalu
-melihat skor dan riwayat percobaan. Tampilan memakai tema gelap sinematik
-KAGE dengan aksen vermilion, emas terbatas, dan font Onest.
+<img src="assets/svg/logo_emblem.svg" width="96" alt="Logo KAGE">
 
-## Fitur
+# KAGE
 
-- Login dengan email dan password, lengkap dengan validasi, pesan error, dan
-  tombol tampilkan/sembunyikan password.
-- Registrasi akun dengan nama, NIM, email, program studi, password, dan
-  konfirmasi password.
-- Akun dummy dan akun hasil registrasi disimpan di memori selama aplikasi
-  berjalan, tanpa database atau API.
-- `MainShell` dengan 4 tab yang state-nya tetap hidup melalui `IndexedStack`:
-  Beranda, Kuis, Skor, dan Profil.
-- Tujuh kategori kuis (termasuk Flutter Dasar dan Dart), masing-masing berisi
-  10 soal pilihan ganda (A–D). Beranda menampilkan kategori dalam daftar
-  horizontal yang bisa digeser.
-- Beranda menampilkan sapaan, progres kategori, kartu petualangan berikutnya,
-  kategori, dan ringkasan statistik dari data sesi aktual.
-- Halaman hasil menampilkan emblem, skor, jumlah benar/salah, dan akurasi.
-- Profil menampilkan data akun, ringkasan statistik, koleksi badge
-  presentasional, pengaturan, info aplikasi, dan tombol logout.
-- Halaman Pengaturan berisi ringkasan akun, info versi, dan logout.
-- Kuis dibuka sebagai layar penuh tanpa bottom navigation. Jawaban terpilih
-  ditandai dan tombol **Lanjut** aktif setelah memilih.
-- Indikator "Soal x dari 10", progress bar, dan animasi pergantian soal.
-- Halaman hasil berisi jumlah benar, persentase, dan pesan sesuai skor.
-- Riwayat skor tersimpan di `QuizProvider` selama aplikasi berjalan.
-- State sesi dan kuis berada di Provider pada root aplikasi, sehingga aman saat
-  rotasi atau pindah halaman.
-- Layout responsif untuk portrait, landscape, layar kecil, dan tablet.
-- Transisi fade antar-halaman.
-- Dukungan Flutter Web dengan judul, manifest, favicon, dan ikon KAGE.
+### The Quiz Sanctuary
+
+Aplikasi kuis pilihan ganda bertema kuil Jepang malam hari, dibangun dengan Flutter
+untuk UTS Lab Pemrograman Mobile.
+
+[![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-4A4F5E)](#menjalankan-aplikasi)
+
+</div>
+
+---
+
+## Tentang Proyek
+
+**KAGE — The Quiz Sanctuary** adalah aplikasi kuis yang mengajak pengguna belajar
+melalui perjalanan visual bernuansa kuil Jepang: gerbang torii, lentera, bulan,
+kelopak sakura, dan langit malam. Aplikasi memiliki alur lengkap mulai dari
+splash screen, login/registrasi, pemilihan kategori, pengerjaan kuis, pembahasan
+jawaban, hingga hasil dan riwayat skor.
+
+Seluruh data masih bersifat **lokal/dummy di dalam memori** — tidak ada backend,
+database, atau penyimpanan permanen. Cocok digunakan sebagai proyek pembelajaran
+Flutter dan demonstrasi UI/UX.
+
+## Fitur Utama
+
+- **Splash screen sinematik** dengan animasi lentera, kelopak sakura, dan progress bar.
+- **Login & registrasi** dengan validasi form, pesan error, dan toggle password.
+- **Beranda personal** berisi sapaan, progres belajar, kartu lanjutkan petualangan,
+  statistik, kategori, dan kutipan.
+- **5 kategori kuis**: Sains, Teknologi, Sejarah, Logika, dan Pengetahuan Umum.
+- **50 soal pilihan ganda** (10 soal per kategori) dengan pembahasan dan fakta menarik.
+- **Pemilihan tingkat kesulitan**: Pemula, Menengah, dan Ahli.
+- **Penyimpanan progres kuis** ke Beranda, termasuk konfirmasi saat keluar di tengah kuis.
+- **Halaman hasil** dengan animasi skor, jumlah benar, akurasi, dan durasi.
+- **Riwayat skor** dengan filter kategori dan ringkasan statistik.
+- **Badge & pencapaian** yang dihitung dari riwayat kuis.
+- **Profil pengguna** dengan level, XP, edit nama/email, dan pengaturan.
+- **Bottom navigation** untuk Beranda, Kuis, Skor, dan Profil.
+- **Transisi halaman halus** (fade + slide) di seluruh aplikasi.
+- **Responsif** untuk ponsel, tablet, dan web; konten dibatasi 520 px di layar lebar.
+- **Dukungan Flutter Web** dengan metadata, manifest, dan ikon KAGE.
+
+## Tampilan Aplikasi
+
+<div align="center">
+
+<img src="docs/screenshots/login.png" width="200" alt="Halaman login KAGE">
+<img src="docs/screenshots/beranda.png" width="200" alt="Halaman beranda KAGE">
+<img src="docs/screenshots/kategori.png" width="200" alt="Halaman kategori KAGE">
+
+<img src="docs/screenshots/kuis.png" width="200" alt="Halaman kuis KAGE">
+<img src="docs/screenshots/hasil.png" width="200" alt="Halaman hasil kuis KAGE">
+<img src="docs/screenshots/profil.png" width="200" alt="Halaman profil KAGE">
+
+</div>
+
+Tangkapan layar diambil dari build web pada viewport ponsel 390 × 844.
 
 ## Alur Aplikasi
 
 ```text
 Splash
-  └── Login <──> Register
-        └── MainShell (Beranda | Kuis | Skor | Profil)
-              └── QuizPage (layar penuh)
-                    └── ResultPage
-                          └── Coba Lagi -> QuizPage
+  └── Login ──> Register
+        └── Beranda ──> Kategori ──> Detail Kategori
+              │                          └── Kuis ──> Penjelasan
+              │                                        └── Hasil
+              ├── Riwayat (filter & statistik)
+              ├── Profil ──> Badge
+              │          └── Pengaturan
+              └── Lanjutkan Petualangan ──> Kuis
 ```
-
-- Login atau registrasi berhasil membuka `MainShell` dan membersihkan halaman
-  auth dari tumpukan navigasi.
-- Tombol back dari hasil tidak membuka kembali kuis yang sudah selesai.
-- Logout menghapus sesi dan kembali ke Login dengan tumpukan navigasi yang
-  bersih.
-
-## Akun Demo
-
-| Email | Password | Nama |
-|---|---|---|
-| `demo@mail.com` | `123456` | Demo Mahasiswa |
-| `budi@mail.com` | `123456` | Budi Santoso |
-
-Akun hasil registrasi juga dapat dipakai sampai aplikasi ditutup.
 
 ## Teknologi
 
-- Flutter 3.47 / Dart 3.13
-- [`provider`](https://pub.dev/packages/provider) untuk state management
-- Font Onest lokal 400/500/600/700 (tanpa `google_fonts`)
-
-## UI/UX KAGE
-
-Bahasa visual KAGE terinspirasi kuil Jepang malam hari: latar Midnight,
-permukaan Charcoal dan Surface, aksen vermilion untuk aksi utama, serta emas
-untuk ornamen dan badge. Seluruh antarmuka memakai Onest dengan hierarki yang
-konsisten:
-
-| Peran | Weight |
+| Kebutuhan | Implementasi |
 |---|---|
-| Judul hero | Bold 700 |
-| Judul halaman dan kartu | SemiBold 600 |
-| Teks soal dan isi | Regular 400 |
-| Label dan metadata | Medium 500 |
-| Tombol | SemiBold 600 |
+| Framework | Flutter 3.47 / Dart 3.13 |
+| Navigasi | [`go_router`](https://pub.dev/packages/go_router) 18.x |
+| State management | [`provider`](https://pub.dev/packages/provider) 6.x (`ChangeNotifier`) |
+| Aset vektor | [`flutter_svg`](https://pub.dev/packages/flutter_svg) 2.x |
+| Tipografi | Font lokal **Onest** & **Cinzel** (`assets/fonts/`) |
+| Ikon | Material Icons + aset SVG khusus KAGE |
 
-Warna, tipografi, dan aset didefinisikan terpusat di
-`lib/theme/app_theme.dart`. Komponen visual seperti brand, kartu kategori,
-kartu statistik, dan badge berada di `lib/widgets/` agar konsisten dan dapat
-dipakai ulang. Panduan lengkap ada di [`docs/DESIGN.md`](docs/DESIGN.md).
+### Palet Warna
 
-## Struktur Singkat
+| Token | Warna | Penggunaan |
+|---|---|---|
+| Primary / Vermilion | `#B9232C` | Tombol utama, jawaban terpilih, progress bar |
+| Background / Midnight | `#0B0D12` | Latar utama |
+| Surface / Charcoal | `#171A22` | Kartu, input, panel |
+| Gold / Antique Gold | `#C9A56A` | Aksen, badge, ornamen, level |
+| Text / Ivory | `#E8E4DD` | Teks utama |
+| Muted | `#8B909C` | Teks sekunder dan metadata |
+
+Warna aksen kategori: Sains `#F0A25A`, Teknologi `#6EB6FF`, Sejarah `#E0B86A`,
+Logika `#B79CFF`, dan Umum `#6FD0A0`.
+
+## Struktur Proyek
 
 ```text
 lib/
-├── main.dart                 # root aplikasi + MultiProvider
+├── main.dart                  # Entry point + konfigurasi font
+├── app.dart                   # MaterialApp.router, GoRouter, tema, responsive frame
 ├── data/
-│   ├── dummy_users.dart      # akun demo
-│   └── questions_data.dart   # kategori × 10 soal
-├── models/                   # User, Category, Question, ScoreRecord
-├── pages/                    # Splash, Login, Register, MainShell, Beranda,
-│                             # Kuis, Quiz, Result, Skor, Profil, Pengaturan
-├── providers/                # AuthProvider dan QuizProvider
-├── theme/app_theme.dart      # token warna, aset, dan tema KAGE
-├── utils/                    # responsive helper + route fade
-└── widgets/                  # widget reusable, termasuk komponen brand KAGE
-
-web/                          # entry point Flutter Web (Chrome)
+│   └── quiz_data.dart         # 5 kategori × 10 soal, pembahasan, fakta menarik
+├── models/
+│   └── models.dart            # CategoryId, Difficulty, Question, QuizResult, BadgeItem
+├── state/
+│   └── app_state.dart         # State global: auth, profil, progres kuis, riwayat, badge
+├── pages/
+│   ├── splash_page.dart
+│   ├── login_page.dart
+│   ├── register_page.dart
+│   ├── beranda_page.dart
+│   ├── kategori_page.dart
+│   ├── detail_kategori_page.dart
+│   ├── kuis_page.dart
+│   ├── penjelasan_page.dart
+│   ├── hasil_page.dart
+│   ├── riwayat_page.dart
+│   ├── profil_page.dart
+│   ├── badge_page.dart
+│   └── pengaturan_page.dart
+├── theme/
+│   ├── app_colors.dart        # Token warna
+│   └── app_theme.dart         # Onest, Cinzel, ThemeData
+└── widgets/
+    └── kage_widgets.dart      # Widget reusable: wordmark, tombol, progress bar,
+                               # bottom nav, score row, ilustrasi, dll.
 ```
 
-## Menjalankan
+Aset visual berada di `assets/svg/` dan font di `assets/fonts/`. Paket desain asli
+(spesifikasi dan sumber HTML) disimpan di `kage_package/` sebagai referensi.
+Tangkapan layar untuk dokumentasi berada di `docs/screenshots/`.
 
-Pastikan Flutter sudah terpasang, lalu:
+## Rute Aplikasi
+
+| Rute | Halaman |
+|---|---|
+| `/` | Splash |
+| `/login` | Login |
+| `/register` | Registrasi |
+| `/beranda` | Beranda |
+| `/kategori` | Daftar kategori |
+| `/kategori/:id` | Detail kategori |
+| `/kuis` | Pengerjaan kuis |
+| `/penjelasan` | Pembahasan jawaban |
+| `/hasil` | Hasil kuis |
+| `/riwayat` | Riwayat skor |
+| `/profil` | Profil & statistik |
+| `/badge` | Badge & pencapaian |
+| `/pengaturan` | Pengaturan |
+
+## Menjalankan Aplikasi
+
+Pastikan Flutter sudah terpasang dan berada di channel stable.
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-Untuk menjalankan di Chrome:
+Menjalankan di browser:
 
 ```bash
 flutter run -d chrome
 ```
 
-Untuk memilih perangkat tertentu:
+Melihat perangkat yang tersedia:
 
 ```bash
 flutter devices
 flutter run -d <device-id>
 ```
 
-## Pengujian
+> Font Onest dan Cinzel dibundel langsung sebagai aset aplikasi, sehingga tampilan
+> tetap konsisten dan tidak memerlukan koneksi internet saat dijalankan.
+
+## Pengujian & Analisis
 
 ```bash
 flutter analyze
 flutter test
 ```
 
-Pengujian mencakup validasi auth, alur login/register, navigasi, penyimpanan
-skor, logout, serta layout pada ukuran layar kecil, portrait, landscape, dan
-tablet.
+Build web untuk produksi:
 
-## Screenshot
+```bash
+flutter build web --release
+```
 
-Tangkapan layar berikut menggunakan tema KAGE dan tipografi Onest terbaru.
+## Akun & Data
 
-| Login | Beranda | Kuis |
-|---|---|---|
-| ![Halaman login](docs/screenshots/login.png) | ![Halaman beranda](docs/screenshots/home.png) | ![Halaman kuis](docs/screenshots/quiz.png) |
+Aplikasi menggunakan autentikasi simulasi: pengguna dapat masuk dengan email/
+username dan password apa pun yang tidak kosong, atau membuat akun baru melalui
+halaman registrasi. Nama dan email akan ditampilkan di Beranda dan Profil.
 
-| Hasil | Skor | Profil |
-|---|---|---|
-| ![Halaman hasil](docs/screenshots/result.png) | ![Halaman skor](docs/screenshots/score.png) | ![Halaman profil](docs/screenshots/profile.png) |
+Seluruh data berikut hanya tersimpan selama sesi aplikasi berjalan:
 
-## Catatan
+- akun dan profil pengguna,
+- progres kuis yang disimpan,
+- riwayat skor,
+- XP, level, dan badge.
 
-- Data soal ada di `lib/data/questions_data.dart` sesuai `docs/QUESTIONS.md`.
-- Semua data akun dan skor hanya tersimpan selama aplikasi berjalan. Tidak ada
-  database, API, atau penyimpanan permanen.
-- Panduan visual ada di `DESIGN.md` dan `docs/DESIGN.md`.
-- Katalog aset: `docs/ASSET_CATALOG.md`.
-- Kredit font dan aset ada di [docs/CREDITS.md](docs/CREDITS.md).
-- Ringkasan implementasi dan verifikasi ada di
-  [docs/IMPLEMENTATION_REPORT.md](docs/IMPLEMENTATION_REPORT.md).
+Menutup atau me-restart aplikasi akan mengembalikan data ke kondisi awal.
+
+## Status Pengembangan
+
+- [x] Splash, login, dan registrasi
+- [x] Beranda dan navigasi utama
+- [x] Kategori, detail kategori, dan pemilihan kesulitan
+- [x] Kuis 50 soal, pembahasan, dan hasil
+- [x] Riwayat skor dan statistik
+- [x] Profil, badge, dan pengaturan
+- [x] Responsif untuk web/tablet
+- [x] Branding ikon, splash native, dan metadata web
+- [ ] Penyimpanan permanen (database/local storage)
+- [ ] Integrasi backend dan akun nyata
+
+## Kontribusi
+
+Proyek ini dibuat untuk keperluan UTS Lab Pemrograman Mobile. Saran dan perbaikan
+dapat disampaikan melalui issue atau pull request di repositori ini.
+
+---
+
+<div align="center">
+
+**KAGE — The Quiz Sanctuary**
+
+*"Pengetahuan adalah cahaya yang tak pernah padam."*
+
+</div>
