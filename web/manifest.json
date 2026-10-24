@@ -6,7 +6,7 @@
     "background_color": "#0B0D12",
     "theme_color": "#0B0D12",
     "description": "Aplikasi kuis pilihan ganda bertema kuil Jepang malam hari.",
-    "orientation": "any",
+    "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
         {

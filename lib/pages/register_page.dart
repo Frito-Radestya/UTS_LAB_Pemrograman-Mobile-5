@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/auth_provider.dart';
+import '../state/app_state.dart';
+import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
-import '../utils/app_route.dart';
-import '../utils/responsive.dart';
-import '../widgets/app_background.dart';
-import '../widgets/app_text_field.dart';
-import '../widgets/kage_brand.dart';
-import '../widgets/primary_button.dart';
-import 'main_shell.dart';
+import '../widgets/kage_widgets.dart';
 
-/// Halaman pendaftaran akun dummy.
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -20,339 +15,301 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _nimController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _prodiController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmController = TextEditingController();
-
-  bool _obscurePassword = true;
-  bool _obscureConfirm = true;
-  String? _registerError;
+  final name = TextEditingController();
+  final email = TextEditingController();
+  final password = TextEditingController();
+  bool hide = true;
+  String? nameError;
+  String? emailError;
+  String? passwordError;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _nimController.dispose();
-    _emailController.dispose();
-    _prodiController.dispose();
-    _passwordController.dispose();
-    _confirmController.dispose();
+    name.dispose();
+    email.dispose();
+    password.dispose();
     super.dispose();
   }
 
-  String? _required(String? value, String label) {
-    if (value == null || value.trim().isEmpty) {
-      return '$label wajib diisi.';
-    }
-    return null;
-  }
-
-  String? _validateEmail(String? value) {
-    final required = _required(value, 'Email');
-    if (required != null) {
-      return required;
-    }
-
-    final email = value!.trim();
-    final pattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-    if (!pattern.hasMatch(email)) {
-      return 'Format email tidak valid.';
-    }
-    if (context.read<AuthProvider>().isEmailRegistered(email)) {
-      return 'Email sudah terdaftar.';
-    }
-    return null;
-  }
-
-  String? _validateNim(String? value) {
-    final required = _required(value, 'NIM');
-    if (required != null) {
-      return required;
-    }
-    if (context.read<AuthProvider>().isNimRegistered(value!)) {
-      return 'NIM sudah terdaftar.';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    final required = _required(value, 'Password');
-    if (required != null) {
-      return required;
-    }
-    if (value!.length < 6) {
-      return 'Password minimal 6 karakter.';
-    }
-    return null;
-  }
-
-  String? _validateConfirm(String? value) {
-    final required = _required(value, 'Konfirmasi password');
-    if (required != null) {
-      return required;
-    }
-    if (value != _passwordController.text) {
-      return 'Konfirmasi password tidak sama.';
-    }
-    return null;
-  }
-
-  void _submit() {
-    setState(() => _registerError = null);
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
+  void _register() {
     FocusScope.of(context).unfocus();
-    final error = context.read<AuthProvider>().register(
-      name: _nameController.text,
-      nim: _nimController.text,
-      email: _emailController.text,
-      prodi: _prodiController.text,
-      password: _passwordController.text,
-    );
+    final fullName = name.text.trim();
+    final mail = email.text.trim();
+    final pass = password.text;
+    final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
-    if (error != null) {
-      setState(() => _registerError = error);
+    setState(() {
+      nameError = fullName.isEmpty ? 'Nama lengkap wajib diisi.' : null;
+      emailError = mail.isEmpty
+          ? 'Email wajib diisi.'
+          : !emailPattern.hasMatch(mail)
+          ? 'Format email belum valid.'
+          : null;
+      passwordError = pass.isEmpty
+          ? 'Password wajib diisi.'
+          : pass.length < 8
+          ? 'Password minimal 8 karakter.'
+          : null;
+    });
+    if (nameError != null || emailError != null || passwordError != null) {
       return;
     }
 
-    // AuthProvider langsung membuat sesi setelah register. Hapus Login dari
-    // tumpukan navigasi agar pengguna tidak bisa kembali ke form pendaftaran.
-    Navigator.of(context)
-        .pushAndRemoveUntil(AppRoute.fade(const MainShell()), (route) => false);
-  }
-
-  void _backToLogin() {
-    Navigator.maybePop(context);
-  }
-
-  Widget _passwordSuffix({
-    required bool obscure,
-    required VoidCallback onPressed,
-  }) {
-    final responsive = Responsive(context);
-    return IconButton(
-      tooltip: obscure ? 'Tampilkan password' : 'Sembunyikan password',
-      onPressed: onPressed,
-      icon: Icon(
-        obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-        size: responsive.bodySize * 1.2,
-        color: AppColors.textSecondary,
-      ),
-    );
+    context.read<AppState>().login(name: fullName, mail: mail);
+    context.go('/beranda');
   }
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context);
+    final size = MediaQuery.sizeOf(context);
+    final w = size.width;
+    final h = size.height;
 
     return Scaffold(
-      body: AppBackground(
-        imageAsset: AppAssets.auth,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.all(responsive.pagePadding),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: responsive.contentWidth,
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const Center(
-                            child: KageBrand(
-                              logoScale: 0.5,
-                              wordmarkScale: 0.7,
-                              showTagline: false,
-                            ),
-                          ),
-                          SizedBox(height: responsive.gap),
-                          Text(
-                            'DAFTAR AKUN',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: responsive.bodySize * 0.72,
-                              fontWeight: AppTypography.label,
-                              letterSpacing: responsive.bodySize * 0.18,
-                              color: AppColors.antiqueGold,
-                            ),
-                          ),
-                          SizedBox(height: responsive.smallGap),
-                          Text(
-                            'Mulai perjalananmu',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: responsive.headingSize * 0.82,
-                              height: 1.1,
-                              letterSpacing: responsive.letterSpacing,
-                              fontWeight: AppTypography.heading,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          SizedBox(height: responsive.smallGap),
-                          Text(
-                            'Isi data berikut untuk membuat akun sementara.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: responsive.bodySize,
-                              height: 1.5,
-                              fontWeight: AppTypography.body,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          SizedBox(height: responsive.gap * 1.2),
-                          AppTextField(
-                            controller: _nameController,
-                            label: 'Nama lengkap',
-                            hint: 'Nama sesuai data mahasiswa',
-                            textCapitalization: TextCapitalization.words,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icons.person_outline_rounded,
-                            validator: (value) => _required(value, 'Nama'),
-                          ),
-                          SizedBox(height: responsive.gap * 0.7),
-                          AppTextField(
-                            controller: _nimController,
-                            label: 'NIM',
-                            hint: 'Nomor induk mahasiswa',
-                            keyboardType: TextInputType.number,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icons.badge_outlined,
-                            validator: _validateNim,
-                          ),
-                          SizedBox(height: responsive.gap * 0.7),
-                          AppTextField(
-                            controller: _emailController,
-                            label: 'Email',
-                            hint: 'nama@mail.com',
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icons.mail_outline_rounded,
-                            validator: _validateEmail,
-                          ),
-                          SizedBox(height: responsive.gap * 0.7),
-                          AppTextField(
-                            controller: _prodiController,
-                            label: 'Program studi',
-                            hint: 'Contoh: Teknik Informatika',
-                            textCapitalization: TextCapitalization.words,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icons.school_outlined,
-                            validator: (value) =>
-                                _required(value, 'Program studi'),
-                          ),
-                          SizedBox(height: responsive.gap * 0.7),
-                          AppTextField(
-                            controller: _passwordController,
-                            label: 'Password',
-                            hint: 'Minimal 6 karakter',
-                            obscureText: _obscurePassword,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icons.lock_outline_rounded,
-                            suffixIcon: _passwordSuffix(
-                              obscure: _obscurePassword,
-                              onPressed: () {
-                                setState(
-                                  () => _obscurePassword = !_obscurePassword,
-                                );
-                              },
-                            ),
-                            validator: _validatePassword,
-                          ),
-                          SizedBox(height: responsive.gap * 0.7),
-                          AppTextField(
-                            controller: _confirmController,
-                            label: 'Konfirmasi password',
-                            hint: 'Ulangi password',
-                            obscureText: _obscureConfirm,
-                            textInputAction: TextInputAction.done,
-                            prefixIcon: Icons.lock_reset_rounded,
-                            suffixIcon: _passwordSuffix(
-                              obscure: _obscureConfirm,
-                              onPressed: () {
-                                setState(
-                                  () => _obscureConfirm = !_obscureConfirm,
-                                );
-                              },
-                            ),
-                            validator: _validateConfirm,
-                            onFieldSubmitted: (_) => _submit(),
-                          ),
-                          if (_registerError != null) ...[
-                            SizedBox(height: responsive.smallGap),
-                            Text(
-                              _registerError!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: responsive.bodySize * 0.82,
-                                color: AppColors.vermilionLight,
-                              ),
-                            ),
-                          ],
-                          SizedBox(height: responsive.gap * 1.2),
-                          PrimaryButton(
-                            key: const Key('register-submit'),
-                            label: 'Daftar',
-                            icon: Icons.arrow_forward_rounded,
-                            onPressed: _submit,
-                          ),
-                          SizedBox(height: responsive.gap * 0.4),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  'Sudah punya akun?',
-                                  style: TextStyle(
-                                    fontSize: responsive.bodySize * 0.85,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: _backToLogin,
-                                child: Text(
-                                  'Masuk',
-                                  style: TextStyle(
-                                    fontSize: responsive.bodySize * 0.85,
-                                    fontWeight: AppTypography.button,
-                                    color: AppColors.vermilionLight,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: responsive.smallGap),
-                          Text(
-                            'Akun hanya tersimpan selama aplikasi terbuka.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: responsive.bodySize * 0.68,
-                              color: AppColors.textSecondary.withValues(
-                                alpha: 0.8,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+      backgroundColor: AppColors.background,
+      body: Stack(
+        children: [
+          // Top gradient
+          const Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            height: 260,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF120F2A),
+                    Color(0xFF1D1A3F),
+                    AppColors.background,
+                  ],
+                  stops: [0, 0.45, 1],
+                ),
+              ),
+            ),
+          ),
+          // Bottom glow
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: h * 0.36,
+            child: const Opacity(
+              opacity: 0.7,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Color(0xFF2A1230), AppColors.background],
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          ),
+          // Torii watermark at bottom
+          Positioned(
+            left: w * 0.25,
+            bottom: h * 0.04,
+            child: ToriiArt(width: w * 0.60, height: w * 0.50, opacity: 0.28),
+          ),
+          // Animated lantern
+          Positioned(
+            right: w * 0.055,
+            bottom: h * 0.15,
+            child: const AnimatedLantern(
+              opacity: 0.7,
+              duration: Duration(milliseconds: 2100),
+              delayFraction: 0.2,
+            ),
+          ),
+          // Animated sakura petals
+          AnimatedSakuraPetal(
+            left: w * 0.76,
+            top: h * 0.04,
+            width: 12,
+            height: 8,
+            angle: 50,
+            opacity: 0.8,
+            duration: const Duration(seconds: 5),
+            delayFraction: 0.0,
+          ),
+          AnimatedSakuraPetal(
+            left: w * 0.86,
+            top: h * 0.06,
+            width: 9,
+            height: 6,
+            angle: 10,
+            opacity: 0.75,
+            color: const Color(0xFFF09AB0),
+            duration: const Duration(seconds: 6),
+            delayFraction: 0.4,
+          ),
+          AnimatedSakuraPetal(
+            left: w * 0.65,
+            top: h * 0.08,
+            width: 10,
+            height: 7,
+            angle: -30,
+            opacity: 0.7,
+            duration: const Duration(seconds: 4),
+            delayFraction: 0.7,
+          ),
+          AnimatedSakuraPetal(
+            left: w * 0.10,
+            top: h * 0.05,
+            width: 10,
+            height: 7,
+            angle: -30,
+            opacity: 0.6,
+            duration: const Duration(seconds: 7),
+            delayFraction: 0.55,
+          ),
+          AnimatedSakuraPetal(
+            left: w * 0.30,
+            top: h * 0.03,
+            width: 9,
+            height: 6,
+            angle: 25,
+            opacity: 0.6,
+            color: const Color(0xFFF09AB0),
+            duration: const Duration(seconds: 5),
+            delayFraction: 0.8,
+          ),
+          // Form
+          SafeArea(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 24, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const BackIconButton(label: 'Kembali ke halaman masuk'),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(left: 12, top: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'KAGE',
+                              style: AppTheme.cinzel(
+                                size: 18,
+                                heightPx: 24,
+                                letterSpacing: 6,
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              'Buat Akun',
+                              style: AppTheme.onest(
+                                size: 28,
+                                heightPx: 36,
+                                weight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Mulai perjalanan pengetahuanmu bersama KAGE.',
+                              style: AppTheme.onest(
+                                size: 14,
+                                heightPx: 20,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 28),
+                            AppTextField(
+                              controller: name,
+                              hint: 'Nama Lengkap',
+                              icon: Icons.person_outline,
+                              errorText: nameError,
+                              textInputAction: TextInputAction.next,
+                              autofillHints: const [AutofillHints.name],
+                            ),
+                            const SizedBox(height: 12),
+                            AppTextField(
+                              controller: email,
+                              hint: 'Email',
+                              icon: Icons.mail_outline,
+                              errorText: emailError,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              autofillHints: const [AutofillHints.email],
+                            ),
+                            const SizedBox(height: 12),
+                            AppTextField(
+                              controller: password,
+                              hint: 'Password',
+                              icon: Icons.lock_outline,
+                              obscure: hide,
+                              errorText: passwordError,
+                              textInputAction: TextInputAction.done,
+                              autofillHints: const [AutofillHints.newPassword],
+                              onSubmitted: (_) => _register(),
+                              onToggleObscure: () =>
+                                  setState(() => hide = !hide),
+                            ),
+                            const SizedBox(height: 8),
+                            if (passwordError == null)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 4),
+                                child: Text(
+                                  'Minimal 8 karakter, gunakan kombinasi huruf dan angka.',
+                                  style: AppTheme.onest(
+                                    size: 12,
+                                    heightPx: 16,
+                                    color: AppColors.textMuted,
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(height: 24),
+                            PrimaryButton(label: 'Daftar', onTap: _register),
+                            const SizedBox(height: 22),
+                            Center(
+                              child: Text.rich(
+                                TextSpan(
+                                  text: 'Sudah punya akun? ',
+                                  style: AppTheme.onest(
+                                    size: 14,
+                                    heightPx: 20,
+                                    color: AppColors.textMuted,
+                                  ),
+                                  children: [
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: GestureDetector(
+                                        onTap: () => context.go('/login'),
+                                        child: Text(
+                                          'Masuk',
+                                          style: AppTheme.onest(
+                                            size: 14,
+                                            heightPx: 20,
+                                            weight: FontWeight.w600,
+                                            color: AppColors.primaryText,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
