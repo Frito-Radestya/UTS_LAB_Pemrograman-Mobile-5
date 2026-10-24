@@ -58,7 +58,7 @@ class OptionButton extends StatelessWidget {
                     '$optionLabel.',
                     style: TextStyle(
                       fontSize: responsive.bodySize,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: AppTypography.label,
                       color: selected
                           ? AppColors.accent
                           : AppColors.textSecondary,
@@ -70,12 +70,21 @@ class OptionButton extends StatelessWidget {
                     label,
                     style: TextStyle(
                       fontSize: responsive.bodySize,
-                      fontWeight: FontWeight.w300,
+                      fontWeight: AppTypography.label,
                       height: 1.3,
                       color: AppColors.textPrimary,
                     ),
                   ),
                 ),
+                if (selected)
+                  Padding(
+                    padding: EdgeInsets.only(left: responsive.smallGap * 0.5),
+                    child: Icon(
+                      Icons.check_circle_rounded,
+                      size: responsive.bodySize * 1.15,
+                      color: AppColors.vermilionLight,
+                    ),
+                  ),
               ],
             ),
           ),

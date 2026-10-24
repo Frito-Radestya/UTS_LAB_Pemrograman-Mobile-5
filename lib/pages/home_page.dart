@@ -3,15 +3,16 @@ import 'package:provider/provider.dart';
 
 import '../data/questions_data.dart';
 import '../models/category.dart';
+import '../models/score_record.dart';
 import '../providers/auth_provider.dart';
 import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive.dart';
-import '../widgets/category_card.dart';
-import '../widgets/empty_score_card.dart';
-import '../widgets/score_tile.dart';
+import '../widgets/kage_category_tile.dart';
+import '../widgets/kage_section_header.dart';
+import '../widgets/kage_stat_card.dart';
 
-/// Tab Beranda: sapaan, banner, daftar kategori, skor terakhir, dan tips.
+/// Tab Beranda: sapaan, progres, petualangan berikutnya, dan kategori.
 class HomePage extends StatelessWidget {
   const HomePage({
     super.key,
@@ -29,9 +30,21 @@ class HomePage extends StatelessWidget {
     final quiz = context.watch<QuizProvider>();
 
     final name = auth.currentUser?.name ?? 'Sobat';
+    final initial = auth.currentUser?.initial ?? '?';
+    final lastCategory = quiz.lastCategory;
     final lastScore = quiz.lastScore;
+    final best = quiz.bestScore;
+
+    // Kategori unik yang sudah diselesaikan, dipakai untuk progres.
+    final explored = quiz.history.map((record) => record.categoryTitle).toSet();
+    final totalCategories = quizCategories.length;
+    final progress = totalCategories == 0
+        ? 0.0
+        : (explored.length / totalCategories).clamp(0.0, 1.0);
+    final accuracy = best?.percentage.round();
 
     return SingleChildScrollView(
+      key: const PageStorageKey<String>('home-scroll'),
       padding: EdgeInsets.all(responsive.pagePadding),
       child: Center(
         child: ConstrainedBox(
@@ -39,53 +52,87 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Halo, $name',
-                style: TextStyle(
-                  fontSize: responsive.headingSize * 0.72,
-                  height: 1.12,
-                  letterSpacing: responsive.letterSpacing,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textPrimary,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Halo, $name',
+                          style: TextStyle(
+                            fontSize: responsive.headingSize * 0.62,
+                            height: 1.12,
+                            letterSpacing: responsive.letterSpacing,
+                            fontWeight: AppTypography.hero,
+                            color: AppColors.ivory,
+                          ),
+                        ),
+                        SizedBox(height: responsive.smallGap * 0.4),
+                        Text(
+                          'Siap menjelajah pengetahuan hari ini?',
+                          style: TextStyle(
+                            fontSize: responsive.bodySize * 0.88,
+                            height: 1.4,
+                            fontWeight: AppTypography.body,
+                            color: AppColors.muted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: responsive.smallGap),
+                  _Avatar(initial: initial),
+                ],
               ),
-              SizedBox(height: responsive.smallGap * 0.6),
-              Text(
-                'Mau menguji pemahaman Flutter & Dart hari ini?',
-                style: TextStyle(
-                  fontSize: responsive.bodySize * 0.92,
-                  height: 1.45,
-                  fontWeight: FontWeight.w300,
-                  color: AppColors.textSecondary,
-                ),
+              SizedBox(height: responsive.gap * 1.2),
+              _ProgressCard(
+                completed: explored.length,
+                total: totalCategories,
+                progress: progress,
+                onTap: onOpenQuizTab,
               ),
-              SizedBox(height: responsive.gap * 1.3),
-              _HomeBanner(onTap: onOpenQuizTab),
-              SizedBox(height: responsive.gap * 1.5),
-              _SectionHeader(
+              SizedBox(height: responsive.gap * 1.2),
+              _JourneyCard(
+                category: lastCategory,
+                lastScore: lastScore,
+                onTap: lastCategory == null
+                    ? onOpenQuizTab
+                    : () => onCategoryTap(lastCategory),
+              ),
+              SizedBox(height: responsive.gap * 1.4),
+              KageSectionHeader(
                 title: 'Kategori Kuis',
                 actionLabel: 'Lihat semua',
                 onAction: onOpenQuizTab,
               ),
               SizedBox(height: responsive.smallGap * 0.7),
-              ...quizCategories.map(
-                (category) => Padding(
-                  padding: EdgeInsets.only(bottom: responsive.gap * 0.7),
-                  child: CategoryCard(
-                    category: category,
-                    onTap: () => onCategoryTap(category),
+              _CategoryRail(onCategoryTap: onCategoryTap),
+              SizedBox(height: responsive.gap * 1.2),
+              Row(
+                children: [
+                  Expanded(
+                    child: KageStatCard(
+                      label: 'Kuis selesai',
+                      value: '${quiz.completedCount}',
+                    ),
                   ),
-                ),
+                  SizedBox(width: responsive.smallGap),
+                  Expanded(
+                    child: KageStatCard(
+                      label: 'Akurasi terbaik',
+                      value: accuracy == null ? '—' : '$accuracy%',
+                    ),
+                  ),
+                  SizedBox(width: responsive.smallGap),
+                  Expanded(
+                    child: KageStatCard(
+                      label: 'Kategori',
+                      value: '${explored.length}/$totalCategories',
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: responsive.gap * 0.4),
-              const _SectionHeader(title: 'Skor Terakhir'),
-              SizedBox(height: responsive.smallGap * 0.7),
-              if (lastScore != null)
-                ScoreTile(record: lastScore)
-              else
-                const EmptyScoreCard(),
-              SizedBox(height: responsive.gap * 1.5),
-              const _TipsCard(),
               SizedBox(height: responsive.gap),
             ],
           ),
@@ -95,33 +142,185 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/// Banner pembuka di Beranda. Mengetuk banner membuka tab Kuis.
-class _HomeBanner extends StatelessWidget {
-  const _HomeBanner({required this.onTap});
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.initial});
 
+  final String initial;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+    final size = responsive.bodySize * 2.8;
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: AppColors.vermilion.withValues(alpha: 0.14),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.antiqueGold.withValues(alpha: 0.55),
+          width: responsive.shortestSide * 0.004,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          initial,
+          style: TextStyle(
+            fontSize: responsive.bodySize * 1.15,
+            fontWeight: AppTypography.title,
+            color: AppColors.ivory,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgressCard extends StatelessWidget {
+  const _ProgressCard({
+    required this.completed,
+    required this.total,
+    required this.progress,
+    required this.onTap,
+  });
+
+  final int completed;
+  final int total;
+  final double progress;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
+    final percent = (progress * 100).round();
+    final message = completed == 0
+        ? 'Mulai kategori pertamamu.'
+        : completed >= total
+        ? 'Semua kategori sudah dijelajahi.'
+        : '$percent% perjalanan selesai.';
+
+    return Material(
+      color: AppColors.surface.withValues(alpha: 0.94),
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(responsive.radius),
+        side: BorderSide(
+          color: AppColors.border,
+          width: responsive.shortestSide * 0.004,
+        ),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.all(responsive.pagePadding * 0.55),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'PROGRES BELAJAR',
+                      style: TextStyle(
+                        fontSize: responsive.bodySize * 0.62,
+                        fontWeight: AppTypography.label,
+                        letterSpacing: responsive.bodySize * 0.1,
+                        color: AppColors.antiqueGold,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '$completed/$total Kategori',
+                    style: TextStyle(
+                      fontSize: responsive.bodySize * 0.72,
+                      fontWeight: AppTypography.label,
+                      color: AppColors.ivory,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: responsive.smallGap * 0.8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(responsive.bodySize),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: responsive.bodySize * 0.24,
+                  backgroundColor: AppColors.border,
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.vermilionLight,
+                  ),
+                ),
+              ),
+              SizedBox(height: responsive.smallGap * 0.7),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: responsive.bodySize * 0.76,
+                        fontWeight: AppTypography.body,
+                        color: AppColors.muted,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: responsive.bodySize,
+                    color: AppColors.antiqueGold,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _JourneyCard extends StatelessWidget {
+  const _JourneyCard({
+    required this.category,
+    required this.lastScore,
+    required this.onTap,
+  });
+
+  final Category? category;
+  final ScoreRecord? lastScore;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+    final isContinuing = category != null;
+    final imageAsset = category?.imageAsset ?? AppAssets.home;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(responsive.radius),
       child: AspectRatio(
-        aspectRatio: 1.9,
+        aspectRatio: responsive.isLandscape ? 2.1 : 1.5,
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset('assets/images/bg_temple.jpg', fit: BoxFit.cover),
+            Image.asset(
+              imageAsset,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const ColoredBox(color: AppColors.charcoal);
+              },
+            ),
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.background.withValues(alpha: 0.94),
-                    AppColors.background.withValues(alpha: 0.28),
+                    AppColors.midnight.withValues(alpha: 0.18),
+                    AppColors.midnight.withValues(alpha: 0.94),
                   ],
+                  stops: const [0, 0.82],
                 ),
               ),
             ),
@@ -130,44 +329,69 @@ class _HomeBanner extends StatelessWidget {
               child: InkWell(
                 onTap: onTap,
                 child: Padding(
-                  padding: EdgeInsets.all(responsive.pagePadding * 0.6),
+                  padding: EdgeInsets.all(responsive.pagePadding * 0.55),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        'MULAI DARI SINI',
+                        isContinuing
+                            ? 'LANJUTKAN PETUALANGAN'
+                            : 'MULAI PERJALANAN',
                         style: TextStyle(
-                          fontSize: responsive.bodySize * 0.66,
-                          fontWeight: FontWeight.w400,
+                          fontSize: responsive.bodySize * 0.62,
+                          fontWeight: AppTypography.label,
                           letterSpacing: responsive.bodySize * 0.12,
-                          color: AppColors.accent,
+                          color: AppColors.antiqueGold,
                         ),
                       ),
-                      SizedBox(height: responsive.smallGap * 0.4),
+                      SizedBox(height: responsive.smallGap * 0.35),
                       Text(
-                        'Uji pemahamanmu\nhari ini',
+                        category?.title ?? 'Gerbang Pengetahuan',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: responsive.bodySize * 1.45,
+                          fontSize: responsive.bodySize * 1.35,
                           height: 1.08,
                           letterSpacing: responsive.letterSpacing * 0.5,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textPrimary,
+                          fontWeight: AppTypography.title,
+                          color: AppColors.ivory,
                         ),
                       ),
-                      SizedBox(height: responsive.smallGap * 0.5),
-                      Text(
-                        'Pilih kategori dan mulai kuis singkat.',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: responsive.bodySize * 0.72,
-                          height: 1.35,
-                          fontWeight: FontWeight.w300,
-                          color: AppColors.textSecondary,
-                        ),
+                      SizedBox(height: responsive.smallGap * 0.7),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              lastScore == null
+                                  ? 'Pilih kategori dan uji pemahamanmu.'
+                                  : 'Skor terakhir ${lastScore!.score}/'
+                                        '${lastScore!.total} benar.',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: responsive.bodySize * 0.76,
+                                height: 1.35,
+                                fontWeight: AppTypography.body,
+                                color: AppColors.muted,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: responsive.smallGap),
+                          Container(
+                            width: responsive.bodySize * 2.3,
+                            height: responsive.bodySize * 2.3,
+                            decoration: const BoxDecoration(
+                              color: AppColors.vermilion,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.play_arrow_rounded,
+                              size: responsive.bodySize * 1.3,
+                              color: AppColors.ivory,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -181,99 +405,42 @@ class _HomeBanner extends StatelessWidget {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, this.actionLabel, this.onAction});
+class _CategoryRail extends StatelessWidget {
+  const _CategoryRail({required this.onCategoryTap});
 
-  final String title;
-  final String? actionLabel;
-  final VoidCallback? onAction;
+  final ValueChanged<Category> onCategoryTap;
 
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
 
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: responsive.bodySize * 1.05,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ),
-        if (actionLabel != null)
-          TextButton(
-            onPressed: onAction,
-            child: Text(
-              actionLabel!,
-              style: TextStyle(
-                fontSize: responsive.bodySize * 0.76,
-                fontWeight: FontWeight.w400,
-                color: AppColors.accent,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final tileWidth =
+            constraints.maxWidth * (responsive.isLandscape ? 0.21 : 0.34);
+        final tileHeight = tileWidth * 1.28;
 
-class _TipsCard extends StatelessWidget {
-  const _TipsCard();
-
-  @override
-  Widget build(BuildContext context) {
-    final responsive = Responsive(context);
-
-    return Container(
-      padding: EdgeInsets.all(responsive.pagePadding * 0.5),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(responsive.radius),
-        border: Border.all(
-          color: AppColors.border,
-          width: responsive.shortestSide * 0.005,
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.lightbulb_outline_rounded,
-            size: responsive.iconSize,
-            color: AppColors.accent,
-          ),
-          SizedBox(width: responsive.pagePadding * 0.45),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Tips belajar',
-                  style: TextStyle(
-                    fontSize: responsive.bodySize * 0.92,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textPrimary,
-                  ),
+        return SizedBox(
+          height: tileHeight,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: quizCategories.length,
+            itemBuilder: (context, index) {
+              final category = quizCategories[index];
+              return SizedBox(
+                width: tileWidth,
+                child: KageCategoryTile(
+                  category: category,
+                  onTap: () => onCategoryTap(category),
                 ),
-                SizedBox(height: responsive.smallGap * 0.3),
-                Text(
-                  'Baca soal dengan teliti dan pilih satu jawaban sebelum menekan Lanjut.',
-                  style: TextStyle(
-                    fontSize: responsive.bodySize * 0.76,
-                    height: 1.4,
-                    fontWeight: FontWeight.w300,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
+            separatorBuilder: (context, index) {
+              return SizedBox(width: responsive.smallGap);
+            },
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

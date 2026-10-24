@@ -22,7 +22,7 @@ class PrimaryButton extends StatelessWidget {
     final textStyle = TextStyle(
       fontFamily: 'Onest',
       fontSize: responsive.bodySize * 1.05,
-      fontWeight: FontWeight.w400,
+      fontWeight: AppTypography.button,
       letterSpacing: responsive.headingSize * -0.006,
     );
 

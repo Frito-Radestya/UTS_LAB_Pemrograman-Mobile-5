@@ -10,6 +10,7 @@ class Category {
     required this.description,
     required this.icon,
     required this.questions,
+    this.imageAsset,
   });
 
   final String id;
@@ -17,4 +18,7 @@ class Category {
   final String description;
   final IconData icon;
   final List<Question> questions;
+
+  /// Ilustrasi lokal kategori. Null memakai ikon Material sebagai cadangan.
+  final String? imageAsset;
 }

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../data/questions_data.dart';
 import '../providers/auth_provider.dart';
+import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_route.dart';
 import '../utils/responsive.dart';
+import '../widgets/kage_badge_tile.dart';
+import '../widgets/kage_stat_card.dart';
+import 'settings_page.dart';
 
 /// Tab Profil: data akun, informasi aplikasi, dan tombol logout.
 class ProfilePage extends StatelessWidget {
@@ -15,12 +21,46 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
     final user = context.watch<AuthProvider>().currentUser;
+    final quiz = context.watch<QuizProvider>();
 
     final name = user?.name ?? 'Pengguna';
     final email = user?.email ?? '-';
     final nim = user?.nim ?? '-';
     final prodi = user?.prodi ?? '-';
     final initial = user?.initial ?? '?';
+
+    final explored = quiz.history.map((record) => record.categoryTitle).toSet();
+    final totalCategories = quizCategories.length;
+    final best = quiz.bestScore;
+    final badges =
+        <({String title, String description, String asset, bool unlocked})>[
+          (
+            title: 'Langkah Pertama',
+            description: 'Selesaikan kuis pertamamu.',
+            asset: AppAssets.badgeFirst,
+            unlocked: quiz.completedCount > 0,
+          ),
+          (
+            title: 'Skor Sempurna',
+            description: 'Jawab semua soal dengan benar.',
+            asset: AppAssets.badgePerfect,
+            unlocked: quiz.history.any(
+              (record) => record.total > 0 && record.score == record.total,
+            ),
+          ),
+          (
+            title: 'Master Kuis',
+            description: 'Raih akurasi minimal 80%.',
+            asset: AppAssets.badgeMaster,
+            unlocked: best != null && best.percentage >= 80,
+          ),
+          (
+            title: 'Rajin Berlatih',
+            description: 'Selesaikan tiga kuis.',
+            asset: AppAssets.badgeStreak,
+            unlocked: quiz.completedCount >= 3,
+          ),
+        ];
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(responsive.pagePadding),
@@ -36,7 +76,7 @@ class ProfilePage extends StatelessWidget {
                   fontSize: responsive.headingSize * 0.72,
                   height: 1.12,
                   letterSpacing: responsive.letterSpacing,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: AppTypography.heading,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -46,12 +86,67 @@ class ProfilePage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: responsive.bodySize * 0.92,
                   height: 1.45,
-                  fontWeight: FontWeight.w300,
+                  fontWeight: AppTypography.body,
                   color: AppColors.textSecondary,
                 ),
               ),
               SizedBox(height: responsive.gap * 1.3),
-              _ProfileCard(name: name, email: email, initial: initial),
+              _ProfileCard(
+                name: name,
+                email: email,
+                initial: initial,
+                explored: explored.length,
+              ),
+              SizedBox(height: responsive.gap * 1.2),
+              Row(
+                children: [
+                  Expanded(
+                    child: KageStatCard(
+                      label: 'Kuis selesai',
+                      value: '${quiz.completedCount}',
+                    ),
+                  ),
+                  SizedBox(width: responsive.smallGap),
+                  Expanded(
+                    child: KageStatCard(
+                      label: 'Terbaik',
+                      value: best == null ? '—' : '${best.percentage.round()}%',
+                    ),
+                  ),
+                  SizedBox(width: responsive.smallGap),
+                  Expanded(
+                    child: KageStatCard(
+                      label: 'Kategori',
+                      value: '${explored.length}/$totalCategories',
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: responsive.gap * 1.3),
+              const _SectionLabel(title: 'Pencapaian'),
+              SizedBox(height: responsive.smallGap * 0.7),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final itemWidth =
+                      (constraints.maxWidth - responsive.smallGap) / 2;
+                  return Wrap(
+                    spacing: responsive.smallGap,
+                    runSpacing: responsive.smallGap,
+                    children: [
+                      for (final badge in badges)
+                        SizedBox(
+                          width: itemWidth,
+                          child: KageBadgeTile(
+                            title: badge.title,
+                            description: badge.description,
+                            asset: badge.asset,
+                            unlocked: badge.unlocked,
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
               SizedBox(height: responsive.gap * 1.3),
               const _SectionLabel(title: 'Data Mahasiswa'),
               SizedBox(height: responsive.smallGap * 0.7),
@@ -70,6 +165,15 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: responsive.gap * 1.3),
+              const _SectionLabel(title: 'Menu'),
+              SizedBox(height: responsive.smallGap * 0.7),
+              _MenuCard(
+                onSettings: () {
+                  Navigator.of(context)
+                      .push(AppRoute.fade(SettingsPage(onLogout: onLogout)));
+                },
+              ),
+              SizedBox(height: responsive.gap * 1.3),
               const _SectionLabel(title: 'Tentang Aplikasi'),
               SizedBox(height: responsive.smallGap * 0.7),
               const _AppInfoCard(),
@@ -84,7 +188,7 @@ class ProfilePage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.76,
                     height: 1.4,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: AppTypography.body,
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -103,11 +207,13 @@ class _ProfileCard extends StatelessWidget {
     required this.name,
     required this.email,
     required this.initial,
+    required this.explored,
   });
 
   final String name;
   final String email;
   final String initial;
+  final int explored;
 
   @override
   Widget build(BuildContext context) {
@@ -130,10 +236,10 @@ class _ProfileCard extends StatelessWidget {
             width: avatarSize,
             height: avatarSize,
             decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha: 0.14),
+              color: AppColors.vermilion.withValues(alpha: 0.14),
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.accent.withValues(alpha: 0.45),
+                color: AppColors.antiqueGold.withValues(alpha: 0.55),
                 width: responsive.shortestSide * 0.004,
               ),
             ),
@@ -142,8 +248,8 @@ class _ProfileCard extends StatelessWidget {
                 initial,
                 style: TextStyle(
                   fontSize: responsive.bodySize * 1.6,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.accent,
+                  fontWeight: AppTypography.title,
+                  color: AppColors.ivory,
                 ),
               ),
             ),
@@ -159,7 +265,7 @@ class _ProfileCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: responsive.bodySize * 1.25,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: AppTypography.title,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -170,14 +276,78 @@ class _ProfileCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.8,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: AppTypography.label,
                     color: AppColors.textSecondary,
+                  ),
+                ),
+                SizedBox(height: responsive.smallGap * 0.35),
+                Text(
+                  '$explored kategori dijelajahi',
+                  style: TextStyle(
+                    fontSize: responsive.bodySize * 0.68,
+                    fontWeight: AppTypography.label,
+                    letterSpacing: responsive.bodySize * 0.06,
+                    color: AppColors.antiqueGold,
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MenuCard extends StatelessWidget {
+  const _MenuCard({required this.onSettings});
+
+  final VoidCallback onSettings;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
+    return Material(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(responsive.radius),
+        side: BorderSide(
+          color: AppColors.border,
+          width: responsive.shortestSide * 0.005,
+        ),
+      ),
+      child: InkWell(
+        onTap: onSettings,
+        borderRadius: BorderRadius.circular(responsive.radius),
+        child: Padding(
+          padding: EdgeInsets.all(responsive.pagePadding * 0.5),
+          child: Row(
+            children: [
+              Icon(
+                Icons.settings_outlined,
+                size: responsive.iconSize,
+                color: AppColors.antiqueGold,
+              ),
+              SizedBox(width: responsive.pagePadding * 0.4),
+              Expanded(
+                child: Text(
+                  'Pengaturan',
+                  style: TextStyle(
+                    fontSize: responsive.bodySize * 0.95,
+                    fontWeight: AppTypography.title,
+                    color: AppColors.ivory,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: responsive.bodySize * 0.75,
+                color: AppColors.muted,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -196,7 +366,7 @@ class _SectionLabel extends StatelessWidget {
       title,
       style: TextStyle(
         fontSize: responsive.bodySize * 1.05,
-        fontWeight: FontWeight.w400,
+        fontWeight: AppTypography.heading,
         color: AppColors.textPrimary,
       ),
     );
@@ -267,7 +437,7 @@ class _InfoRow extends StatelessWidget {
                 label.toUpperCase(),
                 style: TextStyle(
                   fontSize: responsive.bodySize * 0.68,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: AppTypography.label,
                   letterSpacing: responsive.bodySize * 0.1,
                   color: AppColors.textSecondary,
                 ),
@@ -277,7 +447,7 @@ class _InfoRow extends StatelessWidget {
                 value,
                 style: TextStyle(
                   fontSize: responsive.bodySize * 0.95,
-                  fontWeight: FontWeight.w300,
+                  fontWeight: AppTypography.body,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -320,10 +490,10 @@ class _AppInfoCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Kuis Pemrograman Mobile',
+                  'KAGE — The Quiz Sanctuary',
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.95,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: AppTypography.title,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -332,18 +502,18 @@ class _AppInfoCard extends StatelessWidget {
                   'Versi 1.0.0',
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.76,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: AppTypography.label,
                     color: AppColors.textSecondary,
                   ),
                 ),
                 SizedBox(height: responsive.smallGap * 0.5),
                 Text(
-                  'Aplikasi kuis pilihan ganda Flutter & Dart. Data akun dan '
+                  'Aplikasi kuis pilihan ganda. Data akun dan '
                   'skor disimpan di memori selama aplikasi berjalan.',
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.76,
                     height: 1.4,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: AppTypography.body,
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -385,7 +555,7 @@ class _LogoutButton extends StatelessWidget {
           textStyle: TextStyle(
             fontFamily: 'Onest',
             fontSize: responsive.bodySize * 1.02,
-            fontWeight: FontWeight.w400,
+            fontWeight: AppTypography.button,
           ),
         ),
       ),

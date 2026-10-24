@@ -6,7 +6,10 @@ import '../theme/app_theme.dart';
 import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
+import '../widgets/kage_achievement_badge.dart';
+import '../widgets/kage_stat_card.dart';
 import '../widgets/primary_button.dart';
+import '../widgets/secondary_button.dart';
 import 'quiz_page.dart';
 
 /// Halaman hasil: menyimpan skor, lalu menampilkan ringkasan dan pesan.
@@ -35,17 +38,17 @@ class _ResultPageState extends State<ResultPage> {
 
   String _messageFor(double percentage) {
     if (percentage >= 80) {
-      return 'Luar biasa!';
+      return 'Kamu Hebat!';
     }
     if (percentage >= 50) {
-      return 'Bagus!';
+      return 'Kerja Bagus!';
     }
-    return 'Ayo coba lagi';
+    return 'Ayo Coba Lagi';
   }
 
   String _descriptionFor(double percentage) {
     if (percentage >= 80) {
-      return 'Pemahaman Flutter dan Dart kamu sudah sangat kuat.';
+      return 'Pemahamanmu sudah sangat kuat. Pertahankan api semangat ini.';
     }
     if (percentage >= 50) {
       return 'Dasar-dasarnya sudah dikuasai. Sedikit latihan lagi!';
@@ -64,7 +67,6 @@ class _ResultPageState extends State<ResultPage> {
     Responsive responsive,
     QuizProvider provider,
     double percentage,
-    double iconSize,
   ) {
     // Di landscape jarak antarbagian dirapatkan supaya badge persentase
     // tidak terpotong di layar pendek.
@@ -78,13 +80,9 @@ class _ResultPageState extends State<ResultPage> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Center(
-          child: Image.asset(
-            'assets/images/trophy.png',
-            width: iconSize,
-            height: iconSize,
-            fit: BoxFit.contain,
-          ),
+        KageAchievementBadge(
+          percentage: percentage,
+          isFirstAttempt: provider.completedCount <= 1,
         ),
         SizedBox(height: gap),
         Text(
@@ -92,9 +90,9 @@ class _ResultPageState extends State<ResultPage> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: responsive.bodySize * 0.72,
-            fontWeight: FontWeight.w400,
+            fontWeight: AppTypography.label,
             letterSpacing: responsive.bodySize * 0.18,
-            color: AppColors.accent,
+            color: AppColors.antiqueGold,
           ),
         ),
         SizedBox(height: responsive.smallGap * 0.6),
@@ -104,22 +102,21 @@ class _ResultPageState extends State<ResultPage> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize: responsive.bodySize * 0.82,
-            fontWeight: FontWeight.w300,
-            color: AppColors.textSecondary,
+            fontSize: responsive.bodySize * 1.02,
+            fontWeight: AppTypography.title,
+            color: AppColors.ivory,
           ),
         ),
-        SizedBox(height: responsive.smallGap * 0.8),
+        SizedBox(height: responsive.smallGap * 0.35),
         Text(
           provider.playerName,
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize: responsive.headingSize * 0.8,
-            fontWeight: FontWeight.w400,
-            letterSpacing: responsive.letterSpacing,
-            color: AppColors.textPrimary,
+            fontSize: responsive.bodySize * 0.78,
+            fontWeight: AppTypography.label,
+            color: AppColors.textSecondary,
           ),
         ),
         SizedBox(height: gap),
@@ -135,46 +132,44 @@ class _ResultPageState extends State<ResultPage> {
               style: TextStyle(
                 fontSize: scoreSize,
                 height: 1,
-                fontWeight: FontWeight.w400,
+                fontWeight: AppTypography.hero,
                 letterSpacing: responsive.letterSpacing * 1.5,
-                color: AppColors.accent,
+                color: AppColors.vermilionLight,
               ),
             );
           },
         ),
+        SizedBox(height: responsive.smallGap * 0.3),
         Text(
           'dari ${provider.totalQuestions} soal',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: responsive.bodySize,
-            fontWeight: FontWeight.w300,
+            fontSize: responsive.bodySize * 0.82,
+            fontWeight: AppTypography.label,
             color: AppColors.textSecondary,
           ),
         ),
         SizedBox(height: gap),
-        Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: responsive.pagePadding * 0.5,
-              vertical: responsive.smallGap,
+        Row(
+          children: [
+            Expanded(
+              child: KageStatCard(label: 'Benar', value: '${provider.score}'),
             ),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(responsive.radius),
-              border: Border.all(
-                color: AppColors.border,
-                width: responsive.shortestSide * 0.005,
+            SizedBox(width: responsive.smallGap),
+            Expanded(
+              child: KageStatCard(
+                label: 'Salah',
+                value: '${provider.wrongCount}',
               ),
             ),
-            child: Text(
-              '${percentage.round()}% benar',
-              style: TextStyle(
-                fontSize: responsive.bodySize,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textPrimary,
+            SizedBox(width: responsive.smallGap),
+            Expanded(
+              child: KageStatCard(
+                label: 'Akurasi',
+                value: '${percentage.round()}%',
               ),
             ),
-          ),
+          ],
         ),
       ],
     );
@@ -194,10 +189,10 @@ class _ResultPageState extends State<ResultPage> {
           _messageFor(percentage),
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: responsive.headingSize * 0.5,
-            fontWeight: FontWeight.w400,
+            fontSize: responsive.headingSize * 0.55,
+            fontWeight: AppTypography.heading,
             letterSpacing: responsive.letterSpacing,
-            color: AppColors.correct,
+            color: AppColors.ivory,
           ),
         ),
         SizedBox(height: responsive.smallGap),
@@ -207,15 +202,21 @@ class _ResultPageState extends State<ResultPage> {
           style: TextStyle(
             fontSize: responsive.bodySize,
             height: 1.5,
-            fontWeight: FontWeight.w300,
+            fontWeight: AppTypography.body,
             color: AppColors.textSecondary,
           ),
         ),
         SizedBox(height: responsive.gap * 1.6),
         PrimaryButton(
-          label: 'Main Lagi',
+          label: 'Coba Lagi',
           icon: Icons.replay_rounded,
           onPressed: () => _playAgain(context, provider),
+        ),
+        SizedBox(height: responsive.smallGap * 0.8),
+        SecondaryButton(
+          label: 'Kembali',
+          icon: Icons.arrow_back_rounded,
+          onPressed: () => Navigator.of(context).maybePop(),
         ),
       ],
     );
@@ -226,11 +227,10 @@ class _ResultPageState extends State<ResultPage> {
     final responsive = Responsive(context);
     final provider = context.watch<QuizProvider>();
     final percentage = provider.percentage;
-    final iconSize =
-        responsive.shortestSide * (responsive.isLandscape ? 0.14 : 0.26);
 
     return Scaffold(
       body: AppBackground(
+        imageAsset: AppAssets.result,
         child: LayoutBuilder(
           builder: (context, constraints) {
             final verticalPadding =
@@ -238,12 +238,7 @@ class _ResultPageState extends State<ResultPage> {
             final minHeight = (constraints.maxHeight - verticalPadding * 2)
                 .clamp(0.0, double.infinity);
 
-            final summary = _buildSummary(
-              responsive,
-              provider,
-              percentage,
-              iconSize,
-            );
+            final summary = _buildSummary(responsive, provider, percentage);
             final feedback = _buildFeedback(
               context,
               responsive,
@@ -252,7 +247,7 @@ class _ResultPageState extends State<ResultPage> {
             );
 
             // Di landscape, ringkasan skor dan pesan disusun berdampingan
-            // agar tombol Main Lagi tetap terlihat tanpa scroll.
+            // agar tombol Coba Lagi tetap terlihat tanpa scroll.
             final content = responsive.isLandscape
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.center,

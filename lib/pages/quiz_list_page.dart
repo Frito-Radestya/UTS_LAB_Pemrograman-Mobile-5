@@ -30,19 +30,19 @@ class QuizListPage extends StatelessWidget {
                   fontSize: responsive.headingSize * 0.72,
                   height: 1.12,
                   letterSpacing: responsive.letterSpacing,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textPrimary,
+                  fontWeight: AppTypography.heading,
+                  color: AppColors.ivory,
                 ),
               ),
               SizedBox(height: responsive.smallGap * 0.6),
               Text(
-                'Setiap kategori berisi 10 soal pilihan ganda. '
-                'Pilih satu untuk memulai kuis.',
+                'Pilih satu perjalanan pengetahuan. Jumlah soal mengikuti '
+                'data kategori yang tersedia.',
                 style: TextStyle(
                   fontSize: responsive.bodySize * 0.92,
                   height: 1.45,
-                  fontWeight: FontWeight.w300,
-                  color: AppColors.textSecondary,
+                  fontWeight: AppTypography.body,
+                  color: AppColors.muted,
                 ),
               ),
               SizedBox(height: responsive.gap * 1.4),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/category.dart';
 import '../providers/auth_provider.dart';
 import '../providers/quiz_provider.dart';
+import '../theme/app_theme.dart';
 import '../utils/app_route.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_bottom_nav.dart';
@@ -57,6 +58,7 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AppBackground(
+        imageAsset: AppAssets.home,
         // IndexedStack menjaga state tiap tab saat pengguna berpindah tab.
         child: IndexedStack(
           index: _currentIndex,

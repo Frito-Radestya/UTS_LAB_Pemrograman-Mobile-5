@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
 
-/// Latar gambar kuil dengan overlay gelap agar teks tetap terbaca.
+import '../theme/app_theme.dart';
+
+/// Latar ilustrasi KAGE dengan overlay gelap agar teks tetap terbaca.
 class AppBackground extends StatelessWidget {
-  const AppBackground({super.key, required this.child});
+  const AppBackground({
+    super.key,
+    required this.child,
+    this.imageAsset = AppAssets.home,
+  });
 
   final Widget child;
+  final String imageAsset;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.asset('assets/images/bg_temple.jpg', fit: BoxFit.cover),
+        ColoredBox(color: AppColors.midnight),
+        Image.asset(
+          imageAsset,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const ColoredBox(color: AppColors.midnight);
+          },
+        ),
         const DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xA60D0D0D), Color(0xE60D0D0D)],
+              colors: [Color(0x990B0D12), Color(0xF20B0D12)],
             ),
           ),
         ),

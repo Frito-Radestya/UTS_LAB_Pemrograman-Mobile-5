@@ -67,7 +67,7 @@ class ScoreTile extends StatelessWidget {
                   '${record.percentage.round()}%',
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.9,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: AppTypography.title,
                     color: AppColors.accent,
                   ),
                 ),
@@ -85,7 +85,7 @@ class ScoreTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: responsive.bodySize,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: AppTypography.title,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -96,7 +96,7 @@ class ScoreTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.78,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: AppTypography.label,
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -105,7 +105,7 @@ class ScoreTile extends StatelessWidget {
                   _formatDateTime(record.dateTime),
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.7,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: AppTypography.label,
                     color: AppColors.textSecondary.withValues(alpha: 0.8),
                   ),
                 ),

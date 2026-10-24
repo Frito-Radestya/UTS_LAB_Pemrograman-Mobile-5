@@ -7,6 +7,7 @@ import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_text_field.dart';
+import '../widgets/kage_brand.dart';
 import '../widgets/primary_button.dart';
 import 'main_shell.dart';
 
@@ -151,6 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       body: AppBackground(
+        imageAsset: AppAssets.auth,
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
@@ -168,23 +170,22 @@ class _RegisterPageState extends State<RegisterPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Center(
-                            child: Image.asset(
-                              'assets/images/logo.png',
-                              width: responsive.heroIconSize * 0.7,
-                              height: responsive.heroIconSize * 0.7,
-                              fit: BoxFit.contain,
+                          const Center(
+                            child: KageBrand(
+                              logoScale: 0.5,
+                              wordmarkScale: 0.7,
+                              showTagline: false,
                             ),
                           ),
                           SizedBox(height: responsive.gap),
                           Text(
-                            'BUAT AKUN',
+                            'DAFTAR AKUN',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: responsive.bodySize * 0.72,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: AppTypography.label,
                               letterSpacing: responsive.bodySize * 0.18,
-                              color: AppColors.accent,
+                              color: AppColors.antiqueGold,
                             ),
                           ),
                           SizedBox(height: responsive.smallGap),
@@ -195,7 +196,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               fontSize: responsive.headingSize * 0.82,
                               height: 1.1,
                               letterSpacing: responsive.letterSpacing,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: AppTypography.heading,
                               color: AppColors.textPrimary,
                             ),
                           ),
@@ -206,7 +207,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             style: TextStyle(
                               fontSize: responsive.bodySize,
                               height: 1.5,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: AppTypography.body,
                               color: AppColors.textSecondary,
                             ),
                           ),
@@ -295,7 +296,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: responsive.bodySize * 0.82,
-                                color: AppColors.accent,
+                                color: AppColors.vermilionLight,
                               ),
                             ),
                           ],
@@ -303,7 +304,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           PrimaryButton(
                             key: const Key('register-submit'),
                             label: 'Daftar',
-                            icon: Icons.person_add_alt_1_rounded,
+                            icon: Icons.arrow_forward_rounded,
                             onPressed: _submit,
                           ),
                           SizedBox(height: responsive.gap * 0.4),
@@ -325,8 +326,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   'Masuk',
                                   style: TextStyle(
                                     fontSize: responsive.bodySize * 0.85,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.accent,
+                                    fontWeight: AppTypography.button,
+                                    color: AppColors.vermilionLight,
                                   ),
                                 ),
                               ),

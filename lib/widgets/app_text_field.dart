@@ -59,7 +59,7 @@ class AppTextField extends StatelessWidget {
             label.toUpperCase(),
             style: TextStyle(
               fontSize: responsive.bodySize * 0.7,
-              fontWeight: FontWeight.w400,
+              fontWeight: AppTypography.label,
               letterSpacing: responsive.bodySize * 0.08,
               color: AppColors.textSecondary,
             ),
@@ -79,7 +79,7 @@ class AppTextField extends StatelessWidget {
           cursorColor: AppColors.accent,
           style: TextStyle(
             fontSize: responsive.bodySize,
-            fontWeight: FontWeight.w300,
+            fontWeight: AppTypography.body,
             color: AppColors.textPrimary,
           ),
           decoration: InputDecoration(

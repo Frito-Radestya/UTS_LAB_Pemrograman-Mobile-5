@@ -7,19 +7,24 @@
 
 - Lisensi: SIL Open Font License 1.1 (`assets/fonts/OFL.txt`).
 - Sumber berkas: <https://github.com/google/fonts/tree/main/ofl/onest>.
-- `Onest-Light.ttf` (weight 300) dan `Onest-Regular.ttf` (weight 400) dibuat
-  dari variable font Onest `wght` agar dapat didaftarkan sebagai dua weight
-  statis di `pubspec.yaml`.
+- `Onest-Regular.ttf` (400), `Onest-Medium.ttf` (500),
+  `Onest-SemiBold.ttf` (600), dan `Onest-Bold.ttf` (700) dibuat dari variable
+  font Onest `wght` agar dapat didaftarkan sebagai empat weight statis di
+  `pubspec.yaml`.
+- `Onest-Light.ttf` (300) lama disimpan sebagai arsip dan tidak dibundel.
 - Dipakai untuk seluruh teks aplikasi. Tidak memakai paket `google_fonts`.
 
 ## Gambar
 
-Aset berikut dibuat khusus untuk project ini (ilustrasi sederhana, bukan
-salinan aset pihak ketiga):
+Ilustrasi latar, kategori, badge, dan mark KAGE dibuat khusus untuk project
+ini (bukan salinan aset pihak ketiga). Rincian berkas ada di
+`docs/ASSET_CATALOG.md`.
 
-- `assets/images/bg_temple.jpg` — latar gelap bertema kuil/torii.
-- `assets/images/logo.png` — logo gerbang torii.
-- `assets/images/trophy.png` — ikon piala di halaman hasil.
+Aset lama (disimpan sebagai arsip, tidak dipakai dan tidak dibundel):
+
+- `assets/images/bg_temple.jpg`
+- `assets/images/logo.png`
+- `assets/images/trophy.png`
 
 ## Ikon
 

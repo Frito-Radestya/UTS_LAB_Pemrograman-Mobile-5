@@ -39,13 +39,13 @@ void main() {
     await tester.pumpWidget(const MyApp());
 
     expect(find.byType(SplashPage), findsOneWidget);
-    expect(find.text('Flutter & Dart'), findsOneWidget);
+    expect(find.text('KAGE'), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 2));
     await tester.pumpAndSettle();
 
     expect(find.byType(LoginPage), findsOneWidget);
-    expect(find.text('Masuk ke akunmu'), findsOneWidget);
+    expect(find.text('Selamat datang kembali.'), findsOneWidget);
   });
 
   testWidgets('login menolak email dan password kosong', (tester) async {
@@ -146,7 +146,6 @@ void main() {
     expect(find.text('Kategori Kuis'), findsOneWidget);
     expect(find.text('Flutter Dasar'), findsOneWidget);
     expect(find.text('Dart & Pemrograman'), findsOneWidget);
-    expect(find.text('Belum ada skor'), findsOneWidget);
 
     await tester.tap(find.text('Kuis'));
     await tester.pumpAndSettle();
@@ -165,7 +164,7 @@ void main() {
     expect(find.byType(ProfilePage), findsOneWidget);
     expect(find.text('Demo Mahasiswa'), findsOneWidget);
     expect(find.text('demo@mail.com'), findsOneWidget);
-    expect(find.text('Kuis Pemrograman Mobile'), findsOneWidget);
+    expect(find.text('KAGE — The Quiz Sanctuary'), findsOneWidget);
     expect(find.text('Versi 1.0.0'), findsOneWidget);
 
     await tester.tap(find.text('Beranda'));
@@ -269,7 +268,7 @@ void main() {
     expect(find.byType(QuizPage), findsNothing);
     expect(find.byType(ResultPage), findsNothing);
     expect(find.text('Belum ada skor'), findsNothing);
-    expect(find.byType(ScoreTile), findsOneWidget);
+    expect(find.text('Kuis selesai'), findsOneWidget);
 
     await tester.tap(find.text('Skor'));
     await tester.pumpAndSettle();

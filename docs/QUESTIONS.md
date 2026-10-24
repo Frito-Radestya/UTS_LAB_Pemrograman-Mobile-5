@@ -54,5 +54,8 @@ const List<Category> quizCategories = [
 ];
 ```
 
-Kategori aktif dipilih dari halaman daftar kuis. Setiap kategori berisi
-tepat 10 soal dan setiap soal memiliki 4 opsi.
+Kategori aktif dipilih dari Beranda atau halaman daftar kuis. Setiap kategori
+berisi tepat 10 soal dan setiap soal memiliki 4 opsi.
+
+Selain dua kategori di atas, `lib/data/questions_data.dart` juga memuat
+Sains, Teknologi, Sejarah, Logika, dan Pengetahuan Umum (masing-masing 10 soal).

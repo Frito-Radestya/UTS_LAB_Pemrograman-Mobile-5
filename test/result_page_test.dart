@@ -34,7 +34,8 @@ void main() {
     await tester.pump();
     expect(provider.history, hasLength(1));
 
-    final playAgain = find.text('Main Lagi');
+    final playAgain = find.text('Coba Lagi');
+    expect(find.text('Kembali'), findsOneWidget);
     await tester.ensureVisible(playAgain);
     await tester.tap(playAgain);
     await tester.pumpAndSettle();

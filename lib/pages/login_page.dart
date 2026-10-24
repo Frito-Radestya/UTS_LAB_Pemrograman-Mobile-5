@@ -7,7 +7,9 @@ import '../utils/app_route.dart';
 import '../utils/responsive.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_text_field.dart';
+import '../widgets/kage_brand.dart';
 import '../widgets/primary_button.dart';
+import '../widgets/secondary_button.dart';
 import 'main_shell.dart';
 import 'register_page.dart';
 
@@ -70,8 +72,6 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // Masuk ke shell dan hapus Login/Splash dari tumpukan navigasi agar
-    // tombol back tidak kembali ke halaman login.
     Navigator.of(context)
         .pushAndRemoveUntil(AppRoute.fade(const MainShell()), (route) => false);
   }
@@ -86,6 +86,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       body: AppBackground(
+        imageAsset: AppAssets.auth,
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
@@ -103,46 +104,33 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Center(
-                            child: Image.asset(
-                              'assets/images/logo.png',
-                              width: responsive.heroIconSize * 0.82,
-                              height: responsive.heroIconSize * 0.82,
-                              fit: BoxFit.contain,
+                          const Center(
+                            child: KageBrand(
+                              logoScale: 0.62,
+                              wordmarkScale: 0.88,
                             ),
                           ),
                           SizedBox(height: responsive.gap),
                           Text(
-                            'SELAMAT DATANG',
+                            'Selamat datang kembali.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: responsive.bodySize * 0.72,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: responsive.bodySize * 0.18,
-                              color: AppColors.accent,
-                            ),
-                          ),
-                          SizedBox(height: responsive.smallGap),
-                          Text(
-                            'Masuk ke akunmu',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: responsive.headingSize * 0.82,
+                              fontSize: responsive.headingSize * 0.72,
                               height: 1.1,
                               letterSpacing: responsive.letterSpacing,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.textPrimary,
+                              fontWeight: AppTypography.heading,
+                              color: AppColors.ivory,
                             ),
                           ),
                           SizedBox(height: responsive.smallGap),
                           Text(
-                            'Lanjutkan latihan Flutter dan Dart dari akunmu.',
+                            'Masuk untuk melanjutkan perjalanan pengetahuanmu.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: responsive.bodySize,
                               height: 1.5,
-                              fontWeight: FontWeight.w300,
-                              color: AppColors.textSecondary,
+                              fontWeight: AppTypography.body,
+                              color: AppColors.muted,
                             ),
                           ),
                           SizedBox(height: responsive.gap * 1.5),
@@ -177,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ? Icons.visibility_outlined
                                     : Icons.visibility_off_outlined,
                                 size: responsive.bodySize * 1.2,
-                                color: AppColors.textSecondary,
+                                color: AppColors.muted,
                               ),
                             ),
                             validator: _validatePassword,
@@ -190,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: responsive.bodySize * 0.82,
-                                color: AppColors.accent,
+                                color: AppColors.error,
                               ),
                             ),
                           ],
@@ -201,41 +189,21 @@ class _LoginPageState extends State<LoginPage> {
                             icon: Icons.arrow_forward_rounded,
                             onPressed: _submit,
                           ),
-                          SizedBox(height: responsive.gap * 0.4),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  'Belum punya akun?',
-                                  style: TextStyle(
-                                    fontSize: responsive.bodySize * 0.85,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: _openRegister,
-                                child: Text(
-                                  'Daftar',
-                                  style: TextStyle(
-                                    fontSize: responsive.bodySize * 0.85,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.accent,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          SizedBox(height: responsive.gap * 0.55),
+                          SecondaryButton(
+                            label: 'Daftar',
+                            icon: Icons.person_add_alt_1_rounded,
+                            onPressed: _openRegister,
                           ),
-                          SizedBox(height: responsive.smallGap),
+                          SizedBox(height: responsive.gap * 0.8),
                           Text(
-                            'Akun demo: demo@mail.com / 123456',
+                            'Akun hanya tersimpan selama aplikasi berjalan.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: responsive.bodySize * 0.68,
-                              color: AppColors.textSecondary.withValues(
-                                alpha: 0.8,
-                              ),
+                              fontSize: responsive.bodySize * 0.72,
+                              height: 1.4,
+                              fontWeight: AppTypography.body,
+                              color: AppColors.muted,
                             ),
                           ),
                         ],

@@ -55,6 +55,39 @@ class QuizProvider extends ChangeNotifier {
   double get percentage =>
       _questions.isEmpty ? 0 : (score / _questions.length) * 100;
 
+  int get wrongCount => totalQuestions - score;
+
+  /// Jumlah percobaan yang benar-benar tersimpan di riwayat sesi ini.
+  int get completedCount => _history.length;
+
+  /// Skor terbaik berdasarkan persentase, atau null jika belum ada riwayat.
+  ScoreRecord? get bestScore {
+    if (_history.isEmpty) {
+      return null;
+    }
+    var best = _history.first;
+    for (final record in _history.skip(1)) {
+      if (record.percentage > best.percentage) {
+        best = record;
+      }
+    }
+    return best;
+  }
+
+  /// Kategori dari percobaan terakhir, dicocokkan ke data aktual.
+  Category? get lastCategory {
+    final title = _lastScore?.categoryTitle;
+    if (title == null) {
+      return null;
+    }
+    for (final category in quizCategories) {
+      if (category.title == title) {
+        return category;
+      }
+    }
+    return null;
+  }
+
   /// Memulai kategori baru dengan progres kosong dan nama pemain aktif.
   void startCategory(Category category, {required String playerName}) {
     _activeCategory = category;

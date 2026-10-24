@@ -110,6 +110,7 @@ class QuizPage extends StatelessWidget {
 
     return Scaffold(
       body: AppBackground(
+        imageAsset: AppAssets.quiz,
         child: LayoutBuilder(
           builder: (context, constraints) {
             final verticalPadding =
@@ -155,8 +156,8 @@ class QuizPage extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: responsive.bodySize * 0.7,
                                       letterSpacing: responsive.bodySize * 0.08,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.accent,
+                                      fontWeight: AppTypography.label,
+                                      color: AppColors.antiqueGold,
                                     ),
                                   ),
                                   SizedBox(height: responsive.smallGap * 0.3),
@@ -168,7 +169,7 @@ class QuizPage extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontSize: responsive.bodySize * 1.15,
-                                      fontWeight: FontWeight.w400,
+                                      fontWeight: AppTypography.title,
                                       color: AppColors.textPrimary,
                                     ),
                                   ),
@@ -181,7 +182,7 @@ class QuizPage extends StatelessWidget {
                               '${provider.totalQuestions}',
                               style: TextStyle(
                                 fontSize: responsive.bodySize * 0.82,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: AppTypography.label,
                                 color: AppColors.textSecondary,
                               ),
                             ),

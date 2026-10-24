@@ -11,9 +11,12 @@ void main() {
     }
   });
 
-  test('tersedia dua kategori dengan masing-masing 10 soal', () {
-    expect(quizCategories, hasLength(2));
-    expect(quizCategories.map((category) => category.id).toSet(), hasLength(2));
+  test('tersedia kategori dengan masing-masing 10 soal', () {
+    expect(quizCategories.length, greaterThanOrEqualTo(2));
+    expect(
+      quizCategories.map((category) => category.id).toSet(),
+      hasLength(quizCategories.length),
+    );
 
     for (final category in quizCategories) {
       expect(category.title, isNotEmpty);

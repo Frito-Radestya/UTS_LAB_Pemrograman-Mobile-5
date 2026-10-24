@@ -13,7 +13,7 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 
 ### Task 1 — Setup project, aset, dan font
 - [x] Tambah dependency `provider` di `pubspec.yaml`
-- [x] Daftarkan folder aset dan font Onest (Light 300, Regular 400)
+- [x] Daftarkan folder aset dan font Onest (Regular 400, Medium 500, SemiBold 600, Bold 700)
 - [x] Buat struktur folder `lib/pages`, `lib/widgets`, `lib/providers`, `lib/data`, `lib/models`, `lib/utils`
 - [x] Buat `lib/utils/responsive.dart` (helper ukuran dari `MediaQuery`)
 - [x] Buat `lib/theme/app_theme.dart` (warna dan font dari `DESIGN.md`)
@@ -50,7 +50,7 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 
 ### Task 7 — Halaman Hasil (ResultPage)
 - [x] Tampilkan nama, skor, persentase, dan pesan sesuai skor
-- [x] Tombol Main Lagi (reset provider dan kembali ke Halaman Nama)
+- [x] Tombol Coba Lagi (reset provider dan kembali ke kuis)
 - Commit: `feat: halaman hasil skor akhir dan reset`
 
 ### Task 8 — Navigasi dan transisi
@@ -85,6 +85,17 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - [x] Task 10 — Pemeriksaan responsif dan rotasi untuk alur baru
 - [x] Task 11 — Polesan akhir, pembersihan kode lama, dan pembaruan dokumentasi
 
+## Redesign KAGE — The Quiz Sanctuary
+- [x] Design system, aset lokal, dan redesign seluruh halaman
+- [x] Terapkan brand KAGE (emblem, wordmark, tagline) di splash, login, dan register
+- [x] Beranda baru: progres kategori, kartu petualangan, daftar kategori horizontal, dan statistik
+- [x] Profil baru: ringkasan statistik dan koleksi badge presentasional
+- [x] Halaman hasil dengan emblem, skor, benar/salah, dan akurasi
+- [x] Halaman Pengaturan
+- [x] Branding web: judul, manifest, favicon, dan ikon KAGE
+- [x] Hierarki tipografi Onest 400/500/600/700 lewat `AppTypography` dan `ThemeData`
+- [x] Ganti screenshot dokumentasi dengan tampilan KAGE
+
 ## Pengujian Akhir (manual)
 - [ ] Login kosong atau format email salah tidak bisa lanjut
 - [ ] Registrasi dengan data valid langsung masuk ke `MainShell`
@@ -92,6 +103,6 @@ Kerjakan **berurutan**, satu task per sesi. Setelah selesai: centang `[x]`, jala
 - [ ] Jawab semua soal, skor dan riwayat muncul dengan benar
 - [ ] Rotasi di tengah kuis, soal aktif dan jawaban tetap
 - [ ] Pindah tab dan halaman lalu kembali, progres tetap
-- [ ] Main Lagi mereset progres tanpa menghapus riwayat
+- [ ] Coba Lagi mereset progres tanpa menghapus riwayat
 - [ ] Logout kembali ke Login dan tombol back tidak membuka sesi lama
 - [ ] Tampilan oke di layar kecil, portrait, landscape, dan tablet

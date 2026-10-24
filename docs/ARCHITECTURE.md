@@ -9,13 +9,16 @@ kuis_app/
 ├── TASKS.md
 ├── pubspec.yaml
 ├── assets/
-│   ├── fonts/            # Onest-Light.ttf, Onest-Regular.ttf
-│   ├── images/           # bg_temple.jpg, logo.png, trophy.png
-│   └── references/       # screenshot Kage (tidak ikut build)
+│   ├── fonts/            # Onest Regular 400, Medium 500, SemiBold 600, Bold 700
+│   ├── images/           # background, kategori, badge, dekorasi, ikon KAGE
+│   └── references/       # screenshot referensi (tidak ikut build)
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── QUESTIONS.md
-│   └── CREDITS.md
+│   ├── CREDITS.md
+│   ├── DESIGN.md
+│   ├── ASSET_CATALOG.md
+│   └── IMPLEMENTATION_REPORT.md
 ├── web/                  # entry point Flutter Web (index.html, manifest, ikon)
 └── lib/
     ├── main.dart
@@ -39,6 +42,7 @@ kuis_app/
     │   ├── quiz_list_page.dart   # daftar kategori di tab Kuis
     │   ├── score_page.dart       # tab Skor
     │   ├── profile_page.dart     # tab Profil dan logout
+    │   ├── settings_page.dart
     │   ├── quiz_page.dart
     │   └── result_page.dart
     ├── widgets/
@@ -47,11 +51,19 @@ kuis_app/
     │   ├── app_text_field.dart
     │   ├── category_card.dart
     │   ├── empty_score_card.dart
+    │   ├── kage_achievement_badge.dart
+    │   ├── kage_badge_tile.dart
+    │   ├── kage_brand.dart
+    │   ├── kage_category_tile.dart
+    │   ├── kage_logo.dart
+    │   ├── kage_section_header.dart
+    │   ├── kage_stat_card.dart
     │   ├── option_button.dart
     │   ├── primary_button.dart
     │   ├── question_card.dart
     │   ├── quiz_progress_bar.dart
-    │   └── score_tile.dart
+    │   ├── score_tile.dart
+    │   └── secondary_button.dart
     ├── theme/
     │   └── app_theme.dart
     ├── utils/
@@ -106,7 +118,7 @@ Setiap perubahan memanggil `notifyListeners()`.
 |---|---|---|
 | `User` | `name`, `nim`, `email`, `prodi`, `password` | Akun dummy di memori |
 | `Question` | `text`, `options`, `correctIndex` | Tepat 4 opsi (A–D) |
-| `Category` | `id`, `title`, `description`, `icon`, `questions` | Satu kategori berisi 10 soal |
+| `Category` | `id`, `title`, `description`, `icon`, `imageAsset`, `questions` | Satu kategori berisi 10 soal dan ilustrasi lokal |
 | `ScoreRecord` | `playerName`, `categoryTitle`, `score`, `total`, `dateTime` | Riwayat satu percobaan kuis |
 
 `QuizProvider` memilih kategori lewat `startCategory()`. Data kategori dan
@@ -122,8 +134,8 @@ akun dummy berada di `lib/data/`.
 | `MainShell` | Stateful | Menyimpan indeks tab aktif; `IndexedStack` menjaga state tiap tab |
 | `HomePage` | Stateless | Membaca `AuthProvider` dan `QuizProvider`, lalu menampilkan Beranda |
 | `QuizListPage` | Stateless | Menampilkan daftar kategori; aksi mulai kuis diteruskan lewat callback |
-| `ScorePage` | Stateless | Membaca `lastScore` dan `history` dari `QuizProvider` |
-| `ProfilePage` | Stateless | Membaca akun aktif dari `AuthProvider`; aksi logout diteruskan lewat callback |
+| `ScorePage` | Stateful | Menyimpan filter kategori di tab Skor; data berasal dari `QuizProvider` |
+| `ProfilePage` | Stateless | Membaca akun aktif dan riwayat untuk ringkasan/badge; logout diteruskan lewat callback |
 | `ResultPage` | Stateful | Menyimpan hasil sekali lewat post-frame callback di `initState` |
 | `QuizPage` | Stateless | Membaca data dari Provider |
 | `MyApp` | Stateless | Root aplikasi |
@@ -143,13 +155,15 @@ akun dummy berada di `lib/data/`.
 - `QuizPage` → `ResultPage` dengan `pushReplacement`, sehingga back dari hasil
   tidak membuka kuis yang sudah selesai.
 - `ResultPage` menyimpan hasil sekali ke `QuizProvider` setelah frame pertama.
-  Tombol Main Lagi memanggil `resetQuiz()` lalu mengganti halaman dengan
+  Tombol Coba Lagi memanggil `resetQuiz()` lalu mengganti halaman dengan
   `QuizPage` kategori yang sama; riwayat tetap tersimpan.
-- Tab Skor menampilkan `lastScore` dan sisa `history` (terbaru di atas).
-- Tab Profil menampilkan nama, email, NIM, program studi, dan info aplikasi.
-  Tombol Keluar memanggil `AuthProvider.logout()`, lalu membuka `LoginPage`
-  dengan `pushAndRemoveUntil` agar `MainShell` tidak tersisa di tumpukan
-  navigasi dan tombol back tidak membuka sesi lama.
+- Tab Skor menampilkan `lastScore` dan sisa `history` (terbaru di atas), dengan
+  filter kategori.
+- Tab Profil menampilkan nama, email, NIM, program studi, ringkasan statistik,
+  badge presentasional, dan info aplikasi. Halaman Pengaturan dibuka lewat
+  `Navigator.push`. Tombol Keluar memanggil `AuthProvider.logout()`, lalu
+  membuka `LoginPage` dengan `pushAndRemoveUntil` agar `MainShell` tidak
+  tersisa di tumpukan navigasi dan tombol back tidak membuka sesi lama.
 
 ## Responsif
 Semua ukuran melalui helper `lib/utils/responsive.dart` (berbasis `MediaQuery`), contoh:

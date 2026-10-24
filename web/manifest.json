@@ -1,11 +1,11 @@
 {
-    "name": "Kuis Pemrograman Mobile",
-    "short_name": "Kuis Mobile",
+    "name": "KAGE — The Quiz Sanctuary",
+    "short_name": "KAGE",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0D0D0D",
-    "theme_color": "#0D0D0D",
-    "description": "Aplikasi kuis pilihan ganda Flutter dan Dart untuk UTS Lab Pemrograman Mobile.",
+    "background_color": "#0B0D12",
+    "theme_color": "#0B0D12",
+    "description": "Aplikasi kuis pilihan ganda bertema kuil Jepang malam hari.",
     "orientation": "any",
     "prefer_related_applications": false,
     "icons": [

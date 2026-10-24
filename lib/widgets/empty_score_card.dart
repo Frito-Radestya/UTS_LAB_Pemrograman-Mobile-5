@@ -42,7 +42,7 @@ class EmptyScoreCard extends StatelessWidget {
                   'Belum ada skor',
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.95,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: AppTypography.title,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -52,7 +52,7 @@ class EmptyScoreCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: responsive.bodySize * 0.76,
                     height: 1.35,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: AppTypography.body,
                     color: AppColors.textSecondary,
                   ),
                 ),

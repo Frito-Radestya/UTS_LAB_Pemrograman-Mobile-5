@@ -4,7 +4,7 @@ import '../models/category.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive.dart';
 
-/// Kartu kategori kuis untuk halaman Beranda dan daftar kuis.
+/// Kartu kategori kuis untuk halaman daftar kuis.
 class CategoryCard extends StatelessWidget {
   const CategoryCard({super.key, required this.category, required this.onTap});
 
@@ -14,7 +14,7 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
-    final iconBoxSize = responsive.bodySize * 2.8;
+    final thumbSize = responsive.bodySize * 3.2;
 
     return Material(
       color: AppColors.surface,
@@ -29,20 +29,37 @@ class CategoryCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.all(responsive.pagePadding * 0.5),
+          padding: EdgeInsets.all(responsive.pagePadding * 0.45),
           child: Row(
             children: [
-              Container(
-                width: iconBoxSize,
-                height: iconBoxSize,
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(responsive.radius * 0.7),
-                ),
-                child: Icon(
-                  category.icon,
-                  size: responsive.iconSize,
-                  color: AppColors.accent,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(responsive.radius * 0.7),
+                child: SizedBox(
+                  width: thumbSize,
+                  height: thumbSize,
+                  child: category.imageAsset == null
+                      ? ColoredBox(
+                          color: AppColors.vermilion.withValues(alpha: 0.12),
+                          child: Icon(
+                            category.icon,
+                            size: responsive.iconSize,
+                            color: AppColors.vermilion,
+                          ),
+                        )
+                      : Image.asset(
+                          category.imageAsset!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return ColoredBox(
+                              color: AppColors.charcoal,
+                              child: Icon(
+                                category.icon,
+                                size: responsive.iconSize,
+                                color: AppColors.vermilion,
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ),
               SizedBox(width: responsive.pagePadding * 0.45),
@@ -56,8 +73,8 @@ class CategoryCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: responsive.bodySize * 1.05,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary,
+                        fontWeight: AppTypography.title,
+                        color: AppColors.ivory,
                       ),
                     ),
                     SizedBox(height: responsive.smallGap * 0.35),
@@ -67,9 +84,9 @@ class CategoryCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: responsive.bodySize * 0.78,
-                        fontWeight: FontWeight.w300,
+                        fontWeight: AppTypography.body,
                         height: 1.35,
-                        color: AppColors.textSecondary,
+                        color: AppColors.muted,
                       ),
                     ),
                     SizedBox(height: responsive.smallGap * 0.55),
@@ -77,8 +94,8 @@ class CategoryCard extends StatelessWidget {
                       '${category.questions.length} soal',
                       style: TextStyle(
                         fontSize: responsive.bodySize * 0.72,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.accent,
+                        fontWeight: AppTypography.label,
+                        color: AppColors.vermilionLight,
                       ),
                     ),
                   ],
@@ -88,7 +105,7 @@ class CategoryCard extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: responsive.bodySize * 0.8,
-                color: AppColors.textSecondary,
+                color: AppColors.muted,
               ),
             ],
           ),

@@ -1,70 +1,59 @@
 # DESIGN.md — Panduan Visual
 
-Referensi gaya: Kage Landing Page (ThreeUI). Yang diadopsi hanya **bahasa visualnya** (warna, font, suasana), bukan salinan layout atau aset.
+Identitas: **KAGE — The Quiz Sanctuary**. Suasana kuil Jepang malam hari, torii vermilion, bulan, kabut, dan sakura. Yang diadopsi adalah bahasa visual, bukan salinan layout atau aset pihak ketiga.
 
-> **Catatan**: Warna aksen, font, berat font, ukuran, dan letter spacing berasal dari data teknis komponen. Nilai yang bertanda *(asumsi)* belum diverifikasi dan harus disesuaikan setelah screenshot referensi tersedia di `assets/references/`.
+Font: Onest (Regular 400, Medium 500, SemiBold 600, Bold 700) di `assets/fonts/`. Light 300 lama tidak dipakai dan tidak dibundel. Tidak memakai `google_fonts`.
 
-## 1. Suasana
-Gelap, tenang, dramatis, nuansa kuil Jepang, dengan satu aksen merah vermilion. Minimalis, banyak ruang kosong, tipografi bersih.
+## 1. Palet Warna
 
-## 2. Palet Warna
 | Peran | Hex | Status |
 |---|---|---|
-| Aksen utama (tombol, progress, highlight) | `#E0231C` | Dari referensi |
-| Latar utama | `#0D0D0D` | *(asumsi)* |
-| Permukaan kartu | `#1A1A1A` | *(asumsi)* |
-| Border tipis | `#2E2E2E` | *(asumsi)* |
-| Teks utama | `#F5F2EC` | *(asumsi)* |
-| Teks sekunder | `#A8A39A` | *(asumsi)* |
-| Benar (hasil) | `#4CAF50` | *(asumsi)* |
+| Midnight (latar) | `#0B0D12` | Token KAGE |
+| Charcoal | `#171A22` | Token KAGE |
+| Surface (kartu) | `#20242D` | Token KAGE |
+| Elevated | `#272C36` | Token KAGE |
+| Vermilion (tombol, progres) | `#B9232C` | Token KAGE |
+| Vermilion Light | `#E1484D` | Token KAGE |
+| Antique Gold | `#C9A56A` | Token KAGE |
+| Ivory (teks utama) | `#E8E4DD` | Token KAGE |
+| Muted (teks sekunder) | `#9297A2` | Token KAGE |
+| Success | `#53B889` | Token KAGE |
+| Error | `#E15A62` | Token KAGE |
+| Border | `#343944` | Token KAGE |
 
-Aksen merah dipakai hemat: tombol utama, progress bar, opsi terpilih, dan angka skor.
+Vermilion dipakai hemat: tombol utama, progress, opsi terpilih. Emas hanya untuk badge dan aksen kecil.
 
-## 3. Tipografi
-- **Font**: Onest (file `.ttf` di-bundle di `assets/fonts/`, family `Onest`)
-- **Heading**: weight 400
-- **Body**: weight 300
-- **Rumus ukuran (tanpa hardcode)**, dengan `w = MediaQuery.of(context).size.width`:
+## 2. Tipografi
 
-| Elemen | Ukuran | Dasar |
-|---|---|---|
-| Heading | `w * 0.115` | 46 ÷ 400 |
-| Body | `w * 0.0425` | 17 ÷ 400 |
-| Letter spacing heading | `headingSize * -0.012` | dari referensi |
+- Hero/wordmark: Onest 700, `headingSize` dari `responsive.dart`
+- Judul halaman/section: Onest 600, `headingSize`
+- Judul card: Onest 600, `bodySize`
+- Teks soal/isi: Onest 400, `bodySize`
+- Label/metadata: Onest 500, `bodySize`
+- Tombol: Onest 600, `buttonHeight`
+- Letter spacing heading: `headingSize * -0.012`
+- Bobot terpusat di `AppTypography` dan `ThemeData` (`lib/theme/app_theme.dart`).
 
-Disarankan membuat helper (misal `lib/utils/responsive.dart`) agar rumus ini satu tempat. Beri batas (`clamp`) supaya tidak terlalu besar di tablet atau landscape.
+## 3. Spacing
 
-## 4. Spacing dan Ukuran Dinamis
 - Padding halaman: `w * 0.06`
-- Jarak antar-elemen: `h * 0.02`
-- Tinggi tombol: `h * 0.07`
-- Radius sudut: `w * 0.03`
-- Lebar konten di landscape dibatasi (`ConstrainedBox` atau `FractionallySizedBox`) agar tidak melebar berlebihan.
-- Halaman yang bisa lebih panjang dari layar dibungkus `SingleChildScrollView` supaya aman saat rotasi.
+- Jarak: `h * 0.02`
+- Tinggi tombol: `buttonHeight` (dinamis)
+- Radius: `radius` (dinamis)
+- Konten landscape dibatasi `contentWidth`
+- Halaman panjang dibungkus `SingleChildScrollView`
 
-## 5. Komponen
-| Komponen | Gaya |
-|---|---|
-| Tombol utama | Isi `#E0231C`, teks putih, radius dinamis; nonaktif = abu gelap |
-| Tombol opsi jawaban | Latar kartu, border tipis; terpilih = border dan huruf opsi berwarna aksen |
-| Kartu pertanyaan | Latar permukaan, border tipis, padding dinamis |
-| Progress bar | Track `#2E2E2E`, isi `#E0231C` |
-| Input nama | Latar permukaan, border tipis; fokus = border aksen |
+## 4. Komponen
 
-## 6. Animasi
-- Transisi antar-halaman: fade (`PageRouteBuilder` + `FadeTransition`)
-- Pergantian soal: `AnimatedSwitcher` (fade, ±300 ms)
-- Progress bar: `AnimatedContainer` atau `TweenAnimationBuilder`
-- Angka skor di Halaman Hasil: animasi hitung naik (opsional)
-- Tidak ada animasi berlebihan; semua halus dan singkat.
+Lihat `lib/widgets/`. Latar memakai overlay gelap di atas ilustrasi lokal.
 
-## 7. Aset (akan disiapkan manual)
-| File | Fungsi |
-|---|---|
-| `assets/images/bg_temple.jpg` | Latar gelap bertema kuil/torii (diberi overlay gelap agar teks terbaca) |
-| `assets/images/logo.png` | Logo/ikon aplikasi di Halaman Nama |
-| `assets/images/trophy.png` | Ikon di Halaman Hasil |
-| `assets/fonts/Onest-Light.ttf` | Font body (300) |
-| `assets/fonts/Onest-Regular.ttf` | Font heading (400) |
+## 5. Animasi
 
-Semua aset harus berlisensi bebas pakai. Catat sumbernya di `docs/CREDITS.md`.
+- Transisi halaman: fade 300 ms
+- Ganti soal: `AnimatedSwitcher` 300 ms
+- Progress bar: 300 ms
+- Angka skor: hitung naik
+
+## 6. Aset
+
+Katalog lengkap: `docs/ASSET_CATALOG.md`.

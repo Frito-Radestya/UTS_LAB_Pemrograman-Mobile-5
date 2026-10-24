@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => QuizProvider()),
       ],
       child: MaterialApp(
-        title: 'Kuis Pemrograman Mobile',
+        title: 'KAGE',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.dark,
         home: const _EntryGate(),
