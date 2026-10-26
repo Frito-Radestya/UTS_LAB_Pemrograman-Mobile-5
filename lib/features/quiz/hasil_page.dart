@@ -9,6 +9,7 @@ import 'package:kage/models/models.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/features/profile/progress.dart';
 import 'package:kage/features/profile/progress_controller.dart';
+import 'package:kage/features/quiz/answer_review.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
@@ -321,38 +322,7 @@ class HasilPage extends StatelessWidget {
                   ),
                   if (quiz.review.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    // Material, bukan Container, agar perluasan tile tetap
-                    // menggambar latarnya dengan benar.
-                    Material(
-                      color: AppColors.surface,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: const BorderSide(color: AppColors.borderStrong),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Tinjau jawaban',
-                              style: AppTextStyles.titleMedium,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Buka satu soal untuk membaca pembahasannya.',
-                              style: AppTextStyles.bodySmallMuted,
-                            ),
-                            const SizedBox(height: 8),
-                            for (var i = 0; i < quiz.review.length; i++)
-                              _reviewTile(context, quiz.review[i], i),
-                          ],
-                        ),
-                      ),
-                    ),
+                    AnswerReviewPanel(reviews: quiz.review),
                   ],
                   const SizedBox(height: 16),
                   if (quiz.wrongReview.isNotEmpty) ...[
@@ -379,59 +349,6 @@ class HasilPage extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Satu soal pada tinjauan jawaban: status, yang dipilih, dan pembahasan.
-  Widget _reviewTile(BuildContext context, QuizReview item, int index) {
-    const letters = ['A', 'B', 'C', 'D'];
-    final color = item.correct ? AppColors.success : AppColors.primaryText;
-    final chosen = item.chosenIndex;
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        tilePadding: EdgeInsets.zero,
-        childrenPadding: const EdgeInsets.only(bottom: 12),
-        iconColor: AppColors.textMuted,
-        collapsedIconColor: AppColors.textMuted,
-        leading: Icon(
-          item.correct ? Icons.check_circle : Icons.cancel,
-          color: color,
-          size: 20,
-        ),
-        title: Text(
-          '${index + 1}. ${item.question.prompt}',
-          style: AppTextStyles.bodyMedium,
-        ),
-        subtitle: Text(
-          item.correct
-              ? 'Jawabanmu benar'
-              : chosen == null
-              ? 'Tidak dijawab'
-              : 'Jawabanmu ${letters[chosen]}. ${item.chosenOption}',
-          style: AppTextStyles.bodySmallMuted,
-        ),
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Jawaban benar: '
-              '${letters[item.question.correctIndex]}. ${item.correctOption}',
-              style: AppTextStyles.bodySmallStrong.copyWith(
-                color: AppColors.success,
-              ),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              item.question.explanation,
-              style: AppTextStyles.bodySmallRelaxedMuted,
             ),
           ),
         ],

@@ -238,6 +238,7 @@ cukup diturunkan dengan `copyWith`.
 | `/penjelasan` | Pembahasan jawaban |
 | `/hasil` | Hasil kuis |
 | `/riwayat` | Riwayat skor |
+| `/riwayat/detail` | Detail satu percobaan kuis |
 | `/profil` | Profil & statistik |
 | `/badge` | Badge & pencapaian |
 | `/pengaturan` | Pengaturan |
@@ -385,6 +386,23 @@ didukung, `categoryId` tidak cocok, daftar soal kosong, `prompt`/`explanation`/
 `test/data/quiz_bank_test.dart` memuat **seluruh** berkas JSON, memvalidasi tiap
 soal, dan memastikan bank benar-benar terbaca lewat asset bundle aplikasi.
 
+## Riwayat Kuis
+
+Halaman Riwayat menyaring percobaan berdasarkan kategori, tingkat kesulitan
+(`Semua tingkat` / `Pemula` / `Menengah` / `Ahli`), dan rentang waktu
+(`Semua waktu` / `7 hari` / `30 hari`). Statistik di atas daftar mengikuti filter
+aktif, dan grafik batang `Tren skor` menampilkan hingga sepuluh percobaan terakhir
+dengan warna dari `scoreTint`.
+
+Setiap entri bisa diketuk untuk membuka `/riwayat/detail`. Halaman itu
+menampilkan ringkasan percobaan beserta tinjauan jawaban yang sama seperti
+halaman Hasil. Karena bank soal tidak menyimpan jawaban pengguna, tiap
+`QuizResult` menyimpan `answers`, `questionOrder`, dan `optionOrders`; helper
+`reviewFromResult` menyusun ulang soal memakai urutan opsi yang benar-benar
+dilihat pengguna saat itu. Bila rincian tidak ada atau tidak konsisten dengan bank
+soal (riwayat versi lama, atau sesi latihan soal salah), halaman menampilkan pesan
+"Rincian jawaban tidak tersedia" alih-alih pembahasan yang keliru.
+
 ## Level & XP
 
 XP diperoleh sebesar skor akhir kuis. Level tidak disimpan sebagai angka
@@ -434,7 +452,7 @@ aktif dengan Enter/Space di web. Teks yang dibacakan disesuaikan agar ringkas:
 |---|---|
 | Opsi jawaban | `Pilihan A. Oksigen`, ditambah `, terpilih` atau `, terkunci` |
 | Bilah progres kuis | `Soal 3 dari 10` beserta persentasenya |
-| Kartu kategori | `Kategori Sains, 30 soal, tersedia` |
+| Kartu kategori | `Kategori Sains, 30 soal, belum pernah dimainkan` |
 | Tingkat kesulitan | `Tingkat Ahli, 10 soal` atau `… belum tersedia` |
 | Badge | `First Quiz, Selesaikan kuis pertama, terbuka` / `terkunci` |
 | Navigasi bawah | `Beranda, tab 1 dari 4, aktif` |
@@ -489,6 +507,7 @@ dan 2,0× tanpa luber.
 - [x] Kategori, detail kategori, dan pemilihan kesulitan
 - [x] Kuis 50 soal, pembahasan, dan hasil
 - [x] Riwayat skor dan statistik
+- [x] Filter, tren skor, dan detail percobaan di Riwayat (U-11)
 - [x] Profil, badge, dan pengaturan
 - [x] Responsif untuk web/tablet
 - [x] Branding ikon, splash native, dan metadata web
