@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../state/app_state.dart';
+import '../state/auth_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -55,7 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    context.read<AppState>().login(name: fullName, mail: mail);
+    context.read<AuthController>().login(name: fullName, mail: mail);
     context.go('/beranda');
   }
 

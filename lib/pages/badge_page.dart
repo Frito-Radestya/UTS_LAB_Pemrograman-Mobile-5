@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
-import '../state/app_state.dart';
+import '../state/history_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -13,7 +13,7 @@ class BadgePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final badges = context.watch<AppState>().badges;
+    final badges = context.watch<HistoryController>().badges;
     final earned = badges.where((b) => b.earned).length;
 
     return Scaffold(

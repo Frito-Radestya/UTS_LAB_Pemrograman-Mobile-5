@@ -4,20 +4,17 @@ import 'package:flutter/foundation.dart';
 
 import '../data/quiz_data.dart';
 import '../models/models.dart';
-import 'progress.dart';
-import 'streak.dart';
 
-class AppState extends ChangeNotifier {
-  bool loggedIn = false;
-  bool notifications = true;
+typedef QuizCompleted = void Function(QuizResult result);
 
-  String fullName = '';
-  String email = '';
-  int xp = 0;
+/// Mengelola satu sesi kuis: soal aktif, jawaban, penguncian, dan progres.
+///
+/// Controller ini tidak mengetahui riwayat atau XP. Hasil akhir dikirim lewat
+/// [onCompleted] agar lapisan komposisi yang menghubungkannya.
+class QuizController extends ChangeNotifier {
+  QuizController({this.onCompleted});
 
-  int get level => levelFromXp(xp);
-
-  int get streak => calculateStreak(history, DateTime.now());
+  final QuizCompleted? onCompleted;
 
   Difficulty selectedDifficulty = Difficulty.pemula;
   CategoryId? activeCategory;
@@ -37,6 +34,8 @@ class AppState extends ChangeNotifier {
   QuizResult? lastResult;
   bool showingCorrect = true;
 
+  InProgressQuiz? resume;
+
   Duration get currentElapsed {
     final startedAt = quizStartedAt;
     if (startedAt == null) return _elapsedBeforeResume;
@@ -51,114 +50,10 @@ class AppState extends ChangeNotifier {
   List<List<int>> get optionOrders =>
       List<List<int>>.unmodifiable(_optionOrders.map(List<int>.unmodifiable));
 
-  InProgressQuiz? resume;
-
   bool isQuestionLocked(int index) =>
       index >= 0 && index < _submitted.length && _submitted[index];
 
   bool get currentQuestionLocked => isQuestionLocked(questionIndex);
-
-  final List<QuizResult> history = <QuizResult>[];
-
-  String get firstName {
-    final parts = fullName
-        .trim()
-        .split(RegExp(r'\s+'))
-        .where((part) => part.isNotEmpty)
-        .toList();
-    return parts.isEmpty ? 'Pengguna' : parts.first;
-  }
-
-  String get initial {
-    final name = fullName.trim();
-    return name.isEmpty ? 'K' : name[0].toUpperCase();
-  }
-
-  int get totalQuizzes => history.length;
-  int get bestScore => history.isEmpty
-      ? 0
-      : history.map((e) => e.score).reduce((a, b) => a > b ? a : b);
-  int get averageScore => history.isEmpty
-      ? 0
-      : (history.map((e) => e.score).reduce((a, b) => a + b) / history.length)
-            .round();
-  int get accuracyPercent {
-    if (history.isEmpty) return 0;
-    final correct = history.fold<int>(0, (p, e) => p + e.correct);
-    final total = history.fold<int>(0, (p, e) => p + e.total);
-    return ((correct / total) * 100).round();
-  }
-
-  int get completedCategories {
-    final ids = history.map((e) => e.categoryId).toSet();
-    return ids.length;
-  }
-
-  int get learningPathDone => completedCategories;
-
-  List<BadgeItem> get badges {
-    final hasQuiz = history.isNotEmpty;
-    final perfect = history.any((e) => e.score == 100);
-    final explorer = completedCategories >= categories.length;
-    final master = categories.every((c) {
-      return history.any((h) => h.categoryId == c.id && h.score == 100);
-    });
-    return [
-      BadgeItem(
-        id: 'first',
-        title: 'First Quiz',
-        subtitle: 'Selesaikan kuis pertama',
-        asset: 'assets/svg/badge_first_quiz.svg',
-        earned: hasQuiz,
-      ),
-      BadgeItem(
-        id: 'perfect',
-        title: 'Perfect 10',
-        subtitle: 'Dapatkan 100% benar',
-        asset: 'assets/svg/badge_perfect_10.svg',
-        earned: perfect,
-      ),
-      BadgeItem(
-        id: 'streak',
-        title: 'Streak 7',
-        subtitle: 'Main 7 hari berturut-turut',
-        asset: 'assets/svg/badge_streak_7.svg',
-        earned: streak >= 7,
-      ),
-      BadgeItem(
-        id: 'explorer',
-        title: 'Explorer',
-        subtitle: 'Selesaikan semua kategori',
-        asset: 'assets/svg/badge_explorer.svg',
-        earned: explorer,
-      ),
-      BadgeItem(
-        id: 'master',
-        title: 'Master',
-        subtitle: 'Raih skor sempurna di semua kategori',
-        asset: 'assets/svg/badge_master_locked.svg',
-        earned: master,
-      ),
-    ];
-  }
-
-  void login({String? name, String? mail}) {
-    if (name != null && name.trim().isNotEmpty) fullName = name.trim();
-    if (mail != null && mail.trim().isNotEmpty) email = mail.trim();
-    loggedIn = true;
-    notifyListeners();
-  }
-
-  void updateProfile({String? name, String? mail}) {
-    if (name != null && name.trim().isNotEmpty) fullName = name.trim();
-    if (mail != null && mail.trim().isNotEmpty) email = mail.trim();
-    notifyListeners();
-  }
-
-  void logout() {
-    loggedIn = false;
-    notifyListeners();
-  }
 
   void setDifficulty(Difficulty value) {
     selectedDifficulty = value;
@@ -297,18 +192,20 @@ class AppState extends ChangeNotifier {
   }
 
   void continueAdventure() {
-    final r = resume;
-    if (r == null) return;
-    setDifficulty(r.difficulty);
+    final saved = resume;
+    if (saved == null) return;
+    setDifficulty(saved.difficulty);
     startQuiz(
-      r.categoryId,
-      difficulty: r.difficulty,
-      startIndex: r.index,
-      existing: List<int?>.from(r.answers),
-      submitted: List<bool>.from(r.submitted),
-      questionOrder: List<int>.from(r.questionOrder),
-      optionOrders: [for (final order in r.optionOrders) List<int>.from(order)],
-      elapsed: r.elapsed,
+      saved.categoryId,
+      difficulty: saved.difficulty,
+      startIndex: saved.index,
+      existing: List<int?>.from(saved.answers),
+      submitted: List<bool>.from(saved.submitted),
+      questionOrder: List<int>.from(saved.questionOrder),
+      optionOrders: [
+        for (final order in saved.optionOrders) List<int>.from(order),
+      ],
+      elapsed: saved.elapsed,
     );
   }
 
@@ -353,33 +250,25 @@ class AppState extends ChangeNotifier {
   }
 
   void finishQuiz() {
-    final id = activeCategory!;
+    final id = activeCategory;
     final list = _activeQuestions;
-    if (list.isEmpty) return;
+    if (id == null || list.isEmpty) return;
     var correct = 0;
     for (var i = 0; i < list.length; i++) {
       if (answers[i] == list[i].correctIndex) correct++;
     }
-    final duration = currentElapsed;
     final result = QuizResult(
       categoryId: id,
       score: ((correct / list.length) * 100).round(),
       correct: correct,
       total: list.length,
-      duration: duration,
+      duration: currentElapsed,
       playedAt: DateTime.now(),
       difficulty: selectedDifficulty,
     );
     lastResult = result;
-    history.insert(0, result);
-    xp += (result.score * result.difficulty.xpMultiplier).round();
     resume = null;
+    onCompleted?.call(result);
     notifyListeners();
-  }
-
-  int bestFor(CategoryId id) {
-    final items = history.where((e) => e.categoryId == id);
-    if (items.isEmpty) return 0;
-    return items.map((e) => e.score).reduce((a, b) => a > b ? a : b);
   }
 }

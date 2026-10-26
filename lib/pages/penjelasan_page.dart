@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../state/app_state.dart';
+import '../state/quiz_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -12,13 +12,13 @@ class PenjelasanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
-    final q = app.currentQuestion;
+    final quiz = context.watch<QuizController>();
+    final q = quiz.currentQuestion;
     if (q == null) {
       return const Scaffold(backgroundColor: AppColors.background);
     }
     const letters = ['A', 'B', 'C', 'D'];
-    final correct = app.showingCorrect;
+    final correct = quiz.showingCorrect;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -82,7 +82,7 @@ class PenjelasanPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${app.questionIndex + 1}/${app.totalQuestions}',
+                          '${quiz.questionIndex + 1}/${quiz.totalQuestions}',
                           style: AppTheme.onest(
                             size: 14,
                             heightPx: 20,
@@ -294,11 +294,11 @@ class PenjelasanPage extends StatelessWidget {
                         PrimaryButton(
                           label: 'Lanjutkan',
                           onTap: () {
-                            if (app.isLastQuestion) {
-                              app.finishQuiz();
+                            if (quiz.isLastQuestion) {
+                              quiz.finishQuiz();
                               context.go('/hasil');
                             } else {
-                              app.nextQuestion();
+                              quiz.nextQuestion();
                               context.go('/kuis');
                             }
                           },

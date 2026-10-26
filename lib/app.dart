@@ -17,7 +17,12 @@ import 'pages/profil_page.dart';
 import 'pages/register_page.dart';
 import 'pages/riwayat_page.dart';
 import 'pages/splash_page.dart';
-import 'state/app_state.dart';
+import 'state/app_services.dart';
+import 'state/auth_controller.dart';
+import 'state/history_controller.dart';
+import 'state/progress_controller.dart';
+import 'state/quiz_controller.dart';
+import 'state/settings_controller.dart';
 import 'theme/app_theme.dart';
 
 final _rootKey = GlobalKey<NavigatorState>();
@@ -51,17 +56,19 @@ Page<void> _page(Widget child) {
   );
 }
 
-GoRouter createRouter(AppState app, {String initialLocation = '/'}) {
+GoRouter createRouter(AppServices services, {String initialLocation = '/'}) {
+  final auth = services.auth;
+  final quiz = services.quiz;
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: initialLocation,
-    refreshListenable: app,
+    refreshListenable: services.routerListenable,
     redirect: (context, state) {
       final location = state.matchedLocation;
       final isAuthRoute =
           location == '/' || location == '/login' || location == '/register';
 
-      if (!app.loggedIn) {
+      if (!auth.loggedIn) {
         return isAuthRoute ? null : '/login';
       }
       if (location == '/login' || location == '/register') {
@@ -72,11 +79,11 @@ GoRouter createRouter(AppState app, {String initialLocation = '/'}) {
       if (location == '/kuis' ||
           location == '/penjelasan' ||
           location == '/hasil') {
-        if (app.activeCategory == null) return '/beranda';
-        if (location == '/penjelasan' && app.currentQuestion == null) {
+        if (quiz.activeCategory == null) return '/beranda';
+        if (location == '/penjelasan' && quiz.currentQuestion == null) {
           return '/beranda';
         }
-        if (location == '/hasil' && app.lastResult == null) {
+        if (location == '/hasil' && quiz.lastResult == null) {
           return '/beranda';
         }
       }
@@ -150,21 +157,40 @@ class KageApp extends StatefulWidget {
 }
 
 class _KageAppState extends State<KageApp> {
-  late final AppState _app;
+  late final AppServices _services;
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
-    _app = AppState();
-    _router = createRouter(_app);
+    _services = AppServices();
+    _router = createRouter(_services);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }
 
   @override
+  void dispose() {
+    _router.dispose();
+    _services.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _app,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthController>.value(value: _services.auth),
+        ChangeNotifierProvider<QuizController>.value(value: _services.quiz),
+        ChangeNotifierProvider<HistoryController>.value(
+          value: _services.history,
+        ),
+        ChangeNotifierProvider<ProgressController>.value(
+          value: _services.progress,
+        ),
+        ChangeNotifierProvider<SettingsController>.value(
+          value: _services.settings,
+        ),
+      ],
       child: MaterialApp.router(
         title: 'KAGE — The Quiz Sanctuary',
         debugShowCheckedModeBanner: false,

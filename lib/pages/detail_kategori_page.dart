@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../data/quiz_data.dart';
 import '../models/models.dart';
-import '../state/app_state.dart';
+import '../state/history_controller.dart';
+import '../state/quiz_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -18,7 +19,8 @@ class DetailKategoriPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cat = categoryById(id);
-    final app = context.watch<AppState>();
+    final quiz = context.watch<QuizController>();
+    final history = context.watch<HistoryController>();
     final counts = {
       for (final difficulty in Difficulty.values)
         difficulty: questionsFor(id, difficulty).length,
@@ -26,8 +28,8 @@ class DetailKategoriPage extends StatelessWidget {
     final available = Difficulty.values
         .where((difficulty) => counts[difficulty]! > 0)
         .toList();
-    final effective = available.contains(app.selectedDifficulty)
-        ? app.selectedDifficulty
+    final effective = available.contains(quiz.selectedDifficulty)
+        ? quiz.selectedDifficulty
         : available.isEmpty
         ? null
         : available.first;
@@ -186,21 +188,21 @@ class DetailKategoriPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _diff(
-                        app,
+                        quiz,
                         Difficulty.pemula,
                         counts[Difficulty.pemula]!,
                         effective == Difficulty.pemula,
                       ),
                       const SizedBox(width: 10),
                       _diff(
-                        app,
+                        quiz,
                         Difficulty.menengah,
                         counts[Difficulty.menengah]!,
                         effective == Difficulty.menengah,
                       ),
                       const SizedBox(width: 10),
                       _diff(
-                        app,
+                        quiz,
                         Difficulty.ahli,
                         counts[Difficulty.ahli]!,
                         effective == Difficulty.ahli,
@@ -230,7 +232,7 @@ class DetailKategoriPage extends StatelessWidget {
                           Icons.emoji_events_outlined,
                           'Skor Terbaik',
                           trailing: Text(
-                            '${app.bestFor(id)}',
+                            '${history.bestFor(id)}',
                             style: AppTheme.onest(
                               size: 18,
                               heightPx: 24,
@@ -248,7 +250,7 @@ class DetailKategoriPage extends StatelessWidget {
                     onTap: effective == null
                         ? null
                         : () {
-                            app.startQuiz(id, difficulty: effective);
+                            quiz.startQuiz(id, difficulty: effective);
                             context.push('/kuis');
                           },
                   ),
@@ -261,14 +263,14 @@ class DetailKategoriPage extends StatelessWidget {
     );
   }
 
-  Widget _diff(AppState app, Difficulty d, int count, bool selected) {
+  Widget _diff(QuizController quiz, Difficulty d, int count, bool selected) {
     final enabled = count > 0;
     final on = enabled && selected;
     return Expanded(
       child: Column(
         children: [
           GestureDetector(
-            onTap: enabled ? () => app.setDifficulty(d) : null,
+            onTap: enabled ? () => quiz.setDifficulty(d) : null,
             child: Container(
               height: 44,
               alignment: Alignment.center,

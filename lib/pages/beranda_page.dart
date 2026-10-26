@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/quiz_data.dart';
-import '../state/app_state.dart';
+import '../state/auth_controller.dart';
+import '../state/history_controller.dart';
+import '../state/quiz_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -13,8 +15,10 @@ class BerandaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
-    final resume = app.resume;
+    final auth = context.watch<AuthController>();
+    final history = context.watch<HistoryController>();
+    final quiz = context.watch<QuizController>();
+    final resume = quiz.resume;
     final categoryCount = categories.length;
 
     return ScreenScaffold(
@@ -33,7 +37,7 @@ class BerandaPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Halo, ${app.firstName}',
+                        'Halo, ${auth.firstName}',
                         style: AppTheme.onest(
                           size: 22,
                           heightPx: 28,
@@ -55,8 +59,8 @@ class BerandaPage extends StatelessWidget {
                   onTap: () => context.go('/profil'),
                   child: Semantics(
                     button: true,
-                    label: 'Buka profil ${app.firstName}',
-                    child: _avatar(app.initial, 44, 16),
+                    label: 'Buka profil ${auth.firstName}',
+                    child: _avatar(auth.initial, 44, 16),
                   ),
                 ),
               ],
@@ -64,7 +68,7 @@ class BerandaPage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           // Akun baru mendapat ajakan memulai, bukan progres kosong.
-          if (app.history.isEmpty)
+          if (history.history.isEmpty)
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -129,7 +133,7 @@ class BerandaPage extends StatelessWidget {
                       ),
                       const Spacer(),
                       Text(
-                        '${((app.learningPathDone / categoryCount) * 100).round()}%',
+                        '${((history.learningPathDone / categoryCount) * 100).round()}%',
                         style: AppTheme.onest(
                           size: 14,
                           heightPx: 20,
@@ -141,7 +145,7 @@ class BerandaPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${app.learningPathDone} / $categoryCount Kategori',
+                    '${history.learningPathDone} / $categoryCount Kategori',
                     style: AppTheme.onest(
                       size: 18,
                       heightPx: 26,
@@ -149,7 +153,9 @@ class BerandaPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  KageProgressBar(value: app.learningPathDone / categoryCount),
+                  KageProgressBar(
+                    value: history.learningPathDone / categoryCount,
+                  ),
                 ],
               ),
             ),
@@ -239,7 +245,7 @@ class BerandaPage extends StatelessWidget {
                               bottom: 0,
                               child: GestureDetector(
                                 onTap: () {
-                                  app.continueAdventure();
+                                  quiz.continueAdventure();
                                   context.push('/kuis');
                                 },
                                 child: Container(
@@ -288,11 +294,11 @@ class BerandaPage extends StatelessWidget {
           // Stats row
           Row(
             children: [
-              _stat('${app.totalQuizzes}', 'Total Kuis'),
+              _stat('${history.totalQuizzes}', 'Total Kuis'),
               const SizedBox(width: 12),
-              _stat('${app.accuracyPercent}%', 'Akurasi'),
+              _stat('${history.accuracyPercent}%', 'Akurasi'),
               const SizedBox(width: 12),
-              _stat('${app.streak}', 'Streak'),
+              _stat('${history.streak}', 'Streak'),
             ],
           ),
           const SizedBox(height: 18),

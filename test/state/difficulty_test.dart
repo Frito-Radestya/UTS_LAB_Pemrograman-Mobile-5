@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/data/quiz_data.dart';
 import 'package:kage/models/models.dart';
-import 'package:kage/state/app_state.dart';
+import 'package:kage/state/app_services.dart';
+import 'package:kage/state/quiz_controller.dart';
 
 void main() {
   group('K-03 tingkat kesulitan', () {
@@ -41,16 +42,16 @@ void main() {
 
     test('tingkat berbeda menghasilkan XP berbeda', () {
       int xpFor(Difficulty difficulty) {
-        final app = AppState()
-          ..startQuiz(CategoryId.sains, difficulty: difficulty);
+        final app = AppServices()
+          ..quiz.startQuiz(CategoryId.sains, difficulty: difficulty);
         addTearDown(app.dispose);
-        for (var i = 0; i < app.totalQuestions; i++) {
-          app.selectAnswer(app.currentQuestion!.correctIndex);
-          app.submitCurrent();
-          if (!app.isLastQuestion) app.nextQuestion();
+        for (var i = 0; i < app.quiz.totalQuestions; i++) {
+          app.quiz.selectAnswer(app.quiz.currentQuestion!.correctIndex);
+          app.quiz.submitCurrent();
+          if (!app.quiz.isLastQuestion) app.quiz.nextQuestion();
         }
-        app.finishQuiz();
-        return app.xp;
+        app.quiz.finishQuiz();
+        return app.progress.xp;
       }
 
       expect(xpFor(Difficulty.pemula), 100);
@@ -59,26 +60,26 @@ void main() {
     });
 
     test('tingkat tanpa soal tidak bisa dipakai untuk memulai sesi', () {
-      final app = AppState();
-      addTearDown(app.dispose);
-      app.setDifficulty(Difficulty.menengah);
+      final quiz = QuizController();
+      addTearDown(quiz.dispose);
+      quiz.setDifficulty(Difficulty.menengah);
 
-      app.startQuiz(CategoryId.teknologi);
+      quiz.startQuiz(CategoryId.teknologi);
 
-      expect(app.selectedDifficulty, Difficulty.pemula);
-      expect(app.totalQuestions, greaterThan(0));
-      expect(app.currentQuestion, isNotNull);
-      expect(app.currentQuestion!.difficulty, Difficulty.pemula);
+      expect(quiz.selectedDifficulty, Difficulty.pemula);
+      expect(quiz.totalQuestions, greaterThan(0));
+      expect(quiz.currentQuestion, isNotNull);
+      expect(quiz.currentQuestion!.difficulty, Difficulty.pemula);
     });
 
     test('sesi memakai soal dari tingkat yang dipilih', () {
-      final app = AppState()
+      final quiz = QuizController()
         ..startQuiz(CategoryId.sains, difficulty: Difficulty.menengah);
-      addTearDown(app.dispose);
+      addTearDown(quiz.dispose);
 
-      expect(app.selectedDifficulty, Difficulty.menengah);
-      expect(app.activeQuestions, hasLength(10));
-      for (final question in app.activeQuestions) {
+      expect(quiz.selectedDifficulty, Difficulty.menengah);
+      expect(quiz.activeQuestions, hasLength(10));
+      for (final question in quiz.activeQuestions) {
         expect(question.difficulty, Difficulty.menengah);
       }
     });

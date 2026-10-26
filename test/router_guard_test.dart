@@ -3,16 +3,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/app.dart';
 import 'package:kage/pages/beranda_page.dart';
 import 'package:kage/pages/login_page.dart';
-import 'package:kage/state/app_state.dart';
+import 'package:kage/state/app_services.dart';
+import 'package:kage/state/auth_controller.dart';
+import 'package:kage/state/history_controller.dart';
+import 'package:kage/state/progress_controller.dart';
+import 'package:kage/state/quiz_controller.dart';
+import 'package:kage/state/settings_controller.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
-Future<void> _pumpAt(WidgetTester tester, AppState app, String location) async {
+Future<void> _pumpAt(
+  WidgetTester tester,
+  AppServices app,
+  String location,
+) async {
   final router = createRouter(app, initialLocation: location);
   addTearDown(router.dispose);
   await tester.pumpWidget(
-    ChangeNotifierProvider<AppState>.value(
-      value: app,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthController>.value(value: app.auth),
+        ChangeNotifierProvider<QuizController>.value(value: app.quiz),
+        ChangeNotifierProvider<HistoryController>.value(value: app.history),
+        ChangeNotifierProvider<ProgressController>.value(value: app.progress),
+        ChangeNotifierProvider<SettingsController>.value(value: app.settings),
+      ],
       child: MaterialApp.router(theme: AppTheme.dark(), routerConfig: router),
     ),
   );
@@ -23,7 +38,7 @@ Future<void> _pumpAt(WidgetTester tester, AppState app, String location) async {
 void main() {
   group('K-05 route guard', () {
     testWidgets('rute privat tanpa login diarahkan ke /login', (tester) async {
-      final app = AppState();
+      final app = AppServices();
       addTearDown(app.dispose);
 
       await _pumpAt(tester, app, '/profil');
@@ -35,8 +50,9 @@ void main() {
     testWidgets('pengguna yang sudah login diarahkan dari /login', (
       tester,
     ) async {
-      final app = AppState()..loggedIn = true;
+      final app = AppServices();
       addTearDown(app.dispose);
+      app.auth.login(name: 'Budi');
 
       await _pumpAt(tester, app, '/login');
 
@@ -45,8 +61,9 @@ void main() {
     });
 
     testWidgets('kuis tanpa sesi aktif diarahkan ke beranda', (tester) async {
-      final app = AppState()..loggedIn = true;
+      final app = AppServices();
       addTearDown(app.dispose);
+      app.auth.login(name: 'Budi');
 
       await _pumpAt(tester, app, '/kuis');
 
@@ -56,8 +73,9 @@ void main() {
     testWidgets('penjelasan tanpa sesi aktif diarahkan ke beranda', (
       tester,
     ) async {
-      final app = AppState()..loggedIn = true;
+      final app = AppServices();
       addTearDown(app.dispose);
+      app.auth.login(name: 'Budi');
 
       await _pumpAt(tester, app, '/penjelasan');
 
@@ -65,8 +83,9 @@ void main() {
     });
 
     testWidgets('hasil tanpa sesi aktif diarahkan ke beranda', (tester) async {
-      final app = AppState()..loggedIn = true;
+      final app = AppServices();
       addTearDown(app.dispose);
+      app.auth.login(name: 'Budi');
 
       await _pumpAt(tester, app, '/hasil');
 

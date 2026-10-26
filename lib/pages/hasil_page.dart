@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../data/quiz_data.dart';
 import '../models/models.dart';
-import '../state/app_state.dart';
+import '../state/quiz_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -14,8 +14,8 @@ class HasilPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
-    final r = app.lastResult;
+    final quiz = context.watch<QuizController>();
+    final r = quiz.lastResult;
     if (r == null) {
       return const Scaffold(backgroundColor: AppColors.background);
     }
@@ -257,7 +257,7 @@ class HasilPage extends StatelessWidget {
                   PrimaryButton(
                     label: 'Coba Lagi',
                     onTap: () {
-                      app.startQuiz(r.categoryId);
+                      quiz.startQuiz(r.categoryId);
                       context.go('/kuis');
                     },
                   ),
