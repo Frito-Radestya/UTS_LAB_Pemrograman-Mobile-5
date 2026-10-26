@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kage/data/local/local_box.dart';
+import 'package:kage/data/quiz_bank.dart';
 import 'package:kage/data/repositories/auth_repository.dart';
 import 'package:kage/data/repositories/history_repository.dart';
 import 'package:kage/data/repositories/progress_repository.dart';
@@ -29,7 +30,7 @@ class AppServices {
   }) {
     this.authRepository = authRepository ?? InMemoryAuthRepository();
     this.historyRepository = historyRepository ?? InMemoryHistoryRepository();
-    this.quizRepository = quizRepository ?? const LocalQuizRepository();
+    this.quizRepository = quizRepository ?? LocalQuizRepository.empty();
     this.progressRepository =
         progressRepository ?? InMemoryProgressRepository();
     this.settingsRepository =
@@ -49,16 +50,19 @@ class AppServices {
   /// Menyusun layanan dengan penyimpanan lokal permanen.
   ///
   /// `shared_preferences` menyimpan sesi login dan pengaturan, sedangkan Hive
-  /// menyimpan riwayat kuis, XP, dan kuis yang sedang berjalan. Data dimuat
-  /// sebelum `runApp` sehingga halaman langsung menampilkan kondisi terakhir.
+  /// menyimpan riwayat kuis, XP, dan kuis yang sedang berjalan. Bank soal dibaca
+  /// dari `assets/data/*.json`. Semuanya dimuat sebelum `runApp` sehingga
+  /// halaman langsung menampilkan kondisi terakhir.
   static Future<AppServices> create() async {
     final preferences = await SharedPreferences.getInstance();
     final box = await openKageBox();
+    final bank = await loadQuizBank();
     return AppServices(
       authRepository: LocalAuthRepository(preferences),
       settingsRepository: LocalSettingsRepository(preferences),
       historyRepository: LocalHistoryRepository(box),
       progressRepository: LocalProgressRepository(box),
+      quizRepository: LocalQuizRepository(bank),
     );
   }
 

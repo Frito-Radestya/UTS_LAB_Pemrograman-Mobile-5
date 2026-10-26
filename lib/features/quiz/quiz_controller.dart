@@ -19,7 +19,7 @@ class QuizController extends ChangeNotifier {
     this.onCompleted,
     QuizRepository? questions,
     ProgressRepository? progress,
-  }) : _questions = questions ?? const LocalQuizRepository(),
+  }) : _questions = questions ?? LocalQuizRepository.empty(),
        _progress = progress ?? InMemoryProgressRepository() {
     resume = _progress.loadResume();
   }

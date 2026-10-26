@@ -120,7 +120,8 @@ lib/
 ├── app.dart                        # MaterialApp.router, GoRouter, responsive frame
 ├── app_services.dart               # Komposisi controller + penghubung hasil kuis
 ├── data/
-│   ├── quiz_data.dart              # Bank soal per kategori & tingkat
+│   ├── quiz_data.dart              # Metadata tampilan kategori (nama, warna, ikon)
+│   ├── quiz_bank.dart              # Parser + validator bank soal JSON
 │   ├── local/
 │   │   ├── local_box.dart          # Pembuka kotak Hive (riwayat, XP, resume)
 │   │   └── quiz_codec.dart         # Encode/decode JSON model kuis
@@ -309,6 +310,55 @@ Simulasi "menutup lalu membuka aplikasi" tercakup oleh
 `test/data/persistence_test.dart`, yang menutup kotak Hive, membukanya kembali
 dari berkas di disk, lalu membuat ulang seluruh controller.
 
+## Bank Soal (JSON)
+
+Soal tidak lagi ditulis di dalam kode. Setiap kategori punya satu berkas di
+`assets/data/` yang dimuat saat aplikasi mulai (`AppServices.create()`):
+
+```text
+assets/data/questions_sains.json
+assets/data/questions_teknologi.json
+assets/data/questions_sejarah.json
+assets/data/questions_logika.json
+assets/data/questions_umum.json
+```
+
+Skema berkas bersifat **berversi** (`schemaVersion`) supaya perubahan struktur
+di masa depan bisa ditolak dengan pesan yang jelas, bukan gagal diam-diam:
+
+```json
+{
+  "schemaVersion": 1,
+  "categoryId": "sains",
+  "questions": [
+    {
+      "difficulty": "pemula",
+      "prompt": "Apa nama planet yang dikenal sebagai Planet Merah?",
+      "options": ["Jupiter", "Mars", "Venus", "Saturnus"],
+      "correctIndex": 1,
+      "explanation": "Mars …",
+      "funFact": "Mars memiliki gunung tertinggi …"
+    }
+  ]
+}
+```
+
+`difficulty` memakai nilai enum `Difficulty` (`pemula`, `menengah`, `ahli`).
+Menambah soal cukup dengan menyunting berkas JSON; jumlah soal per tingkat di
+halaman detail kategori ikut menyesuaikan sendiri.
+
+Parser dan validator ada di `lib/data/quiz_bank.dart`:
+
+- `validateQuizBank()` mengumpulkan **semua** temuan sekaligus: versi skema tidak
+didukung, `categoryId` tidak cocok, daftar soal kosong, `prompt`/`explanation`/
+`funFact` kosong, pilihan kurang dari dua atau ada yang kosong/duplikat,
+`correctIndex` di luar rentang, dan soal duplikat.
+- `parseQuizBank()` mengembalikan model `Question` dan melempar
+`QuizBankFormatException` berisi nama berkas beserta temuan bila berkas tidak sah.
+
+`test/data/quiz_bank_test.dart` memuat **seluruh** berkas JSON, memvalidasi tiap
+soal, dan memastikan bank benar-benar terbaca lewat asset bundle aplikasi.
+
 ## Level & XP
 
 XP diperoleh sebesar skor akhir kuis. Level tidak disimpan sebagai angka
@@ -358,7 +408,7 @@ sesi kuis tidak pernah dimulai dengan bank soal kosong.
 - [x] Branding ikon, splash native, dan metadata web
 - [x] Penyimpanan permanen lokal (shared_preferences + Hive)
 - [ ] Integrasi backend dan akun nyata
-- [ ] Bank soal dari aset JSON (D-02)
+- [x] Bank soal dari aset JSON berversi + parser/validator (D-02)
 
 ## Kontribusi
 

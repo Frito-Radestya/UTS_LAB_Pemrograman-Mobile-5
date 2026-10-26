@@ -6,6 +6,8 @@ import 'package:kage/features/auth/auth_controller.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 
+import '../support/quiz_bank.dart';
+
 QuizResult _result({
   CategoryId categoryId = CategoryId.sains,
   int score = 80,
@@ -121,7 +123,8 @@ void main() {
     });
 
     test('discardProgress menghapus sesi tersimpan', () {
-      final quiz = QuizController()..startQuiz(CategoryId.sains);
+      final quiz = QuizController(questions: testQuizBank())
+        ..startQuiz(CategoryId.sains);
       addTearDown(quiz.dispose);
       quiz.saveProgress();
       expect(quiz.resume, isNotNull);
@@ -134,7 +137,8 @@ void main() {
     test(
       'nextQuestion berhenti di soal terakhir dan finish mencatat hasil',
       () {
-        final app = AppServices()..quiz.startQuiz(CategoryId.sains);
+        final app = AppServices(quizRepository: testQuizBank())
+          ..quiz.startQuiz(CategoryId.sains);
         addTearDown(app.dispose);
 
         while (!app.quiz.isLastQuestion) {
@@ -149,7 +153,7 @@ void main() {
     );
 
     test('hasil kuis terhubung ke riwayat dan XP', () {
-      final app = AppServices()
+      final app = AppServices(quizRepository: testQuizBank())
         ..quiz.startQuiz(CategoryId.sains, difficulty: Difficulty.ahli);
       addTearDown(app.dispose);
 
@@ -169,7 +173,7 @@ void main() {
     });
 
     test('pengaturan notifikasi dapat diubah', () {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
 
       expect(app.settings.notifications, isTrue);

@@ -4,10 +4,12 @@ import 'package:kage/models/models.dart';
 import 'package:kage/app_services.dart';
 import 'package:kage/features/auth/auth_controller.dart';
 
+import '../support/quiz_bank.dart';
+
 void main() {
   group('K-07 data akun baru tanpa mock', () {
     test('akun baru dimulai dari keadaan kosong', () {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
 
       expect(app.auth.loggedIn, isFalse);
@@ -39,7 +41,7 @@ void main() {
     });
 
     test('progres belajar dihitung dari kategori yang diselesaikan', () {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
       app.history.addResults([
         QuizResult(
@@ -77,7 +79,7 @@ void main() {
     });
 
     test('badge Streak 7 mengikuti nilai streak nyata', () {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
       final now = DateTime.now();
       QuizResult dayResult(int daysAgo) => QuizResult(
@@ -107,7 +109,10 @@ void main() {
 
     test('setiap kategori memiliki soal pemula tanpa skor bawaan', () {
       for (final category in categories) {
-        expect(questionsFor(category.id, Difficulty.pemula), isNotEmpty);
+        expect(
+          testQuizBank().questionsFor(category.id, Difficulty.pemula),
+          isNotEmpty,
+        );
       }
     });
   });

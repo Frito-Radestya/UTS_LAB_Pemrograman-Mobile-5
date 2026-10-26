@@ -11,6 +11,8 @@ import 'package:kage/data/repositories/progress_repository.dart';
 import 'package:kage/data/repositories/settings_repository.dart';
 import 'package:kage/models/models.dart';
 
+import '../support/quiz_bank.dart';
+
 Future<SharedPreferences> _preferences() async {
   SharedPreferences.setMockInitialValues(<String, Object>{});
   return SharedPreferences.getInstance();
@@ -144,10 +146,7 @@ void main() {
       await box.put('history', '{"skor": 80}');
       expect(repository.load(), isEmpty);
 
-      await box.put(
-        'history',
-        '[{"categoryId":"tidak-ada","score":80}]',
-      );
+      await box.put('history', '[{"categoryId":"tidak-ada","score":80}]');
       expect(repository.load(), isEmpty);
     });
 
@@ -224,6 +223,7 @@ void main() {
       settingsRepository: LocalSettingsRepository(preferences),
       historyRepository: LocalHistoryRepository(firstBox),
       progressRepository: LocalProgressRepository(firstBox),
+      quizRepository: testQuizBank(),
     );
     first.auth.login(name: 'Budi', mail: 'budi@example.com');
     first.settings.setNotifications(false);
@@ -259,6 +259,7 @@ void main() {
       settingsRepository: LocalSettingsRepository(preferences),
       historyRepository: LocalHistoryRepository(secondBox),
       progressRepository: LocalProgressRepository(secondBox),
+      quizRepository: testQuizBank(),
     );
     addTearDown(() async {
       second.dispose();

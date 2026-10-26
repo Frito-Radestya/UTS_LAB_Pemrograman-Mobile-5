@@ -14,6 +14,8 @@ import 'package:kage/features/settings/settings_controller.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
+import 'support/quiz_bank.dart';
+
 Future<void> _pumpAt(
   WidgetTester tester,
   AppServices app,
@@ -42,7 +44,7 @@ Future<void> _pumpAt(
 void main() {
   group('K-05 route guard', () {
     testWidgets('rute privat tanpa login diarahkan ke /login', (tester) async {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
 
       await _pumpAt(tester, app, '/profil');
@@ -54,7 +56,7 @@ void main() {
     testWidgets('pengguna yang sudah login diarahkan dari /login', (
       tester,
     ) async {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
       app.auth.login(name: 'Budi');
 
@@ -65,7 +67,7 @@ void main() {
     });
 
     testWidgets('kuis tanpa sesi aktif diarahkan ke beranda', (tester) async {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
       app.auth.login(name: 'Budi');
 
@@ -77,7 +79,7 @@ void main() {
     testWidgets('penjelasan tanpa sesi aktif diarahkan ke beranda', (
       tester,
     ) async {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
       app.auth.login(name: 'Budi');
 
@@ -87,7 +89,7 @@ void main() {
     });
 
     testWidgets('hasil tanpa sesi aktif diarahkan ke beranda', (tester) async {
-      final app = AppServices();
+      final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
       app.auth.login(name: 'Budi');
 
