@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
@@ -18,7 +18,7 @@ class DetailKategoriPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bank = context.read<QuestionRepository>();
+    final bank = context.read<QuizRepository>();
     final cat = bank.categoryById(id);
     final quiz = context.watch<QuizController>();
     final history = context.watch<HistoryController>();

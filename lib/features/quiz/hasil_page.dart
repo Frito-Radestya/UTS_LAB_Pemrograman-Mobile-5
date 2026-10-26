@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 import 'package:kage/theme/app_colors.dart';
@@ -19,7 +19,7 @@ class HasilPage extends StatelessWidget {
     if (r == null) {
       return const Scaffold(backgroundColor: AppColors.background);
     }
-    final cat = context.read<QuestionRepository>().categoryById(r.categoryId);
+    final cat = context.read<QuizRepository>().categoryById(r.categoryId);
     final time =
         '${r.duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${r.duration.inSeconds.remainder(60).toString().padLeft(2, '0')}';
     final title = r.score >= 90

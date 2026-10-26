@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 
 typedef QuizCompleted = void Function(QuizResult result);
@@ -12,11 +12,11 @@ typedef QuizCompleted = void Function(QuizResult result);
 /// Controller ini tidak mengetahui riwayat atau XP. Hasil akhir dikirim lewat
 /// [onCompleted] agar lapisan komposisi yang menghubungkannya.
 class QuizController extends ChangeNotifier {
-  QuizController({this.onCompleted, QuestionRepository? questions})
-    : _questions = questions ?? const LocalQuestionRepository();
+  QuizController({this.onCompleted, QuizRepository? questions})
+    : _questions = questions ?? const LocalQuizRepository();
 
   final QuizCompleted? onCompleted;
-  final QuestionRepository _questions;
+  final QuizRepository _questions;
 
   Difficulty selectedDifficulty = Difficulty.pemula;
   CategoryId? activeCategory;

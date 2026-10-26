@@ -117,8 +117,9 @@ lib/
 ├── data/
 │   ├── quiz_data.dart              # Bank soal per kategori & tingkat
 │   └── repositories/
-│       ├── question_repository.dart # Kontrak bank soal + implementasi lokal
-│       └── history_repository.dart  # Kontrak penyimpanan riwayat + in-memory
+│       ├── quiz_repository.dart    # Kontrak bank soal + implementasi lokal
+│       ├── auth_repository.dart    # Kontrak sesi pengguna + in-memory
+│       └── history_repository.dart # Kontrak penyimpanan riwayat + in-memory
 ├── models/
 │   └── models.dart                 # CategoryId, Difficulty, Question, QuizResult, BadgeItem
 ├── features/
@@ -194,11 +195,12 @@ Setiap widget reusable memiliki file sendiri di `lib/widgets/`. Berkas
 `kage_widgets.dart` dipertahankan sebagai barrel export agar halaman cukup
 mengimpor satu jalur tanpa bergantung pada lokasi internal setiap komponen.
 
-Akses data melewati repository. `QuestionRepository` membungkus bank soal,
-sedangkan `HistoryRepository` menangani penyimpanan riwayat. Controller hanya
-bergantung pada kontrak tersebut, sehingga sumber soal atau media penyimpanan
-dapat diganti tanpa mengubah logika kuis dan riwayat. `AppServices` menyediakan
-implementasi bawaan dan mendaftarkannya lewat `provider`.
+Akses data melewati repository. `QuizRepository` membungkus bank soal,
+`AuthRepository` menyimpan identitas sesi, dan `HistoryRepository` menangani
+penyimpanan riwayat. Controller hanya bergantung pada kontrak tersebut, sehingga
+sumber soal, autentikasi, atau media penyimpanan dapat diganti tanpa mengubah
+logika fitur. `AppServices` menyediakan implementasi lokal bawaan dan
+mendaftarkannya lewat `provider`.
 
 ## Rute Aplikasi
 

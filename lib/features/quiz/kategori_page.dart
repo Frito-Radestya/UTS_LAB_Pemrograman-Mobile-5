@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:kage/widgets/kage_widgets.dart';
@@ -19,7 +19,7 @@ class _KategoriPageState extends State<KategoriPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bank = context.read<QuestionRepository>();
+    final bank = context.read<QuizRepository>();
     final items = bank.categories
         .where((c) => tab == 0 || c.available)
         .toList();

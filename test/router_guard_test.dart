@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/app.dart';
 import 'package:kage/data/repositories/history_repository.dart';
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/features/home/beranda_page.dart';
 import 'package:kage/features/auth/login_page.dart';
 import 'package:kage/app_services.dart';
@@ -29,7 +29,7 @@ Future<void> _pumpAt(
         ChangeNotifierProvider<HistoryController>.value(value: app.history),
         ChangeNotifierProvider<ProgressController>.value(value: app.progress),
         ChangeNotifierProvider<SettingsController>.value(value: app.settings),
-        Provider<QuestionRepository>.value(value: app.questionRepository),
+        Provider<QuizRepository>.value(value: app.quizRepository),
         Provider<HistoryRepository>.value(value: app.historyRepository),
       ],
       child: MaterialApp.router(theme: AppTheme.dark(), routerConfig: router),
