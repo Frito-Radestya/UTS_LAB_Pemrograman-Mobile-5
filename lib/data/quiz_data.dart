@@ -14,7 +14,6 @@ const categories = <QuizCategory>[
     iconAsset: 'assets/svg/icon_sains.svg',
     gradientInner: Color(0xFF3A2A20),
     gradientOuter: Color(0xFF14121A),
-    bestScore: 90,
   ),
   QuizCategory(
     id: CategoryId.teknologi,
@@ -26,7 +25,6 @@ const categories = <QuizCategory>[
     iconAsset: 'assets/svg/icon_teknologi.svg',
     gradientInner: Color(0xFF1F3358),
     gradientOuter: Color(0xFF10162B),
-    bestScore: 80,
   ),
   QuizCategory(
     id: CategoryId.sejarah,
@@ -39,7 +37,6 @@ const categories = <QuizCategory>[
     iconAsset: 'assets/svg/icon_sejarah.svg',
     gradientInner: Color(0xFF3A3020),
     gradientOuter: Color(0xFF14121A),
-    bestScore: 70,
   ),
   QuizCategory(
     id: CategoryId.logika,
@@ -52,7 +49,6 @@ const categories = <QuizCategory>[
     iconAsset: 'assets/svg/icon_logika.svg',
     gradientInner: Color(0xFF2D2650),
     gradientOuter: Color(0xFF10102A),
-    bestScore: 90,
   ),
   QuizCategory(
     id: CategoryId.umum,
@@ -65,7 +61,6 @@ const categories = <QuizCategory>[
     iconAsset: 'assets/svg/icon_umum.svg',
     gradientInner: Color(0xFF1C3A33),
     gradientOuter: Color(0xFF0F1A1E),
-    bestScore: 80,
   ),
 ];
 
