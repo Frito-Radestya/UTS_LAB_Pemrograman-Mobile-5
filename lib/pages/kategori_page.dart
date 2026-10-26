@@ -167,7 +167,7 @@ class _KategoriPageState extends State<KategoriPage> {
                                         ),
                                       ),
                                       Text(
-                                        '${c.questionCount} soal · Pemula - Ahli',
+                                        '${questionCountFor(c.id)} soal',
                                         style: AppTheme.onest(
                                           size: 13,
                                           heightPx: 18,

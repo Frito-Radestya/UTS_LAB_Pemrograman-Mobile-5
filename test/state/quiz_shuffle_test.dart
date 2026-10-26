@@ -12,7 +12,7 @@ void main() {
       addTearDown(app.dispose);
       app.startQuiz(CategoryId.sains, random: Random(42));
 
-      final source = questionsByCategory[CategoryId.sains]!;
+      final source = questionsFor(CategoryId.sains, Difficulty.pemula);
       expect(app.activeQuestions, hasLength(source.length));
       for (final question in app.activeQuestions) {
         final original = source.firstWhere((q) => q.prompt == question.prompt);

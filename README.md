@@ -36,8 +36,11 @@ Flutter dan demonstrasi UI/UX.
 - **Beranda personal** berisi sapaan, progres belajar, kartu lanjutkan petualangan,
   statistik, kategori, dan kutipan.
 - **5 kategori kuis**: Sains, Teknologi, Sejarah, Logika, dan Pengetahuan Umum.
-- **50 soal pilihan ganda** (10 soal per kategori) dengan pembahasan dan fakta menarik.
-- **Pemilihan tingkat kesulitan**: Pemula, Menengah, dan Ahli.
+- **70 soal pilihan ganda** dengan pembahasan dan fakta menarik. Sains sudah
+  lengkap untuk tiga tingkat (10 soal per tingkat); kategori lain masih bertahap
+  dan menandai tingkat yang belum tersedia sebagai "Segera hadir".
+- **Pemilihan tingkat kesulitan**: Pemula, Menengah, dan Ahli dengan pengali XP
+  berbeda serta jumlah soal aktual per tingkat.
 - **Penyimpanan progres kuis** ke Beranda, termasuk konfirmasi saat keluar di tengah kuis.
 - **Halaman hasil** dengan animasi skor, jumlah benar, akurasi, dan durasi.
 - **Riwayat skor** dengan filter kategori dan ringkasan statistik.
@@ -110,7 +113,7 @@ lib/
 ├── main.dart                  # Entry point + konfigurasi font
 ├── app.dart                   # MaterialApp.router, GoRouter, tema, responsive frame
 ├── data/
-│   └── quiz_data.dart         # 5 kategori × 10 soal, pembahasan, fakta menarik
+│   └── quiz_data.dart         # bank soal per kategori & tingkat, pembahasan, fakta
 ├── models/
 │   └── models.dart            # CategoryId, Difficulty, Question, QuizResult, BadgeItem
 ├── state/
@@ -233,6 +236,21 @@ dibutuhkan bertambah 50 setiap level:
 
 Fungsi `xpToNextLevel(int xp)` mengembalikan sisa XP menuju level berikutnya dan
 dipakai oleh bar progres di halaman Profil.
+
+### Skor dan XP per Tingkat
+
+Skor kuis selalu berupa persentase 0–100 dari jumlah jawaban benar. XP yang
+didapat dihitung dari skor tersebut dengan pengali tingkat kesulitan:
+
+| Tingkat | Pengali XP | Contoh skor 80 |
+|---|---|---|
+| Pemula | 1,0× | 80 XP |
+| Menengah | 1,5× | 120 XP |
+| Ahli | 2,0× | 160 XP |
+
+Aturan ini didefinisikan pada `DifficultyX.xpMultiplier` di `lib/models/models.dart`
+dan dipakai saat kuis selesai. Tingkat tanpa soal tidak dapat dipilih, sehingga
+sesi kuis tidak pernah dimulai dengan bank soal kosong.
 
 ## Status Pengembangan
 

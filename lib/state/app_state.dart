@@ -160,6 +160,7 @@ class AppState extends ChangeNotifier {
 
   void startQuiz(
     CategoryId id, {
+    Difficulty? difficulty,
     int startIndex = 0,
     List<int?>? existing,
     List<bool>? submitted,
@@ -167,10 +168,18 @@ class AppState extends ChangeNotifier {
     List<int>? questionOrder,
     List<List<int>>? optionOrders,
   }) {
+    final requested = difficulty ?? selectedDifficulty;
+    selectedDifficulty = hasQuestionsFor(id, requested)
+        ? requested
+        : Difficulty.values.firstWhere(
+            (value) => hasQuestionsFor(id, value),
+            orElse: () => requested,
+          );
     activeCategory = id;
     questionIndex = startIndex;
     _buildActiveQuestions(
       id,
+      difficulty: selectedDifficulty,
       random: random ?? Random(),
       savedQuestionOrder: questionOrder,
       savedOptionOrders: optionOrders,
@@ -198,11 +207,12 @@ class AppState extends ChangeNotifier {
   /// agar urutan yang dilihat pengguna tetap sama seperti sebelumnya.
   void _buildActiveQuestions(
     CategoryId id, {
+    required Difficulty difficulty,
     required Random random,
     List<int>? savedQuestionOrder,
     List<List<int>>? savedOptionOrders,
   }) {
-    final source = questionsByCategory[id]!;
+    final source = questionsFor(id, difficulty);
     final order = <int>[];
     if (savedQuestionOrder != null &&
         _isPermutation(savedQuestionOrder, source.length)) {
@@ -239,6 +249,7 @@ class AppState extends ChangeNotifier {
           correctIndex: optionOrder.indexOf(original.correctIndex),
           explanation: original.explanation,
           funFact: original.funFact,
+          difficulty: original.difficulty,
         ),
       );
     }
@@ -283,6 +294,7 @@ class AppState extends ChangeNotifier {
     }
     startQuiz(
       r.categoryId,
+      difficulty: r.difficulty,
       startIndex: r.index,
       existing: List<int?>.from(r.answers),
       submitted: List<bool>.from(r.submitted),
@@ -351,7 +363,7 @@ class AppState extends ChangeNotifier {
     );
     lastResult = result;
     history.insert(0, result);
-    xp += result.score;
+    xp += (result.score * result.difficulty.xpMultiplier).round();
     resume = null;
     notifyListeners();
   }

@@ -17,7 +17,6 @@ class QuizCategory {
     required this.iconAsset,
     required this.gradientInner,
     required this.gradientOuter,
-    this.questionCount = 10,
     this.available = true,
   });
 
@@ -30,7 +29,6 @@ class QuizCategory {
   final String iconAsset;
   final Color gradientInner;
   final Color gradientOuter;
-  final int questionCount;
   final bool available;
 }
 
@@ -41,6 +39,7 @@ class Question {
     required this.correctIndex,
     required this.explanation,
     required this.funFact,
+    this.difficulty = Difficulty.pemula,
   });
 
   final String prompt;
@@ -48,6 +47,7 @@ class Question {
   final int correctIndex;
   final String explanation;
   final String funFact;
+  final Difficulty difficulty;
 }
 
 class QuizResult {
@@ -116,6 +116,21 @@ class InProgressQuiz {
 
 extension CategoryIdX on CategoryId {
   String get route => name;
+}
+
+extension DifficultyX on Difficulty {
+  String get label => switch (this) {
+    Difficulty.pemula => 'Pemula',
+    Difficulty.menengah => 'Menengah',
+    Difficulty.ahli => 'Ahli',
+  };
+
+  /// Pengali XP aturan KAGE: Pemula 1.0, Menengah 1.5, Ahli 2.0.
+  double get xpMultiplier => switch (this) {
+    Difficulty.pemula => 1.0,
+    Difficulty.menengah => 1.5,
+    Difficulty.ahli => 2.0,
+  };
 }
 
 Color scoreTint(int score) {
