@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
@@ -15,9 +15,7 @@ class ScoreRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cat = context.read<QuestionRepository>().categoryById(
-      result.categoryId,
-    );
+    final cat = context.read<QuizRepository>().categoryById(result.categoryId);
     final date =
         '${result.playedAt.day.toString().padLeft(2, '0')} ${_month(result.playedAt.month)} ${result.playedAt.year}';
     final dur = _fmt(result.duration);

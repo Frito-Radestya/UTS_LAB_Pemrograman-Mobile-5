@@ -1,7 +1,21 @@
 import 'package:flutter/foundation.dart';
 
+import 'package:kage/data/repositories/auth_repository.dart';
+
 /// Menyimpan status autentikasi dan identitas pengguna yang sedang masuk.
 class AuthController extends ChangeNotifier {
+  AuthController({AuthRepository? repository})
+    : _repository = repository ?? InMemoryAuthRepository() {
+    final profile = _repository.loadProfile();
+    if (profile != null) {
+      _fullName = profile.fullName;
+      _email = profile.email;
+      _loggedIn = true;
+    }
+  }
+
+  final AuthRepository _repository;
+
   bool _loggedIn = false;
   String _fullName = '';
   String _email = '';
@@ -28,17 +42,24 @@ class AuthController extends ChangeNotifier {
     if (name != null && name.trim().isNotEmpty) _fullName = name.trim();
     if (mail != null && mail.trim().isNotEmpty) _email = mail.trim();
     _loggedIn = true;
+    _saveProfile();
     notifyListeners();
   }
 
   void updateProfile({String? name, String? mail}) {
     if (name != null && name.trim().isNotEmpty) _fullName = name.trim();
     if (mail != null && mail.trim().isNotEmpty) _email = mail.trim();
+    _saveProfile();
     notifyListeners();
   }
 
   void logout() {
     _loggedIn = false;
+    _repository.clearProfile();
     notifyListeners();
+  }
+
+  void _saveProfile() {
+    _repository.saveProfile(AuthProfile(fullName: _fullName, email: _email));
   }
 }

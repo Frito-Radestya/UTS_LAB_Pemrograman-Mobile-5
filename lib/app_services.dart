@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 
+import 'package:kage/data/repositories/auth_repository.dart';
 import 'package:kage/data/repositories/history_repository.dart';
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/auth/auth_controller.dart';
 import 'package:kage/features/history/history_controller.dart';
@@ -16,19 +17,20 @@ import 'package:kage/features/settings/settings_controller.dart';
 /// sekaligus.
 class AppServices {
   AppServices({
+    AuthRepository? authRepository,
     HistoryRepository? historyRepository,
-    QuestionRepository? questionRepository,
+    QuizRepository? quizRepository,
   }) {
+    this.authRepository = authRepository ?? InMemoryAuthRepository();
     this.historyRepository = historyRepository ?? InMemoryHistoryRepository();
-    this.questionRepository =
-        questionRepository ?? const LocalQuestionRepository();
-    auth = AuthController();
+    this.quizRepository = quizRepository ?? const LocalQuizRepository();
+    auth = AuthController(repository: this.authRepository);
     settings = SettingsController();
     history = HistoryController(repository: this.historyRepository);
     progress = ProgressController();
     quiz = QuizController(
       onCompleted: _recordQuizResult,
-      questions: this.questionRepository,
+      questions: this.quizRepository,
     );
     routerListenable = Listenable.merge([auth, quiz]);
   }
@@ -38,8 +40,9 @@ class AppServices {
   late final HistoryController history;
   late final ProgressController progress;
   late final QuizController quiz;
+  late final AuthRepository authRepository;
   late final HistoryRepository historyRepository;
-  late final QuestionRepository questionRepository;
+  late final QuizRepository quizRepository;
 
   /// Perubahan yang memengaruhi keputusan redirect router.
   late final Listenable routerListenable;

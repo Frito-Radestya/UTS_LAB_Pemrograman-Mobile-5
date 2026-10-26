@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/features/auth/auth_controller.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
@@ -18,7 +18,7 @@ class BerandaPage extends StatelessWidget {
     final auth = context.watch<AuthController>();
     final history = context.watch<HistoryController>();
     final quiz = context.watch<QuizController>();
-    final bank = context.read<QuestionRepository>();
+    final bank = context.read<QuizRepository>();
     final resume = quiz.resume;
     final categoryCount = bank.categories.length;
 

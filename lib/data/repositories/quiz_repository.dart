@@ -5,7 +5,7 @@ import 'package:kage/models/models.dart';
 ///
 /// Controller bergantung pada kontrak ini sehingga sumber soal bisa diganti
 /// (JSON, API, atau sekadar data lokal) tanpa mengubah logika kuis.
-abstract interface class QuestionRepository {
+abstract interface class QuizRepository {
   List<QuizCategory> get categories;
 
   QuizCategory categoryById(CategoryId id);
@@ -20,8 +20,8 @@ abstract interface class QuestionRepository {
 }
 
 /// Implementasi saat ini yang membaca bank soal lokal di `quiz_data.dart`.
-class LocalQuestionRepository implements QuestionRepository {
-  const LocalQuestionRepository();
+class LocalQuizRepository implements QuizRepository {
+  const LocalQuizRepository();
 
   @override
   List<QuizCategory> get categories => bank.categories;

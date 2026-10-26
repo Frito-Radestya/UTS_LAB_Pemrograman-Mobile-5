@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/app_services.dart';
 import 'package:kage/data/quiz_data.dart' as bank;
+import 'package:kage/data/repositories/auth_repository.dart';
 import 'package:kage/data/repositories/history_repository.dart';
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
+import 'package:kage/features/auth/auth_controller.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/models/models.dart';
 
@@ -23,8 +25,8 @@ QuizResult _result({
 }
 
 void main() {
-  group('LocalQuestionRepository', () {
-    const repository = LocalQuestionRepository();
+  group('LocalQuizRepository', () {
+    const repository = LocalQuizRepository();
 
     test('meneruskan katalog dan detail kategori dari bank soal', () {
       expect(repository.categories, bank.categories);
@@ -122,14 +124,58 @@ void main() {
     });
   });
 
+  group('InMemoryAuthRepository', () {
+    test('menyimpan dan menghapus profil sesi', () {
+      final repository = InMemoryAuthRepository();
+      expect(repository.loadProfile(), isNull);
+
+      repository.saveProfile(
+        const AuthProfile(fullName: 'Budi', email: 'budi@example.com'),
+      );
+
+      expect(repository.loadProfile()?.fullName, 'Budi');
+      expect(repository.loadProfile()?.email, 'budi@example.com');
+
+      repository.clearProfile();
+      expect(repository.loadProfile(), isNull);
+    });
+
+    test('controller memulihkan sesi dari repository yang sama', () {
+      final repository = InMemoryAuthRepository();
+      final first = AuthController(repository: repository);
+      addTearDown(first.dispose);
+      first.login(name: 'Budi', mail: 'budi@example.com');
+
+      final restored = AuthController(repository: repository);
+      addTearDown(restored.dispose);
+      expect(restored.loggedIn, isTrue);
+      expect(restored.fullName, 'Budi');
+      expect(restored.email, 'budi@example.com');
+
+      restored.logout();
+      expect(repository.loadProfile(), isNull);
+
+      final loggedOut = AuthController(repository: repository);
+      addTearDown(loggedOut.dispose);
+      expect(loggedOut.loggedIn, isFalse);
+    });
+  });
+
   group('AppServices', () {
     test('memakai repository yang disuntikkan', () {
+      final authRepository = InMemoryAuthRepository();
       final historyRepository = InMemoryHistoryRepository();
-      final app = AppServices(historyRepository: historyRepository);
+      const quizRepository = LocalQuizRepository();
+      final app = AppServices(
+        authRepository: authRepository,
+        historyRepository: historyRepository,
+        quizRepository: quizRepository,
+      );
       addTearDown(app.dispose);
 
+      expect(app.authRepository, same(authRepository));
       expect(app.historyRepository, same(historyRepository));
-      expect(app.questionRepository, isA<LocalQuestionRepository>());
+      expect(app.quizRepository, same(quizRepository));
     });
 
     test('hasil kuis tersimpan ke repository riwayat bersama', () {

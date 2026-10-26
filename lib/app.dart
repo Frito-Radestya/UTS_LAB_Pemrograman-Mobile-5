@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import 'package:kage/data/repositories/auth_repository.dart';
 import 'package:kage/data/repositories/history_repository.dart';
-import 'package:kage/data/repositories/question_repository.dart';
+import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/history/badge_page.dart';
 import 'package:kage/features/home/beranda_page.dart';
@@ -192,7 +193,8 @@ class _KageAppState extends State<KageApp> {
         ChangeNotifierProvider<SettingsController>.value(
           value: _services.settings,
         ),
-        Provider<QuestionRepository>.value(value: _services.questionRepository),
+        Provider<AuthRepository>.value(value: _services.authRepository),
+        Provider<QuizRepository>.value(value: _services.quizRepository),
         Provider<HistoryRepository>.value(value: _services.historyRepository),
       ],
       child: MaterialApp.router(
