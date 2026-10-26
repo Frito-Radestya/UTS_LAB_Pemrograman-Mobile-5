@@ -33,8 +33,15 @@ class AppState extends ChangeNotifier {
   List<List<int>> _optionOrders = <List<int>>[];
 
   DateTime? quizStartedAt;
+  Duration _elapsedBeforeResume = Duration.zero;
   QuizResult? lastResult;
   bool showingCorrect = true;
+
+  Duration get currentElapsed {
+    final startedAt = quizStartedAt;
+    if (startedAt == null) return _elapsedBeforeResume;
+    return _elapsedBeforeResume + DateTime.now().difference(startedAt);
+  }
 
   List<Question> get activeQuestions =>
       List<Question>.unmodifiable(_activeQuestions);
@@ -167,6 +174,7 @@ class AppState extends ChangeNotifier {
     Random? random,
     List<int>? questionOrder,
     List<List<int>>? optionOrders,
+    Duration elapsed = Duration.zero,
   }) {
     final requested = difficulty ?? selectedDifficulty;
     selectedDifficulty = hasQuestionsFor(id, requested)
@@ -197,6 +205,7 @@ class AppState extends ChangeNotifier {
         _submitted[i] = submitted[i];
       }
     }
+    _elapsedBeforeResume = elapsed;
     quizStartedAt = DateTime.now();
     notifyListeners();
   }
@@ -277,6 +286,7 @@ class AppState extends ChangeNotifier {
       submitted: List<bool>.from(_submitted),
       questionOrder: List<int>.from(_questionOrder),
       optionOrders: [for (final order in _optionOrders) List<int>.from(order)],
+      elapsed: currentElapsed,
     );
     notifyListeners();
   }
@@ -288,10 +298,8 @@ class AppState extends ChangeNotifier {
 
   void continueAdventure() {
     final r = resume;
-    if (r == null) {
-      startQuiz(CategoryId.teknologi);
-      return;
-    }
+    if (r == null) return;
+    setDifficulty(r.difficulty);
     startQuiz(
       r.categoryId,
       difficulty: r.difficulty,
@@ -300,6 +308,7 @@ class AppState extends ChangeNotifier {
       submitted: List<bool>.from(r.submitted),
       questionOrder: List<int>.from(r.questionOrder),
       optionOrders: [for (final order in r.optionOrders) List<int>.from(order)],
+      elapsed: r.elapsed,
     );
   }
 
@@ -351,7 +360,7 @@ class AppState extends ChangeNotifier {
     for (var i = 0; i < list.length; i++) {
       if (answers[i] == list[i].correctIndex) correct++;
     }
-    final duration = DateTime.now().difference(quizStartedAt ?? DateTime.now());
+    final duration = currentElapsed;
     final result = QuizResult(
       categoryId: id,
       score: ((correct / list.length) * 100).round(),

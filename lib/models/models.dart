@@ -97,6 +97,7 @@ class InProgressQuiz {
     this.submitted = const [],
     this.questionOrder = const [],
     this.optionOrders = const [],
+    this.elapsed = Duration.zero,
   });
 
   final CategoryId categoryId;
@@ -112,6 +113,9 @@ class InProgressQuiz {
 
   /// Urutan indeks opsi asli untuk setiap soal pada [questionOrder].
   final List<List<int>> optionOrders;
+
+  /// Total waktu pengerjaan sebelum kuis disimpan.
+  final Duration elapsed;
 }
 
 extension CategoryIdX on CategoryId {
