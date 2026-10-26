@@ -30,7 +30,7 @@ class KageWordmark extends StatelessWidget {
         ).createShader(bounds),
         child: Text(
           'KAGE',
-          style: AppTheme.cinzel(
+          style: AppTextStyles.wordmark(
             size: size,
             heightPx: heightPx,
             letterSpacing: letterSpacing,

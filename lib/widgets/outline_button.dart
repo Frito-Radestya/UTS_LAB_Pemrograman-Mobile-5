@@ -43,10 +43,7 @@ class OutlineButton extends StatelessWidget {
             child: Center(
               child: Text(
                 label,
-                style: AppTheme.onest(
-                  size: 15,
-                  heightPx: 22,
-                  weight: FontWeight.w500,
+                style: AppTextStyles.bodyLargeMedium.copyWith(
                   color: enabled ? AppColors.text : AppColors.textMuted,
                 ),
               ),

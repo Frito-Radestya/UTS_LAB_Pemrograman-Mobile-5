@@ -39,14 +39,7 @@ class PengaturanPage extends StatelessWidget {
                             label: 'Kembali ke profil',
                           ),
                         ),
-                        Text(
-                          'Pengaturan',
-                          style: AppTheme.onest(
-                            size: 18,
-                            heightPx: 26,
-                            weight: FontWeight.w600,
-                          ),
-                        ),
+                        Text('Pengaturan', style: AppTextStyles.titleLarge),
                       ],
                     ),
                   ),
@@ -88,12 +81,7 @@ class PengaturanPage extends StatelessWidget {
                                 ),
                                 child: Text(
                                   auth.initial,
-                                  style: AppTheme.onest(
-                                    size: 22,
-                                    heightPx: 26,
-                                    weight: FontWeight.w600,
-                                    color: AppColors.gold,
-                                  ),
+                                  style: AppTextStyles.headlineTightGold,
                                 ),
                               ),
                               const SizedBox(width: 14),
@@ -103,19 +91,11 @@ class PengaturanPage extends StatelessWidget {
                                   children: [
                                     Text(
                                       auth.fullName,
-                                      style: AppTheme.onest(
-                                        size: 16,
-                                        heightPx: 24,
-                                        weight: FontWeight.w600,
-                                      ),
+                                      style: AppTextStyles.titleMedium,
                                     ),
                                     Text(
                                       auth.email,
-                                      style: AppTheme.onest(
-                                        size: 13,
-                                        heightPx: 18,
-                                        color: AppColors.textMuted,
-                                      ),
+                                      style: AppTextStyles.bodySmallMuted,
                                     ),
                                   ],
                                 ),
@@ -167,12 +147,7 @@ class PengaturanPage extends StatelessWidget {
                         Center(
                           child: Text(
                             'KAGE · The Quiz Sanctuary · v1.0.0',
-                            style: AppTheme.onest(
-                              size: 12,
-                              heightPx: 16,
-                              color: AppColors.textMuted,
-                              letterSpacing: 0.5,
-                            ),
+                            style: AppTextStyles.captionMutedSpaced,
                           ),
                         ),
                       ],
@@ -190,15 +165,7 @@ class PengaturanPage extends StatelessWidget {
   Widget _sectionLabel(String text) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 20, 0, 8),
-      child: Text(
-        text,
-        style: AppTheme.onest(
-          size: 12,
-          heightPx: 16,
-          color: AppColors.textMuted,
-          letterSpacing: 1,
-        ),
-      ),
+      child: Text(text, style: AppTextStyles.captionMutedWide),
     );
   }
 
@@ -232,12 +199,7 @@ class PengaturanPage extends StatelessWidget {
             children: [
               Icon(icon, size: 20, color: AppColors.gold),
               const SizedBox(width: 14),
-              Expanded(
-                child: Text(
-                  label,
-                  style: AppTheme.onest(size: 15, heightPx: 22),
-                ),
-              ),
+              Expanded(child: Text(label, style: AppTextStyles.bodyLarge)),
               const Icon(
                 Icons.chevron_right,
                 size: 18,
@@ -270,14 +232,7 @@ class PengaturanPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: AppColors.borderStrong),
         ),
-        title: Text(
-          'Edit Profil',
-          style: AppTheme.onest(
-            size: 18,
-            heightPx: 26,
-            weight: FontWeight.w600,
-          ),
-        ),
+        title: Text('Edit Profil', style: AppTextStyles.titleLarge),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -302,27 +257,11 @@ class PengaturanPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(
-              'Batal',
-              style: AppTheme.onest(
-                size: 14,
-                heightPx: 20,
-                weight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
-            ),
+            child: Text('Batal', style: AppTextStyles.labelMuted),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(
-              'Simpan',
-              style: AppTheme.onest(
-                size: 14,
-                heightPx: 20,
-                weight: FontWeight.w600,
-                color: AppColors.primaryText,
-              ),
-            ),
+            child: Text('Simpan', style: AppTextStyles.labelPrimary),
           ),
         ],
       ),
@@ -363,46 +302,19 @@ class PengaturanPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: AppColors.borderStrong),
         ),
-        title: Text(
-          'Keluar dari akun?',
-          style: AppTheme.onest(
-            size: 18,
-            heightPx: 26,
-            weight: FontWeight.w600,
-          ),
-        ),
+        title: Text('Keluar dari akun?', style: AppTextStyles.titleLarge),
         content: Text(
           'Kamu dapat masuk kembali kapan saja untuk melanjutkan latihan.',
-          style: AppTheme.onest(
-            size: 14,
-            heightPx: 21,
-            color: AppColors.textSoft,
-          ),
+          style: AppTextStyles.bodyRelaxedSoft,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(
-              'Batal',
-              style: AppTheme.onest(
-                size: 14,
-                heightPx: 20,
-                weight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
-            ),
+            child: Text('Batal', style: AppTextStyles.labelMuted),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(
-              'Logout',
-              style: AppTheme.onest(
-                size: 14,
-                heightPx: 20,
-                weight: FontWeight.w600,
-                color: AppColors.primaryText,
-              ),
-            ),
+            child: Text('Logout', style: AppTextStyles.labelPrimary),
           ),
         ],
       ),
@@ -427,26 +339,14 @@ class PengaturanPage extends StatelessWidget {
               color: AppColors.gold,
             ),
             const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                'Tema Gelap',
-                style: AppTheme.onest(size: 15, heightPx: 22),
-              ),
-            ),
+            Expanded(child: Text('Tema Gelap', style: AppTextStyles.bodyLarge)),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.success.withValues(alpha: 0.14),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                'Aktif',
-                style: AppTheme.onest(
-                  size: 12,
-                  heightPx: 16,
-                  color: AppColors.success,
-                ),
-              ),
+              child: Text('Aktif', style: AppTextStyles.captionSuccess),
             ),
           ],
         ),

@@ -43,24 +43,13 @@ class _KategoriPageState extends State<KategoriPage> {
                       onTap: () => context.go('/beranda'),
                     ),
                   ),
-                  Text(
-                    'Pilih Kategori',
-                    style: AppTheme.onest(
-                      size: 22,
-                      heightPx: 32,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
+                  Text('Pilih Kategori', style: AppTextStyles.headlineLarge),
                 ],
               ),
             ),
             Text(
               'Tantang pengetahuanmu di berbagai bidang.',
-              style: AppTheme.onest(
-                size: 14,
-                heightPx: 20,
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.bodyMuted,
             ),
             const SizedBox(height: 16),
             Container(
@@ -106,21 +95,13 @@ class _KategoriPageState extends State<KategoriPage> {
                             Text(
                               'Belum ada kategori tersedia',
                               textAlign: TextAlign.center,
-                              style: AppTheme.onest(
-                                size: 15,
-                                heightPx: 22,
-                                weight: FontWeight.w600,
-                              ),
+                              style: AppTextStyles.titleSmall,
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Coba lihat semua kategori yang sedang disiapkan.',
                               textAlign: TextAlign.center,
-                              style: AppTheme.onest(
-                                size: 13,
-                                heightPx: 19,
-                                color: AppColors.textMuted,
-                              ),
+                              style: AppTextStyles.bodySmallRelaxedMuted,
                             ),
                             const SizedBox(height: 12),
                             OutlineButton(
@@ -164,19 +145,11 @@ class _KategoriPageState extends State<KategoriPage> {
                                     children: [
                                       Text(
                                         c.name,
-                                        style: AppTheme.onest(
-                                          size: 16,
-                                          heightPx: 24,
-                                          weight: FontWeight.w600,
-                                        ),
+                                        style: AppTextStyles.titleMedium,
                                       ),
                                       Text(
                                         '${bank.questionCountFor(c.id)} soal',
-                                        style: AppTheme.onest(
-                                          size: 13,
-                                          heightPx: 18,
-                                          color: AppColors.textMuted,
-                                        ),
+                                        style: AppTextStyles.bodySmallMuted,
                                       ),
                                       const SizedBox(height: 4),
                                       Container(
@@ -193,11 +166,8 @@ class _KategoriPageState extends State<KategoriPage> {
                                         ),
                                         child: Text(
                                           'Tersedia',
-                                          style: AppTheme.onest(
-                                            size: 12,
-                                            heightPx: 18,
-                                            color: AppColors.success,
-                                          ),
+                                          style: AppTextStyles
+                                              .captionRelaxedSuccess,
                                         ),
                                       ),
                                     ],
@@ -234,10 +204,8 @@ class _KategoriPageState extends State<KategoriPage> {
           ),
           child: Text(
             label,
-            style: AppTheme.onest(
-              size: 14,
-              heightPx: 20,
-              weight: on ? FontWeight.w600 : FontWeight.w500,
+            style: AppTextStyles.bodyMedium.copyWith(
+              fontWeight: on ? FontWeight.w600 : FontWeight.w500,
               color: on ? AppColors.text : AppColors.textMuted,
             ),
           ),

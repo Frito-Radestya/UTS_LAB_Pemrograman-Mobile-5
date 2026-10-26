@@ -42,11 +42,7 @@ class ProfilPage extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Skor & Profil',
-                      style: AppTheme.onest(
-                        size: 18,
-                        heightPx: 26,
-                        weight: FontWeight.w600,
-                      ),
+                      style: AppTextStyles.titleLarge,
                     ),
                   ),
                   IconButton(
@@ -91,12 +87,7 @@ class ProfilPage extends StatelessWidget {
                         ),
                         child: Text(
                           auth.initial,
-                          style: AppTheme.onest(
-                            size: 32,
-                            heightPx: 36,
-                            weight: FontWeight.w600,
-                            color: AppColors.gold,
-                          ),
+                          style: AppTextStyles.displayLevel,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -106,11 +97,7 @@ class ProfilPage extends StatelessWidget {
                           children: [
                             Text(
                               auth.fullName,
-                              style: AppTheme.onest(
-                                size: 20,
-                                heightPx: 28,
-                                weight: FontWeight.w600,
-                              ),
+                              style: AppTextStyles.headlineSmall,
                             ),
                             const SizedBox(height: 2),
                             Container(
@@ -124,11 +111,7 @@ class ProfilPage extends StatelessWidget {
                               ),
                               child: Text(
                                 'Level ${progress.level} · Pembelajar',
-                                style: AppTheme.onest(
-                                  size: 13,
-                                  heightPx: 18,
-                                  color: AppColors.gold,
-                                ),
+                                style: AppTextStyles.bodySmallGold,
                               ),
                             ),
                           ],
@@ -154,21 +137,12 @@ class ProfilPage extends StatelessWidget {
                           children: [
                             Text(
                               'Menuju Level ${progress.level + 1}',
-                              style: AppTheme.onest(
-                                size: 13,
-                                heightPx: 18,
-                                color: AppColors.textMuted,
-                              ),
+                              style: AppTextStyles.bodySmallMuted,
                             ),
                             const Spacer(),
                             Text(
                               '${_xp(progress.xp)} / ${_xp(progress.nextLevelXp)} XP',
-                              style: AppTheme.onest(
-                                size: 13,
-                                heightPx: 18,
-                                weight: FontWeight.w600,
-                                color: AppColors.gold,
-                              ),
+                              style: AppTextStyles.bodySmallStrongGold,
                             ),
                           ],
                         ),
@@ -200,11 +174,7 @@ class ProfilPage extends StatelessWidget {
                       child: Center(
                         child: Text(
                           'Lihat semua riwayat',
-                          style: AppTheme.onest(
-                            size: 14,
-                            heightPx: 20,
-                            color: AppColors.primaryText,
-                          ),
+                          style: AppTextStyles.bodyPrimary,
                         ),
                       ),
                     ),
@@ -235,10 +205,8 @@ class ProfilPage extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: AppTheme.onest(
-              size: 14,
-              heightPx: 20,
-              weight: on ? FontWeight.w600 : FontWeight.w400,
+            style: AppTextStyles.body.copyWith(
+              fontWeight: on ? FontWeight.w600 : FontWeight.w400,
               color: on ? AppColors.primaryText : AppColors.textMuted,
             ),
           ),

@@ -147,24 +147,12 @@ class HasilPage extends StatelessWidget {
                 children: [
                   const _HasilEmblem(),
                   const SizedBox(height: 16),
-                  Text(
-                    title,
-                    style: AppTheme.onest(
-                      size: 28,
-                      heightPx: 36,
-                      weight: FontWeight.w700,
-                      color: AppColors.gold,
-                    ),
-                  ),
+                  Text(title, style: AppTextStyles.displayLargeGold),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
                     textAlign: TextAlign.center,
-                    style: AppTheme.onest(
-                      size: 13,
-                      heightPx: 19,
-                      color: AppColors.textMuted,
-                    ),
+                    style: AppTextStyles.bodySmallRelaxedMuted,
                   ),
                   const SizedBox(height: 14),
                   Row(
@@ -174,43 +162,26 @@ class HasilPage extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         '${cat.name} · $difficulty',
-                        style: AppTheme.onest(
-                          size: 13,
-                          heightPx: 18,
-                          weight: FontWeight.w500,
-                          color: AppColors.textSoft,
-                        ),
+                        style: AppTextStyles.bodySmallMediumSoft,
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    'Skor Akhir',
-                    style: AppTheme.onest(
-                      size: 14,
-                      heightPx: 20,
-                      color: AppColors.textSoft,
-                    ),
-                  ),
+                  Text('Skor Akhir', style: AppTextStyles.bodySoft),
                   TweenAnimationBuilder<int>(
                     tween: IntTween(begin: 0, end: r.score),
                     duration: const Duration(milliseconds: 900),
                     curve: Curves.easeOutCubic,
                     builder: (context, value, _) => Text(
                       '$value',
-                      style:
-                          AppTheme.onest(
-                            size: 72,
-                            heightPx: 80,
-                            weight: FontWeight.w700,
-                          ).copyWith(
-                            shadows: [
-                              Shadow(
-                                color: AppColors.primary.withValues(alpha: 0.6),
-                                blurRadius: 30,
-                              ),
-                            ],
+                      style: AppTextStyles.displayScore.copyWith(
+                        shadows: [
+                          Shadow(
+                            color: AppColors.primary.withValues(alpha: 0.6),
+                            blurRadius: 30,
                           ),
+                        ],
+                      ),
                     ),
                   ),
                   Container(
@@ -225,12 +196,7 @@ class HasilPage extends StatelessWidget {
                     ),
                     child: Text(
                       '${r.correct}/${r.total} Benar',
-                      style: AppTheme.onest(
-                        size: 14,
-                        heightPx: 24,
-                        weight: FontWeight.w600,
-                        color: AppColors.success,
-                      ),
+                      style: AppTextStyles.labelLooseSuccess,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -246,12 +212,7 @@ class HasilPage extends StatelessWidget {
                     child: Text(
                       '"Pengetahuan adalah cahaya yang tak pernah padam."',
                       textAlign: TextAlign.center,
-                      style: AppTheme.onest(
-                        size: 14,
-                        heightPx: 22,
-                        color: AppColors.textQuote,
-                        fontStyle: FontStyle.italic,
-                      ),
+                      style: AppTextStyles.bodyLooseQuoteItalic,
                     ),
                   ),
                   PrimaryButton(
@@ -291,25 +252,11 @@ class HasilPage extends StatelessWidget {
               children: [
                 Icon(icon, size: 16, color: AppColors.textMuted),
                 const SizedBox(width: 6),
-                Text(
-                  label,
-                  style: AppTheme.onest(
-                    size: 13,
-                    heightPx: 18,
-                    color: AppColors.textMuted,
-                  ),
-                ),
+                Text(label, style: AppTextStyles.bodySmallMuted),
               ],
             ),
             const SizedBox(height: 2),
-            Text(
-              value,
-              style: AppTheme.onest(
-                size: 24,
-                heightPx: 32,
-                weight: FontWeight.w700,
-              ),
-            ),
+            Text(value, style: AppTextStyles.displaySmall),
           ],
         ),
       ),

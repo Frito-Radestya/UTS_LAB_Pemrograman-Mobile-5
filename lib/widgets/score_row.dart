@@ -42,31 +42,21 @@ class ScoreRow extends StatelessWidget {
               children: [
                 Text(
                   cat.name,
-                  style: AppTheme.onest(
-                    size: compact ? 15 : 16,
-                    heightPx: compact ? 20 : 22,
-                    weight: FontWeight.w600,
-                  ),
+                  style: compact
+                      ? AppTextStyles.titleSmallCompact
+                      : AppTextStyles.titleMediumTight,
                 ),
-                Text(
-                  '$date · $dur',
-                  style: AppTheme.onest(
-                    size: 12,
-                    heightPx: 16,
-                    color: AppColors.textMuted,
-                  ),
-                ),
+                Text('$date · $dur', style: AppTextStyles.captionMuted),
               ],
             ),
           ),
           Text(
             '${result.score}',
-            style: AppTheme.onest(
-              size: compact ? 20 : 22,
-              heightPx: 28,
-              weight: FontWeight.w700,
-              color: scoreTint(result.score),
-            ),
+            style:
+                (compact
+                        ? AppTextStyles.scoreValueCompact
+                        : AppTextStyles.scoreValue)
+                    .copyWith(color: scoreTint(result.score)),
           ),
         ],
       ),

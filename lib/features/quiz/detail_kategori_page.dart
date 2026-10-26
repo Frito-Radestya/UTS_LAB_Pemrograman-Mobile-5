@@ -89,11 +89,7 @@ class DetailKategoriPage extends StatelessWidget {
                         ),
                         Text(
                           'Detail Kategori',
-                          style: AppTheme.onest(
-                            size: 16,
-                            heightPx: 22,
-                            weight: FontWeight.w600,
-                          ),
+                          style: AppTextStyles.titleMediumTight,
                         ),
                       ],
                     ),
@@ -115,11 +111,7 @@ class DetailKategoriPage extends StatelessWidget {
                       Expanded(
                         child: Text(
                           cat.name,
-                          style: AppTheme.onest(
-                            size: 26,
-                            heightPx: 34,
-                            weight: FontWeight.w700,
-                          ),
+                          style: AppTextStyles.displayMedium,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -131,24 +123,13 @@ class DetailKategoriPage extends StatelessWidget {
                         ),
                         child: Text(
                           'Tersedia',
-                          style: AppTheme.onest(
-                            size: 12,
-                            heightPx: 20,
-                            color: AppColors.success,
-                          ),
+                          style: AppTextStyles.captionLooseSuccess,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    cat.description,
-                    style: AppTheme.onest(
-                      size: 14,
-                      heightPx: 22,
-                      color: AppColors.textSoft,
-                    ),
-                  ),
+                  Text(cat.description, style: AppTextStyles.bodyLooseSoft),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
@@ -166,11 +147,7 @@ class DetailKategoriPage extends StatelessWidget {
                           ),
                           child: Text(
                             t,
-                            style: AppTheme.onest(
-                              size: 12,
-                              heightPx: 18,
-                              color: AppColors.textMuted,
-                            ),
+                            style: AppTextStyles.captionRelaxedMuted,
                           ),
                         ),
                     ],
@@ -178,11 +155,7 @@ class DetailKategoriPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   Text(
                     'Pilih tingkat kesulitan',
-                    style: AppTheme.onest(
-                      size: 14,
-                      heightPx: 20,
-                      color: AppColors.textMuted,
-                    ),
+                    style: AppTextStyles.bodyMuted,
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -234,12 +207,7 @@ class DetailKategoriPage extends StatelessWidget {
                           'Skor Terbaik',
                           trailing: Text(
                             '${history.bestFor(id)}',
-                            style: AppTheme.onest(
-                              size: 18,
-                              heightPx: 24,
-                              weight: FontWeight.w700,
-                              color: AppColors.gold,
-                            ),
+                            style: AppTextStyles.titleLargeGold,
                           ),
                         ),
                       ],
@@ -287,10 +255,8 @@ class DetailKategoriPage extends StatelessWidget {
               ),
               child: Text(
                 d.label,
-                style: AppTheme.onest(
-                  size: 13,
-                  heightPx: 20,
-                  weight: on ? FontWeight.w600 : FontWeight.w500,
+                style: AppTextStyles.labelRelaxed.copyWith(
+                  fontWeight: on ? FontWeight.w600 : FontWeight.w500,
                   color: on
                       ? AppColors.success
                       : enabled
@@ -304,11 +270,7 @@ class DetailKategoriPage extends StatelessWidget {
           Text(
             enabled ? '$count soal' : 'Segera hadir',
             textAlign: TextAlign.center,
-            style: AppTheme.onest(
-              size: 12,
-              heightPx: 16,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.captionMuted,
           ),
         ],
       ),
@@ -324,16 +286,7 @@ class DetailKategoriPage extends StatelessWidget {
           children: [
             Icon(icon, color: AppColors.gold, size: 20),
             const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                label,
-                style: AppTheme.onest(
-                  size: 15,
-                  heightPx: 22,
-                  weight: FontWeight.w500,
-                ),
-              ),
-            ),
+            Expanded(child: Text(label, style: AppTextStyles.bodyLargeMedium)),
             trailing,
           ],
         ),

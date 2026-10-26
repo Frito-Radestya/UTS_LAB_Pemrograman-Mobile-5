@@ -195,31 +195,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'KAGE',
-                              style: AppTheme.cinzel(
-                                size: 18,
-                                heightPx: 24,
-                                letterSpacing: 6,
-                              ),
-                            ),
+                            Text('KAGE', style: AppTextStyles.brandSmall),
                             const SizedBox(height: 14),
                             Text(
                               'Buat Akun',
-                              style: AppTheme.onest(
-                                size: 28,
-                                heightPx: 36,
-                                weight: FontWeight.w700,
-                              ),
+                              style: AppTextStyles.displayLarge,
                             ),
                             const SizedBox(height: 6),
                             Text(
                               'Mulai perjalanan pengetahuanmu bersama KAGE.',
-                              style: AppTheme.onest(
-                                size: 14,
-                                heightPx: 20,
-                                color: AppColors.textMuted,
-                              ),
+                              style: AppTextStyles.bodyMuted,
                             ),
                             const SizedBox(height: 28),
                             AppTextField(
@@ -259,11 +244,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 padding: const EdgeInsets.only(left: 4),
                                 child: Text(
                                   'Minimal 8 karakter, gunakan kombinasi huruf dan angka.',
-                                  style: AppTheme.onest(
-                                    size: 12,
-                                    heightPx: 16,
-                                    color: AppColors.textMuted,
-                                  ),
+                                  style: AppTextStyles.captionMuted,
                                 ),
                               ),
                             const SizedBox(height: 24),
@@ -273,11 +254,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: Text.rich(
                                 TextSpan(
                                   text: 'Sudah punya akun? ',
-                                  style: AppTheme.onest(
-                                    size: 14,
-                                    heightPx: 20,
-                                    color: AppColors.textMuted,
-                                  ),
+                                  style: AppTextStyles.bodyMuted,
                                   children: [
                                     WidgetSpan(
                                       alignment: PlaceholderAlignment.baseline,
@@ -286,12 +263,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         onTap: () => context.go('/login'),
                                         child: Text(
                                           'Masuk',
-                                          style: AppTheme.onest(
-                                            size: 14,
-                                            heightPx: 20,
-                                            weight: FontWeight.w600,
-                                            color: AppColors.primaryText,
-                                          ),
+                                          style: AppTextStyles.labelPrimary,
                                         ),
                                       ),
                                     ),

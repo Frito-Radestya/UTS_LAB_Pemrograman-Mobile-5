@@ -74,20 +74,12 @@ class PenjelasanPage extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'Penjelasan Jawaban',
-                            style: AppTheme.onest(
-                              size: 18,
-                              heightPx: 26,
-                              weight: FontWeight.w600,
-                            ),
+                            style: AppTextStyles.titleLarge,
                           ),
                         ),
                         Text(
                           '${quiz.questionIndex + 1}/${quiz.totalQuestions}',
-                          style: AppTheme.onest(
-                            size: 14,
-                            heightPx: 20,
-                            color: AppColors.textMuted,
-                          ),
+                          style: AppTextStyles.bodyMuted,
                         ),
                       ],
                     ),
@@ -145,22 +137,17 @@ class PenjelasanPage extends StatelessWidget {
                                       children: [
                                         Text(
                                           correct ? 'Benar!' : 'Belum tepat',
-                                          style: AppTheme.onest(
-                                            size: 22,
-                                            heightPx: 28,
-                                            weight: FontWeight.w700,
-                                            color: correct
-                                                ? AppColors.success
-                                                : AppColors.primaryText,
-                                          ),
+                                          style: AppTextStyles.scoreValue
+                                              .copyWith(
+                                                color: correct
+                                                    ? AppColors.success
+                                                    : AppColors.primaryText,
+                                              ),
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
                                           'Jawaban benar: ${letters[q.correctIndex]}. ${q.options[q.correctIndex]}',
-                                          style: AppTheme.onest(
-                                            size: 13,
-                                            heightPx: 19,
-                                          ),
+                                          style: AppTextStyles.bodySmallRelaxed,
                                         ),
                                       ],
                                     ),
@@ -180,11 +167,7 @@ class PenjelasanPage extends StatelessWidget {
                               ),
                               Text(
                                 q.explanation,
-                                style: AppTheme.onest(
-                                  size: 15,
-                                  heightPx: 24,
-                                  color: const Color(0xFFD6D2CB),
-                                ),
+                                style: AppTextStyles.bodyLargeQuote,
                               ),
                             ],
                           ),
@@ -214,23 +197,14 @@ class PenjelasanPage extends StatelessWidget {
                                         const SizedBox(width: 8),
                                         Text(
                                           'Fakta Menarik',
-                                          style: AppTheme.onest(
-                                            size: 14,
-                                            heightPx: 20,
-                                            weight: FontWeight.w600,
-                                            color: AppColors.gold,
-                                          ),
+                                          style: AppTextStyles.labelGold,
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       q.funFact,
-                                      style: AppTheme.onest(
-                                        size: 14,
-                                        heightPx: 22,
-                                        color: AppColors.textQuote,
-                                      ),
+                                      style: AppTextStyles.bodyLooseQuote,
                                     ),
                                   ],
                                 ),
@@ -279,11 +253,7 @@ class PenjelasanPage extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   'Setiap jawaban adalah langkah menuju kebenaran.',
-                                  style: AppTheme.onest(
-                                    size: 14,
-                                    heightPx: 20,
-                                    color: AppColors.textMuted,
-                                  ),
+                                  style: AppTextStyles.bodyMuted,
                                 ),
                               ),
                             ],

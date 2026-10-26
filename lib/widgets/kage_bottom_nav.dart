@@ -61,9 +61,7 @@ class KageBottomNav extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 label,
-                style: AppTheme.onest(
-                  size: 12,
-                  heightPx: 16,
+                style: AppTextStyles.caption.copyWith(
                   color: active ? AppColors.primaryText : AppColors.textMuted,
                 ),
               ),

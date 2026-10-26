@@ -45,10 +45,7 @@ class PrimaryButton extends StatelessWidget {
             child: Center(
               child: Text(
                 label,
-                style: AppTheme.onest(
-                  size: 16,
-                  heightPx: 24,
-                  weight: FontWeight.w600,
+                style: AppTextStyles.titleMedium.copyWith(
                   color: enabled ? AppColors.text : AppColors.textMuted,
                 ),
               ),
