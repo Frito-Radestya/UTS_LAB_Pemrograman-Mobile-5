@@ -41,7 +41,11 @@ class KageBottomNav extends StatelessWidget {
     return Expanded(
       child: KageTappable(
         onTap: () => context.go(path),
+        selected: active,
+        semanticLabel: '$label, tab ${i + 1} dari 4${active ? ', aktif' : ''}',
+        excludeChildSemantics: true,
         child: Container(
+          constraints: const BoxConstraints(minHeight: 48),
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(

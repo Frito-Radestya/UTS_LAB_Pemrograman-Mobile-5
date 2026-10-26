@@ -84,7 +84,9 @@ class KuisPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                   child: SizedBox(
-                    height: 44,
+                    // Tinggi minimum, bukan tetap, agar target 48 dp tidak
+                    // terpotong dan judul tetap utuh pada font besar (U-02).
+                    height: 48,
                     child: Row(
                       children: [
                         Transform.translate(
@@ -98,6 +100,8 @@ class KuisPage extends StatelessWidget {
                           child: KageProgressBar(
                             value: (quiz.questionIndex + 1) / total,
                             glow: true,
+                            semanticLabel:
+                                'Soal ${quiz.questionIndex + 1} dari $total',
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -245,8 +249,15 @@ class KuisPage extends StatelessWidget {
   }) {
     return KageTappable(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      selected: selected,
+      semanticLabel:
+          'Pilihan $letter. $text'
+          '${locked ? ', terkunci' : (selected ? ', terpilih' : '')}',
+      excludeChildSemantics: true,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
+        constraints: const BoxConstraints(minHeight: 48),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: selected

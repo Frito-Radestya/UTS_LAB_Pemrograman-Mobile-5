@@ -320,9 +320,10 @@ class AppTextStyles {
     heightPx: 20,
     color: AppColors.success,
   );
-  static final captionSmall = AppTheme.onest(size: 11, heightPx: 15);
+  // Teks terkecil tetap 12 sp agar terbaca pada skala font sistem (U-02).
+  static final captionSmall = AppTheme.onest(size: 12, heightPx: 16);
   static final overlineGold = AppTheme.onest(
-    size: 11,
+    size: 12,
     heightPx: 16,
     color: AppColors.gold,
     letterSpacing: 3,

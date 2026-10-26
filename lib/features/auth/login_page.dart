@@ -276,10 +276,17 @@ class _LoginPageState extends State<LoginPage> {
                             baseline: TextBaseline.alphabetic,
                             child: KageTappable(
                               semanticLabel: 'Daftar akun baru',
+                              excludeChildSemantics: true,
                               onTap: () => context.push('/register'),
-                              child: Text(
-                                'Daftar',
-                                style: AppTextStyles.labelPrimary,
+                              // Area sentuh 48 dp walau teksnya sebaris (U-02).
+                              child: SizedBox(
+                                height: 48,
+                                child: Center(
+                                  child: Text(
+                                    'Daftar',
+                                    style: AppTextStyles.labelPrimary,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

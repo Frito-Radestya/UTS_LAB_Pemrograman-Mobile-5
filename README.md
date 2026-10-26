@@ -422,6 +422,57 @@ Aturan ini didefinisikan pada `DifficultyX.xpMultiplier` di `lib/models/models.d
 dan dipakai saat kuis selesai. Tingkat tanpa soal tidak dapat dipilih, sehingga
 sesi kuis tidak pernah dimulai dengan bank soal kosong.
 
+## Aksesibilitas
+
+### Pembaca layar
+
+Elemen interaktif memakai `KageTappable` yang membungkus `InkWell`, sehingga
+semuanya berupa tombol bagi TalkBack/VoiceOver, bisa dijangkau dengan Tab, dan
+aktif dengan Enter/Space di web. Teks yang dibacakan disesuaikan agar ringkas:
+
+| Elemen | Yang dibacakan |
+|---|---|
+| Opsi jawaban | `Pilihan A. Oksigen`, ditambah `, terpilih` atau `, terkunci` |
+| Bilah progres kuis | `Soal 3 dari 10` beserta persentasenya |
+| Kartu kategori | `Kategori Sains, 30 soal, tersedia` |
+| Tingkat kesulitan | `Tingkat Ahli, 10 soal` atau `… belum tersedia` |
+| Badge | `First Quiz, Selesaikan kuis pertama, terbuka` / `terkunci` |
+| Navigasi bawah | `Beranda, tab 1 dari 4, aktif` |
+| Filter riwayat | `Filter Semua, aktif` |
+| Tombol ikon | `Tampilkan password`, `Keluar dari kuis`, `Kembali ke daftar kategori` |
+
+### Area sentuh
+
+Semua elemen interaktif minimal **48×48 dp**: tombol kembali, tombol mata pada
+kolom password, chip filter riwayat, tab kategori, tingkat kesulitan, avatar,
+tautan "Daftar"/"Masuk", opsi jawaban, dan item navigasi bawah. Uji otomatis
+mengukurnya lewat `test/widgets/accessibility_test.dart`.
+
+### Kontras
+
+Rasio kontras dihitung dengan rumus WCAG 2.1 dan diperiksa otomatis di test:
+
+| Warna teks | Di atas `#0B0D12` | Di atas `#171A22` |
+|---|---|---|
+| `text` #E8E4DD | 15,3:1 | 13,7:1 |
+| `textSoft` #B4B8C2 | 9,8:1 | 8,8:1 |
+| `textMuted` #8B909C | 6,1:1 | 5,4:1 |
+| `textQuote` #C9C5BE | 11,3:1 | 10,1:1 |
+| `primaryText` #E4545C | 5,3:1 | 4,7:1 |
+| `gold` #C9A56A | 8,4:1 | 7,5:1 |
+
+Semua token teks sudah di atas ambang 4,5:1 untuk teks kecil sehingga tidak ada
+nilai yang perlu dinaikkan. Ikon `mutedIcon` #777C88 berada di 4,2:1 — di atas
+ambang 3:1 yang berlaku untuk komponen non-teks.
+
+### Skala font sistem
+
+Ukuran teks terkecil adalah 12 sp (`captionSmall` dan `overlineGold` naik dari
+11 sp). Tinggi tetap yang sebelumnya memotong teks diubah menjadi tinggi
+minimum atau ukuran mengikuti isi pada header Beranda, kartu kategori, kontrol
+tab kategori, dan state kosong riwayat. Seluruh halaman diuji pada skala 1,3×
+dan 2,0× tanpa luber.
+
 ## Status Pengembangan
 
 - [x] Splash, login, dan registrasi

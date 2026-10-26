@@ -19,6 +19,7 @@ class KageTappable extends StatefulWidget {
     this.selected,
     this.focusNode,
     this.autofocus = false,
+    this.excludeChildSemantics = false,
   });
 
   final Widget child;
@@ -40,6 +41,11 @@ class KageTappable extends StatefulWidget {
 
   final FocusNode? focusNode;
   final bool autofocus;
+
+  /// Mengganti isi anak sebagai bahan bacaan pembaca layar dengan
+  /// [semanticLabel] saja. Dipakai pada kartu yang isinya banyak supaya
+  /// TalkBack tidak membacakan potongan-potongan teks terpisah.
+  final bool excludeChildSemantics;
 
   @override
   State<KageTappable> createState() => _KageTappableState();
@@ -135,10 +141,14 @@ class _KageTappableState extends State<KageTappable> {
       );
     }
 
+    final excludeChildren = widget.excludeChildSemantics;
     return Semantics(
       button: _enabled,
       selected: widget.selected,
       label: widget.semanticLabel,
+      excludeSemantics: excludeChildren,
+      // Aksi ketuk dipasang ulang karena semantik anak ikut dibuang.
+      onTap: excludeChildren ? widget.onTap : null,
       child: content,
     );
   }

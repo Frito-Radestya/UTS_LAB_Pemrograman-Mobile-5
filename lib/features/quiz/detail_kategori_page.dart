@@ -240,14 +240,21 @@ class DetailKategoriPage extends StatelessWidget {
         children: [
           KageTappable(
             onTap: enabled ? () => quiz.setDifficulty(d) : null,
+            borderRadius: BorderRadius.circular(24),
+            selected: on,
+            semanticLabel: enabled
+                ? 'Tingkat ${d.label}, $count soal'
+                : 'Tingkat ${d.label}, belum tersedia',
+            excludeChildSemantics: true,
             child: Container(
-              height: 44,
+              // Area sentuh minimal 48 dp (U-02).
+              height: 48,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: on
                     ? AppColors.success.withValues(alpha: 0.14)
                     : Colors.transparent,
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BorderRadius.circular(24),
                 border: Border.all(
                   color: on ? AppColors.success : AppColors.borderStrong,
                   width: 1.5,

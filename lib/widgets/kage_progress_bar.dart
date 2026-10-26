@@ -9,6 +9,7 @@ class KageProgressBar extends StatelessWidget {
     this.height = 6,
     this.color = AppColors.primary,
     this.glow = false,
+    this.semanticLabel,
   });
 
   final double value;
@@ -16,8 +17,24 @@ class KageProgressBar extends StatelessWidget {
   final Color color;
   final bool glow;
 
+  /// Kalimat yang dibacakan pembaca layar, misalnya "Soal 3 dari 10".
+  /// Bila kosong, bilah hanya dianggap dekoratif.
+  final String? semanticLabel;
+
   @override
   Widget build(BuildContext context) {
+    final label = semanticLabel;
+    if (label != null) {
+      return Semantics(
+        label: label,
+        value: '${(value.clamp(0, 1) * 100).round()}%',
+        child: _bar(),
+      );
+    }
+    return _bar();
+  }
+
+  Widget _bar() {
     return Container(
       height: height,
       decoration: BoxDecoration(

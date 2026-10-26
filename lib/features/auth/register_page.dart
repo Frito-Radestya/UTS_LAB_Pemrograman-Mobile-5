@@ -257,10 +257,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                       baseline: TextBaseline.alphabetic,
                                       child: KageTappable(
                                         semanticLabel: 'Masuk ke akun',
+                                        excludeChildSemantics: true,
                                         onTap: () => context.go('/login'),
-                                        child: Text(
-                                          'Masuk',
-                                          style: AppTextStyles.labelPrimary,
+                                        // Area sentuh 48 dp walau teksnya
+                                        // sebaris (U-02).
+                                        child: SizedBox(
+                                          height: 48,
+                                          child: Center(
+                                            child: Text(
+                                              'Masuk',
+                                              style: AppTextStyles.labelPrimary,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),

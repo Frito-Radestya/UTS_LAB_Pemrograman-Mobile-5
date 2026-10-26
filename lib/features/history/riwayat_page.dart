@@ -84,7 +84,9 @@ class _RiwayatPageState extends State<RiwayatPage> {
             Expanded(
               child: items.isEmpty
                   ? Center(
-                      child: Padding(
+                      // Dapat digulir supaya teks tidak meluber pada skala font
+                      // sistem yang besar (U-02).
+                      child: SingleChildScrollView(
                         padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -146,13 +148,18 @@ class _RiwayatPageState extends State<RiwayatPage> {
       padding: const EdgeInsets.only(right: 8),
       child: KageTappable(
         onTap: () => setState(() => filter = id),
+        borderRadius: BorderRadius.circular(24),
+        selected: on,
+        semanticLabel: 'Filter $label${on ? ', aktif' : ''}',
+        excludeChildSemantics: true,
         child: Container(
-          height: 36,
+          // Area sentuh minimal 48 dp (U-02).
+          height: 48,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: on ? AppColors.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(24),
             border: on ? null : Border.all(color: AppColors.borderStrong),
           ),
           child: Text(

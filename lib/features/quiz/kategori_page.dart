@@ -53,7 +53,9 @@ class _KategoriPageState extends State<KategoriPage> {
             ),
             const SizedBox(height: 16),
             Container(
-              height: 44,
+              // Tinggi 58 = target sentuh 48 dp + padding 4 dp di tiap sisi
+              // + tebal garis 1 dp (U-02).
+              height: 58,
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: AppColors.surface,
@@ -121,9 +123,19 @@ class _KategoriPageState extends State<KategoriPage> {
                         final c = items[i];
                         return KageTappable(
                           onTap: () => context.push('/kategori/${c.id.name}'),
+                          borderRadius: BorderRadius.circular(16),
+                          semanticLabel:
+                              'Kategori ${c.name}, '
+                              '${bank.questionCountFor(c.id)} soal, tersedia',
+                          excludeChildSemantics: true,
                           child: Container(
-                            height: 92,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            // Tinggi minimum, bukan tetap, supaya kartu tumbuh
+                            // pada skala font sistem yang besar (U-02).
+                            constraints: const BoxConstraints(minHeight: 92),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.surface,
                               borderRadius: BorderRadius.circular(16),
@@ -196,7 +208,12 @@ class _KategoriPageState extends State<KategoriPage> {
     return Expanded(
       child: KageTappable(
         onTap: () => setState(() => tab = i),
+        borderRadius: BorderRadius.circular(9),
+        selected: on,
+        semanticLabel: 'Tab $label${on ? ', aktif' : ''}',
+        excludeChildSemantics: true,
         child: Container(
+          constraints: const BoxConstraints(minHeight: 48),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: on ? AppColors.primary : Colors.transparent,

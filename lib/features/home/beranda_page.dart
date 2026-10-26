@@ -28,36 +28,35 @@ class BerandaPage extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
         children: [
-          // Header
-          SizedBox(
-            height: 48,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Halo, ${auth.firstName}',
-                        style: AppTextStyles.headline,
-                      ),
-                      Text(
-                        'Terus belajar, terus berkembang.',
-                        style: AppTextStyles.bodyMuted,
-                      ),
-                    ],
-                  ),
+          // Header. Tinggi mengikuti isi, bukan angka tetap, supaya teks tetap
+          // utuh pada skala font sistem yang besar (U-02).
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Halo, ${auth.firstName}',
+                      style: AppTextStyles.headline,
+                    ),
+                    Text(
+                      'Terus belajar, terus berkembang.',
+                      style: AppTextStyles.bodyMuted,
+                    ),
+                  ],
                 ),
-                KageTappable(
-                  onTap: () => context.go('/profil'),
-                  child: Semantics(
-                    button: true,
-                    label: 'Buka profil ${auth.firstName}',
-                    child: _avatar(auth.initial, 44, 16),
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 12),
+              KageTappable(
+                onTap: () => context.go('/profil'),
+                borderRadius: BorderRadius.circular(24),
+                semanticLabel: 'Buka profil ${auth.firstName}',
+                excludeChildSemantics: true,
+                child: _avatar(auth.initial, 48, 16),
+              ),
+            ],
           ),
           const SizedBox(height: 20),
           // Akun baru mendapat ajakan memulai, bukan progres kosong.
@@ -265,8 +264,11 @@ class BerandaPage extends StatelessWidget {
               const Spacer(),
               KageTappable(
                 onTap: () => context.go('/kategori'),
+                semanticLabel: 'Lihat semua kategori',
+                excludeChildSemantics: true,
                 child: SizedBox(
-                  height: 44,
+                  // Area sentuh minimal 48 dp (U-02).
+                  height: 48,
                   child: Center(
                     child: Text(
                       'Lihat Semua',
@@ -285,6 +287,9 @@ class BerandaPage extends StatelessWidget {
                 Expanded(
                   child: KageTappable(
                     onTap: () => context.push('/kategori/${c.id.name}'),
+                    semanticLabel:
+                        'Kategori ${c.name}, ${bank.questionCountFor(c.id)} soal',
+                    excludeChildSemantics: true,
                     child: Column(
                       children: [
                         CategoryIconBadge(category: c),

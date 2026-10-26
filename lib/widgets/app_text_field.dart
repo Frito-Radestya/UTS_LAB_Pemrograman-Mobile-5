@@ -117,22 +117,23 @@ class _AppTextFieldState extends State<AppTextField> {
                 ),
               ),
               if (widget.onToggleObscure != null)
-                Semantics(
-                  button: true,
-                  label: widget.obscure
+                KageTappable(
+                  onTap: widget.onToggleObscure,
+                  borderRadius: BorderRadius.circular(24),
+                  semanticLabel: widget.obscure
                       ? 'Tampilkan password'
                       : 'Sembunyikan password',
-                  child: KageTappable(
-                    onTap: widget.onToggleObscure,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Icon(
-                        widget.obscure
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        size: 18,
-                        color: AppColors.textMuted,
-                      ),
+                  excludeChildSemantics: true,
+                  child: SizedBox(
+                    // Area sentuh minimal 48x48 dp (U-02).
+                    width: 48,
+                    height: 48,
+                    child: Icon(
+                      widget.obscure
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 18,
+                      color: AppColors.textMuted,
                     ),
                   ),
                 ),
