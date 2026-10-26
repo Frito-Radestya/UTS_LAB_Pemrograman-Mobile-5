@@ -51,11 +51,37 @@ Page<void> _page(Widget child) {
   );
 }
 
-GoRouter createRouter(AppState app) {
+GoRouter createRouter(AppState app, {String initialLocation = '/'}) {
   return GoRouter(
     navigatorKey: _rootKey,
-    initialLocation: '/',
+    initialLocation: initialLocation,
     refreshListenable: app,
+    redirect: (context, state) {
+      final location = state.matchedLocation;
+      final isAuthRoute =
+          location == '/' || location == '/login' || location == '/register';
+
+      if (!app.loggedIn) {
+        return isAuthRoute ? null : '/login';
+      }
+      if (location == '/login' || location == '/register') {
+        return '/beranda';
+      }
+
+      // Halaman kuis hanya boleh dibuka jika ada sesi kuis yang berjalan.
+      if (location == '/kuis' ||
+          location == '/penjelasan' ||
+          location == '/hasil') {
+        if (app.activeCategory == null) return '/beranda';
+        if (location == '/penjelasan' && app.currentQuestion == null) {
+          return '/beranda';
+        }
+        if (location == '/hasil' && app.lastResult == null) {
+          return '/beranda';
+        }
+      }
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/',
