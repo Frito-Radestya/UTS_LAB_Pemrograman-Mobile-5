@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'package:kage/data/repositories/history_repository.dart';
+import 'package:kage/data/repositories/question_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/auth/auth_controller.dart';
 import 'package:kage/features/history/history_controller.dart';
@@ -13,12 +15,21 @@ import 'package:kage/features/settings/settings_controller.dart';
 /// satu kelas besar yang mengetahui autentikasi, kuis, riwayat, dan pengaturan
 /// sekaligus.
 class AppServices {
-  AppServices() {
+  AppServices({
+    HistoryRepository? historyRepository,
+    QuestionRepository? questionRepository,
+  }) {
+    this.historyRepository = historyRepository ?? InMemoryHistoryRepository();
+    this.questionRepository =
+        questionRepository ?? const LocalQuestionRepository();
     auth = AuthController();
     settings = SettingsController();
-    history = HistoryController();
+    history = HistoryController(repository: this.historyRepository);
     progress = ProgressController();
-    quiz = QuizController(onCompleted: _recordQuizResult);
+    quiz = QuizController(
+      onCompleted: _recordQuizResult,
+      questions: this.questionRepository,
+    );
     routerListenable = Listenable.merge([auth, quiz]);
   }
 
@@ -27,6 +38,8 @@ class AppServices {
   late final HistoryController history;
   late final ProgressController progress;
   late final QuizController quiz;
+  late final HistoryRepository historyRepository;
+  late final QuestionRepository questionRepository;
 
   /// Perubahan yang memengaruhi keputusan redirect router.
   late final Listenable routerListenable;

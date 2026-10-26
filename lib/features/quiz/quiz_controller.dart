@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:kage/data/quiz_data.dart';
+import 'package:kage/data/repositories/question_repository.dart';
 import 'package:kage/models/models.dart';
 
 typedef QuizCompleted = void Function(QuizResult result);
@@ -12,9 +12,11 @@ typedef QuizCompleted = void Function(QuizResult result);
 /// Controller ini tidak mengetahui riwayat atau XP. Hasil akhir dikirim lewat
 /// [onCompleted] agar lapisan komposisi yang menghubungkannya.
 class QuizController extends ChangeNotifier {
-  QuizController({this.onCompleted});
+  QuizController({this.onCompleted, QuestionRepository? questions})
+    : _questions = questions ?? const LocalQuestionRepository();
 
   final QuizCompleted? onCompleted;
+  final QuestionRepository _questions;
 
   Difficulty selectedDifficulty = Difficulty.pemula;
   CategoryId? activeCategory;
@@ -72,10 +74,10 @@ class QuizController extends ChangeNotifier {
     Duration elapsed = Duration.zero,
   }) {
     final requested = difficulty ?? selectedDifficulty;
-    selectedDifficulty = hasQuestionsFor(id, requested)
+    selectedDifficulty = _questions.hasQuestionsFor(id, requested)
         ? requested
         : Difficulty.values.firstWhere(
-            (value) => hasQuestionsFor(id, value),
+            (value) => _questions.hasQuestionsFor(id, value),
             orElse: () => requested,
           );
     activeCategory = id;
@@ -116,7 +118,7 @@ class QuizController extends ChangeNotifier {
     List<int>? savedQuestionOrder,
     List<List<int>>? savedOptionOrders,
   }) {
-    final source = questionsFor(id, difficulty);
+    final source = _questions.questionsFor(id, difficulty);
     final order = <int>[];
     if (savedQuestionOrder != null &&
         _isPermutation(savedQuestionOrder, source.length)) {

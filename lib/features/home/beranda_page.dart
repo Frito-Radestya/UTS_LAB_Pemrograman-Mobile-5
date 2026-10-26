@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kage/data/quiz_data.dart';
+import 'package:kage/data/repositories/question_repository.dart';
 import 'package:kage/features/auth/auth_controller.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
@@ -18,8 +18,9 @@ class BerandaPage extends StatelessWidget {
     final auth = context.watch<AuthController>();
     final history = context.watch<HistoryController>();
     final quiz = context.watch<QuizController>();
+    final bank = context.read<QuestionRepository>();
     final resume = quiz.resume;
-    final categoryCount = categories.length;
+    final categoryCount = bank.categories.length;
 
     return ScreenScaffold(
       navIndex: 0,
@@ -198,7 +199,7 @@ class BerandaPage extends StatelessWidget {
                                   border: Border.all(color: AppColors.gold),
                                 ),
                                 child: Text(
-                                  categoryById(resume.categoryId).name,
+                                  bank.categoryById(resume.categoryId).name,
                                   style: AppTheme.onest(
                                     size: 12,
                                     heightPx: 18,
@@ -217,7 +218,7 @@ class BerandaPage extends StatelessWidget {
                               ),
                               Text(
                                 'Soal ${resume.index + 1} dari '
-                                '${questionsFor(resume.categoryId, resume.difficulty).length}',
+                                '${bank.questionsFor(resume.categoryId, resume.difficulty).length}',
                                 style: AppTheme.onest(
                                   size: 14,
                                   heightPx: 20,
@@ -279,10 +280,12 @@ class BerandaPage extends StatelessWidget {
                     KageProgressBar(
                       value:
                           (resume.index + 1) /
-                          questionsFor(
-                            resume.categoryId,
-                            resume.difficulty,
-                          ).length,
+                          bank
+                              .questionsFor(
+                                resume.categoryId,
+                                resume.difficulty,
+                              )
+                              .length,
                       height: 4,
                     ),
                   ],
@@ -336,7 +339,7 @@ class BerandaPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              for (final c in categories)
+              for (final c in bank.categories)
                 Expanded(
                   child: GestureDetector(
                     onTap: () => context.push('/kategori/${c.id.name}'),

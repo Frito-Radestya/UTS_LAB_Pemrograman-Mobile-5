@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kage/data/quiz_data.dart';
+import 'package:kage/data/repositories/question_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 import 'package:kage/theme/app_colors.dart';
@@ -18,7 +18,7 @@ class KuisPage extends StatelessWidget {
     final q = quiz.currentQuestion;
     final cat = quiz.activeCategory == null
         ? null
-        : categoryById(quiz.activeCategory!);
+        : context.read<QuestionRepository>().categoryById(quiz.activeCategory!);
     if (q == null || cat == null) {
       return const Scaffold(backgroundColor: AppColors.background);
     }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
-import 'package:kage/data/quiz_data.dart';
+import 'package:kage/data/repositories/question_repository.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:kage/widgets/kage_widgets.dart';
@@ -18,7 +19,10 @@ class _KategoriPageState extends State<KategoriPage> {
 
   @override
   Widget build(BuildContext context) {
-    final items = categories.where((c) => tab == 0 || c.available).toList();
+    final bank = context.read<QuestionRepository>();
+    final items = bank.categories
+        .where((c) => tab == 0 || c.available)
+        .toList();
 
     return ScreenScaffold(
       navIndex: 1,
@@ -167,7 +171,7 @@ class _KategoriPageState extends State<KategoriPage> {
                                         ),
                                       ),
                                       Text(
-                                        '${questionCountFor(c.id)} soal',
+                                        '${bank.questionCountFor(c.id)} soal',
                                         style: AppTheme.onest(
                                           size: 13,
                                           heightPx: 18,
