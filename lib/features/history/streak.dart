@@ -1,4 +1,4 @@
-import '../models/models.dart';
+import 'package:kage/models/models.dart';
 
 /// Menghitung streak harian dari tanggal [QuizResult.playedAt].
 ///

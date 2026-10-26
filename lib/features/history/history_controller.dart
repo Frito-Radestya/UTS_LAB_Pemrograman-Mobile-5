@@ -2,8 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 
-import '../data/quiz_data.dart';
-import '../models/models.dart';
+import 'package:kage/data/quiz_data.dart';
+import 'package:kage/models/models.dart';
+
 import 'streak.dart';
 
 /// Riwayat kuis beserta statistik dan pencapaian yang diturunkan darinya.

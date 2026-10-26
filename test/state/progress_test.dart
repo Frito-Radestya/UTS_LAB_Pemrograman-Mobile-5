@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kage/state/progress.dart';
-import 'package:kage/state/progress_controller.dart';
+import 'package:kage/features/profile/progress.dart';
+import 'package:kage/features/profile/progress_controller.dart';
 
 void main() {
   group('K-08 level dan XP', () {

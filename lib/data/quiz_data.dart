@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../models/models.dart';
-import '../theme/app_colors.dart';
+import 'package:kage/models/models.dart';
+import 'package:kage/theme/app_colors.dart';
 
 const categories = <QuizCategory>[
   QuizCategory(

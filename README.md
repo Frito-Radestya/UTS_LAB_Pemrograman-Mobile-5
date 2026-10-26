@@ -111,41 +111,47 @@ Logika `#B79CFF`, dan Umum `#6FD0A0`.
 
 ```text
 lib/
-├── main.dart                  # Entry point + konfigurasi font
-├── app.dart                   # MaterialApp.router, GoRouter, tema, responsive frame
+├── main.dart                       # Entry point
+├── app.dart                        # MaterialApp.router, GoRouter, responsive frame
+├── app_services.dart               # Komposisi controller + penghubung hasil kuis
 ├── data/
-│   └── quiz_data.dart         # bank soal per kategori & tingkat, pembahasan, fakta
+│   └── quiz_data.dart              # Bank soal per kategori & tingkat
 ├── models/
-│   └── models.dart            # CategoryId, Difficulty, Question, QuizResult, BadgeItem
-├── state/
-│   ├── app_services.dart      # Komposisi controller + penghubung hasil kuis
-│   ├── auth_controller.dart   # Sesi, identitas, dan profil pengguna
-│   ├── quiz_controller.dart   # Sesi kuis, jawaban, penguncian, resume
-│   ├── history_controller.dart # Riwayat, statistik, dan badge
-│   ├── progress_controller.dart # XP dan level
-│   ├── settings_controller.dart # Preferensi aplikasi
-│   ├── progress.dart          # Kurva XP murni
-│   └── streak.dart            # Perhitungan streak harian
-├── pages/
-│   ├── splash_page.dart
-│   ├── login_page.dart
-│   ├── register_page.dart
-│   ├── beranda_page.dart
-│   ├── kategori_page.dart
-│   ├── detail_kategori_page.dart
-│   ├── kuis_page.dart
-│   ├── penjelasan_page.dart
-│   ├── hasil_page.dart
-│   ├── riwayat_page.dart
-│   ├── profil_page.dart
-│   ├── badge_page.dart
-│   └── pengaturan_page.dart
+│   └── models.dart                 # CategoryId, Difficulty, Question, QuizResult, BadgeItem
+├── features/
+│   ├── auth/
+│   │   ├── auth_controller.dart    # Sesi, identitas, dan profil pengguna
+│   │   ├── login_page.dart
+│   │   └── register_page.dart
+│   ├── quiz/
+│   │   ├── quiz_controller.dart    # Sesi kuis, jawaban, penguncian, resume
+│   │   ├── kategori_page.dart
+│   │   ├── detail_kategori_page.dart
+│   │   ├── kuis_page.dart
+│   │   ├── penjelasan_page.dart
+│   │   └── hasil_page.dart
+│   ├── history/
+│   │   ├── history_controller.dart # Riwayat, statistik, dan badge
+│   │   ├── streak.dart             # Perhitungan streak harian
+│   │   ├── riwayat_page.dart
+│   │   └── badge_page.dart
+│   ├── home/
+│   │   └── beranda_page.dart
+│   ├── profile/
+│   │   ├── progress_controller.dart # XP dan level
+│   │   ├── progress.dart           # Kurva XP murni
+│   │   └── profil_page.dart
+│   ├── settings/
+│   │   ├── settings_controller.dart # Preferensi aplikasi
+│   │   └── pengaturan_page.dart
+│   └── splash/
+│       └── splash_page.dart
 ├── theme/
-│   ├── app_colors.dart        # Token warna
-│   └── app_theme.dart         # Onest, Cinzel, ThemeData
+│   ├── app_colors.dart             # Token warna
+│   └── app_theme.dart              # Onest, Cinzel, ThemeData
 └── widgets/
-    └── kage_widgets.dart      # Widget reusable: wordmark, tombol, progress bar,
-                               # bottom nav, score row, ilustrasi, dll.
+    └── kage_widgets.dart           # Widget reusable: wordmark, tombol, progress bar,
+                                    # bottom nav, score row, ilustrasi, dll.
 ```
 
 Aset visual berada di `assets/svg/` dan font di `assets/fonts/`. Paket desain asli
@@ -157,6 +163,12 @@ State dipisahkan per tanggung jawab. `AuthController`, `QuizController`,
 memiliki `ChangeNotifier` sendiri. `AppServices` hanya menjadi titik komposisi:
 ia menghubungkan hasil kuis ke riwayat dan XP tanpa membuat controller saling
 mengenal. Halaman mengambil controller yang dibutuhkan lewat `provider`.
+
+Folder `lib/features/` mengelompokkan controller dan halaman berdasarkan domain
+(auth, quiz, history, home, profile, settings, splash). Kode yang dipakai lintas
+fitur tetap berada di `models/`, `data/`, `theme/`, dan `widgets/`. Seluruh import
+internal memakai `package:kage/...` agar pemindahan file tidak memutus jalur
+relatif.
 
 ## Rute Aplikasi
 

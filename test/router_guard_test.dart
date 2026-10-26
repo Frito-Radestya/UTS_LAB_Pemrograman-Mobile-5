@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/app.dart';
-import 'package:kage/pages/beranda_page.dart';
-import 'package:kage/pages/login_page.dart';
-import 'package:kage/state/app_services.dart';
-import 'package:kage/state/auth_controller.dart';
-import 'package:kage/state/history_controller.dart';
-import 'package:kage/state/progress_controller.dart';
-import 'package:kage/state/quiz_controller.dart';
-import 'package:kage/state/settings_controller.dart';
+import 'package:kage/features/home/beranda_page.dart';
+import 'package:kage/features/auth/login_page.dart';
+import 'package:kage/app_services.dart';
+import 'package:kage/features/auth/auth_controller.dart';
+import 'package:kage/features/history/history_controller.dart';
+import 'package:kage/features/profile/progress_controller.dart';
+import 'package:kage/features/quiz/quiz_controller.dart';
+import 'package:kage/features/settings/settings_controller.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 

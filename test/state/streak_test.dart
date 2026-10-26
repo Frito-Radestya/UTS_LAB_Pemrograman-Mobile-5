@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/models/models.dart';
-import 'package:kage/state/streak.dart';
+import 'package:kage/features/history/streak.dart';
 
 QuizResult _result(DateTime playedAt) {
   return QuizResult(

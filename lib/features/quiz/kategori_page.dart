@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../data/quiz_data.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_theme.dart';
-import '../widgets/kage_widgets.dart';
+import 'package:kage/data/quiz_data.dart';
+import 'package:kage/theme/app_colors.dart';
+import 'package:kage/theme/app_theme.dart';
+import 'package:kage/widgets/kage_widgets.dart';
 
 class KategoriPage extends StatefulWidget {
   const KategoriPage({super.key});

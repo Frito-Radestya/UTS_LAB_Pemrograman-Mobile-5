@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 
-import '../models/models.dart';
-import 'auth_controller.dart';
-import 'history_controller.dart';
-import 'progress_controller.dart';
-import 'quiz_controller.dart';
-import 'settings_controller.dart';
+import 'package:kage/models/models.dart';
+import 'package:kage/features/auth/auth_controller.dart';
+import 'package:kage/features/history/history_controller.dart';
+import 'package:kage/features/profile/progress_controller.dart';
+import 'package:kage/features/quiz/quiz_controller.dart';
+import 'package:kage/features/settings/settings_controller.dart';
 
 /// Titik komposisi seluruh state aplikasi.
 ///

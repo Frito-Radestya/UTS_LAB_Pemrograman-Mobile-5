@@ -3,13 +3,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../data/quiz_data.dart';
-import '../models/models.dart';
-import '../state/history_controller.dart';
-import '../state/quiz_controller.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_theme.dart';
-import '../widgets/kage_widgets.dart';
+import 'package:kage/data/quiz_data.dart';
+import 'package:kage/models/models.dart';
+import 'package:kage/features/history/history_controller.dart';
+import 'package:kage/features/quiz/quiz_controller.dart';
+import 'package:kage/theme/app_colors.dart';
+import 'package:kage/theme/app_theme.dart';
+import 'package:kage/widgets/kage_widgets.dart';
 
 class DetailKategoriPage extends StatelessWidget {
   const DetailKategoriPage({super.key, required this.id});
