@@ -282,17 +282,43 @@ flutter build web --release
 
 ## Akun & Data
 
-Aplikasi menggunakan autentikasi simulasi: pengguna dapat masuk dengan email/
-username dan password apa pun yang tidak kosong, atau membuat akun baru melalui
-halaman registrasi. Nama dan email akan ditampilkan di Beranda dan Profil.
-Pemeriksaan kata sandi yang sebenarnya belum diterapkan (lihat D-03 pada
-`TASKS_KAGE.md`).
+Autentikasi berjalan **sepenuhnya di perangkat**. Registrasi menyimpan akun
+beserta kata sandinya, dan masuk memeriksa kredensial tersebut: kata sandi yang
+salah atau akun yang tidak ada ditolak.
+
+Kata sandi tidak pernah disimpan apa adanya. Setiap akun memakai salt acak
+sendiri (16 byte) dan disimpan sebagai kunci turunan **PBKDF2-HMAC-SHA256**
+(10.000 iterasi, 32 byte) — lihat `lib/data/local/password_hash.dart`.
+Verifikasi memakai perbandingan waktu tetap, dan data akun yang rusak diabaikan
+tanpa membuat aplikasi gagal dijalankan.
+
+Aturan yang ditegakkan `AuthController`:
+
+| Aturan | Pesan |
+|---|---|
+| Nama wajib diisi | Nama lengkap wajib diisi. |
+| Format email | Format email belum valid. |
+| Email unik (tanpa membedakan huruf besar/kecil) | Email sudah terdaftar. Silakan masuk. |
+| Kata sandi minimal 8 karakter | Password minimal 8 karakter. |
+| Kredensial salah | Email atau password salah. |
+
+Masuk menerima email, atau nama lengkap bila hanya satu akun yang memakai nama
+itu. Ganti kata sandi memerlukan kata sandi saat ini dan menolak kata sandi baru
+yang sama dengan yang lama. Mengubah profil ikut memperbarui akun tersimpan
+tanpa mengubah kata sandinya.
+
+Sesi lama yang tersimpan tanpa akun (dari versi sebelum D-03) tetap dipulihkan
+agar pengguna tidak terlempar keluar; akunnya akan dibuat kembali saat mendaftar
+ulang.
+
+Pembahasan lengkap ada di `test/state/auth_test.dart`.
 
 Data disimpan **permanen di perangkat** dan dipulihkan sebelum aplikasi
 dijalankan (`AppServices.create()` di `lib/main.dart`):
 
 | Data | Penyimpanan | Keterangan |
 |---|---|---|
+| Akun terdaftar (nama, email, kata sandi ter-hash) | `shared_preferences` (`auth.accounts`) | Kata sandi hanya tersimpan sebagai salt + kunci turunan |
 | Sesi login dan profil (nama, email) | `shared_preferences` | Restart aplikasi tetap dalam keadaan masuk sampai pengguna logout |
 | Pengaturan (mis. notifikasi) | `shared_preferences` | Nilai awal dibaca `SettingsController` |
 | Riwayat skor | Hive (`kage_local` → `history`) | Disimpan sebagai JSON; data rusak diabaikan |
@@ -407,8 +433,9 @@ sesi kuis tidak pernah dimulai dengan bank soal kosong.
 - [x] Responsif untuk web/tablet
 - [x] Branding ikon, splash native, dan metadata web
 - [x] Penyimpanan permanen lokal (shared_preferences + Hive)
-- [ ] Integrasi backend dan akun nyata
 - [x] Bank soal dari aset JSON berversi + parser/validator (D-02)
+- [x] Akun lokal dengan kata sandi ter-hash PBKDF2 (D-03 jalur A)
+- [ ] Integrasi backend, akun online, dan papan peringkat (D-03 jalur B)
 
 ## Kontribusi
 

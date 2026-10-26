@@ -145,7 +145,11 @@ void main() {
       final repository = InMemoryAuthRepository();
       final first = AuthController(repository: repository);
       addTearDown(first.dispose);
-      first.login(name: 'Budi', mail: 'budi@example.com');
+      first.register(
+        name: 'Budi',
+        email: 'budi@example.com',
+        password: 'rahasia123',
+      );
 
       final restored = AuthController(repository: repository);
       addTearDown(restored.dispose);
@@ -186,7 +190,11 @@ void main() {
         quizRepository: testQuizBank(),
       );
       addTearDown(app.dispose);
-      app.auth.login(name: 'Budi');
+      app.auth.register(
+        name: 'Budi',
+        email: 'budi@example.com',
+        password: 'rahasia123',
+      );
       app.quiz.startQuiz(CategoryId.sains);
       app.quiz.finishQuiz();
 

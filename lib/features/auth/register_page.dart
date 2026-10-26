@@ -33,29 +33,22 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _register() {
     FocusScope.of(context).unfocus();
-    final fullName = name.text.trim();
-    final mail = email.text.trim();
-    final pass = password.text;
-    final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+    final result = context.read<AuthController>().register(
+      name: name.text,
+      email: email.text,
+      password: password.text,
+    );
 
     setState(() {
-      nameError = fullName.isEmpty ? 'Nama lengkap wajib diisi.' : null;
-      emailError = mail.isEmpty
-          ? 'Email wajib diisi.'
-          : !emailPattern.hasMatch(mail)
-          ? 'Format email belum valid.'
-          : null;
-      passwordError = pass.isEmpty
-          ? 'Password wajib diisi.'
-          : pass.length < 8
-          ? 'Password minimal 8 karakter.'
+      nameError = result.field == AuthField.name ? result.message : null;
+      emailError = result.field == AuthField.email ? result.message : null;
+      passwordError = result.field == AuthField.password
+          ? result.message
           : null;
     });
-    if (nameError != null || emailError != null || passwordError != null) {
-      return;
-    }
+    if (!result.ok) return;
 
-    context.read<AuthController>().login(name: fullName, mail: mail);
     context.go('/beranda');
   }
 

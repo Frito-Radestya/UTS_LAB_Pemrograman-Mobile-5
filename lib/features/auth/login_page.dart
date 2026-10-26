@@ -30,22 +30,20 @@ class _LoginPageState extends State<LoginPage> {
 
   void _enter() {
     FocusScope.of(context).unfocus();
-    final identifier = email.text.trim();
-    final pass = password.text;
+
+    final result = context.read<AuthController>().login(
+      identifier: email.text,
+      password: password.text,
+    );
 
     setState(() {
-      emailError = identifier.isEmpty
-          ? 'Email atau username wajib diisi.'
+      emailError = result.field == AuthField.email ? result.message : null;
+      passwordError = result.field == AuthField.password
+          ? result.message
           : null;
-      passwordError = pass.isEmpty ? 'Password wajib diisi.' : null;
     });
-    if (emailError != null || passwordError != null) return;
+    if (!result.ok) return;
 
-    final isEmail = identifier.contains('@');
-    context.read<AuthController>().login(
-      name: isEmail ? null : identifier,
-      mail: isEmail ? identifier : null,
-    );
     context.go('/beranda');
   }
 

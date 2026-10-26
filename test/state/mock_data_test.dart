@@ -32,7 +32,11 @@ void main() {
       final auth = AuthController();
       addTearDown(auth.dispose);
 
-      auth.login(name: 'Ayu Lestari', mail: 'ayu@example.com');
+      auth.register(
+        name: 'Ayu Lestari',
+        email: 'ayu@example.com',
+        password: 'rahasia123',
+      );
 
       expect(auth.fullName, 'Ayu Lestari');
       expect(auth.email, 'ayu@example.com');

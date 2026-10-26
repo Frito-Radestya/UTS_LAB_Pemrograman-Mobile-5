@@ -225,7 +225,11 @@ void main() {
       progressRepository: LocalProgressRepository(firstBox),
       quizRepository: testQuizBank(),
     );
-    first.auth.login(name: 'Budi', mail: 'budi@example.com');
+    first.auth.register(
+      name: 'Budi',
+      email: 'budi@example.com',
+      password: 'rahasia123',
+    );
     first.settings.setNotifications(false);
 
     // Kuis yang diselesaikan mengisi riwayat dan XP.
