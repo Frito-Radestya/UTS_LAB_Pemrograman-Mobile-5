@@ -441,6 +441,15 @@ aktif dengan Enter/Space di web. Teks yang dibacakan disesuaikan agar ringkas:
 | Filter riwayat | `Filter Semua, aktif` |
 | Tombol ikon | `Tampilkan password`, `Keluar dari kuis`, `Kembali ke daftar kategori` |
 
+### Umpan balik jawaban
+
+Halaman pembahasan menampilkan dua baris terpisah — `Jawabanmu` dan
+`Jawaban benar` — lengkap dengan ikon dan penanda ✓/✗, sehingga perbedaannya
+tidak bergantung pada warna saja dan tetap terbaca oleh pengguna dengan buta
+warna. Getaran menyertai alurnya: ringan saat memilih opsi, sedang saat jawaban
+benar, dan kuat saat jawaban salah. Getaran mengikuti preferensi di Pengaturan
+(`SettingsController.haptics`) lewat helper `kageHaptic`.
+
 ### Area sentuh
 
 Semua elemen interaktif minimal **48×48 dp**: tombol kembali, tombol mata pada
