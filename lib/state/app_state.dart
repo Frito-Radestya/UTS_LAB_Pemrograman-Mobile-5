@@ -17,6 +17,9 @@ class AppState extends ChangeNotifier {
   CategoryId? activeCategory;
   int questionIndex = 0;
   List<int?> answers = List<int?>.filled(10, null);
+
+  /// Soal yang sudah dikirim ke halaman penjelasan dan dikunci untuk diubah.
+  List<bool> _submitted = <bool>[];
   DateTime? quizStartedAt;
   QuizResult? lastResult;
   bool showingCorrect = true;
@@ -26,7 +29,24 @@ class AppState extends ChangeNotifier {
     difficulty: Difficulty.pemula,
     index: 2,
     answers: [0, 2, null, null, null, null, null, null, null, null],
+    submitted: [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ],
   );
+
+  bool isQuestionLocked(int index) =>
+      index >= 0 && index < _submitted.length && _submitted[index];
+
+  bool get currentQuestionLocked => isQuestionLocked(questionIndex);
 
   final List<QuizResult> history = [
     QuizResult(
@@ -175,14 +195,25 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startQuiz(CategoryId id, {int startIndex = 0, List<int?>? existing}) {
+  void startQuiz(
+    CategoryId id, {
+    int startIndex = 0,
+    List<int?>? existing,
+    List<bool>? submitted,
+  }) {
     activeCategory = id;
     questionIndex = startIndex;
     final total = questionsByCategory[id]!.length;
     answers = List<int?>.filled(total, null);
+    _submitted = List<bool>.filled(total, false);
     if (existing != null) {
       for (var i = 0; i < existing.length && i < total; i++) {
         answers[i] = existing[i];
+      }
+    }
+    if (submitted != null) {
+      for (var i = 0; i < submitted.length && i < total; i++) {
+        _submitted[i] = submitted[i];
       }
     }
     quizStartedAt = DateTime.now();
@@ -198,6 +229,7 @@ class AppState extends ChangeNotifier {
       difficulty: selectedDifficulty,
       index: questionIndex,
       answers: List<int?>.from(answers),
+      submitted: List<bool>.from(_submitted),
     );
     notifyListeners();
   }
@@ -217,10 +249,12 @@ class AppState extends ChangeNotifier {
       r.categoryId,
       startIndex: r.index,
       existing: List<int?>.from(r.answers),
+      submitted: List<bool>.from(r.submitted),
     );
   }
 
   void selectAnswer(int option) {
+    if (currentQuestionLocked) return;
     answers[questionIndex] = option;
     notifyListeners();
   }
@@ -245,6 +279,9 @@ class AppState extends ChangeNotifier {
   void submitCurrent() {
     final q = currentQuestion;
     if (q == null) return;
+    if (questionIndex < _submitted.length) {
+      _submitted[questionIndex] = true;
+    }
     showingCorrect = answers[questionIndex] == q.correctIndex;
     notifyListeners();
   }
