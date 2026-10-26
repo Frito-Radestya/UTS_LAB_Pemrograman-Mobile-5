@@ -1,9 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
+import 'package:kage/features/history/history_controller.dart';
+import 'package:kage/features/profile/progress.dart';
+import 'package:kage/features/profile/progress_controller.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
@@ -39,6 +44,33 @@ class HasilPage extends StatelessWidget {
       Difficulty.menengah => 'Menengah',
       Difficulty.ahli => 'Ahli',
     };
+
+    // Perbandingan dengan percobaan lain di kategori yang sama.
+    final history = context.watch<HistoryController>();
+    final others = history.history.where(
+      (item) => item.categoryId == r.categoryId && !identical(item, r),
+    );
+    final previousBest = others.isEmpty
+        ? null
+        : others.map((item) => item.score).reduce(math.max);
+    final recordText = switch (previousBest) {
+      null => 'Catatan pertama untuk kategori ini.',
+      _ when r.score > previousBest =>
+        'Rekor baru! +${r.score - previousBest} dari terbaikmu sebelumnya.',
+      _ when r.score == previousBest => 'Menyamai rekor terbaikmu.',
+      _ => '${r.score - previousBest} dari terbaikmu (skor $previousBest).',
+    };
+
+    // XP yang baru diperoleh dan perubahan levelnya.
+    final progress = context.watch<ProgressController>();
+    final xpGained = (r.score * r.difficulty.xpMultiplier).round();
+    final xpBefore = math.max(0, progress.xp - xpGained);
+    final levelBefore = levelFromXp(xpBefore);
+    final levelAfter = progress.level;
+    final levelText = levelAfter > levelBefore
+        ? 'Naik ke level $levelAfter'
+        : 'Level $levelAfter';
+    final remainingText = '${progress.remainingXp} XP lagi ke level berikutnya';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -207,6 +239,78 @@ class HasilPage extends StatelessWidget {
                       _card(Icons.gps_fixed, 'Akurasi', '${r.accuracy}%'),
                     ],
                   ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.borderStrong),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.bolt,
+                              size: 18,
+                              color: AppColors.gold,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '+$xpGained XP',
+                              style: AppTextStyles.titleLargeGold,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                levelText,
+                                textAlign: TextAlign.right,
+                                style: AppTextStyles.bodySmallMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        KageProgressBar(
+                          value: progress.levelProgress,
+                          height: 4,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          remainingText,
+                          style: AppTextStyles.captionRelaxedMuted,
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Icon(
+                              previousBest != null && r.score > previousBest
+                                  ? Icons.emoji_events
+                                  : Icons.insights,
+                              size: 16,
+                              color:
+                                  previousBest != null && r.score > previousBest
+                                  ? AppColors.gold
+                                  : AppColors.textMuted,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                recordText,
+                                style: AppTextStyles.bodySmallRelaxedMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 20, 12, 24),
                     child: Text(
@@ -215,6 +319,52 @@ class HasilPage extends StatelessWidget {
                       style: AppTextStyles.bodyLooseQuoteItalic,
                     ),
                   ),
+                  if (quiz.review.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    // Material, bukan Container, agar perluasan tile tetap
+                    // menggambar latarnya dengan benar.
+                    Material(
+                      color: AppColors.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: const BorderSide(color: AppColors.borderStrong),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Tinjau jawaban',
+                              style: AppTextStyles.titleMedium,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Buka satu soal untuk membaca pembahasannya.',
+                              style: AppTextStyles.bodySmallMuted,
+                            ),
+                            const SizedBox(height: 8),
+                            for (var i = 0; i < quiz.review.length; i++)
+                              _reviewTile(context, quiz.review[i], i),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  if (quiz.wrongReview.isNotEmpty) ...[
+                    OutlineButton(
+                      label:
+                          'Ulangi ${quiz.wrongReview.length} soal yang salah',
+                      onTap: () {
+                        if (quiz.retryWrongOnly()) context.go('/kuis');
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   PrimaryButton(
                     label: 'Coba Lagi',
                     onTap: () {
@@ -229,6 +379,59 @@ class HasilPage extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Satu soal pada tinjauan jawaban: status, yang dipilih, dan pembahasan.
+  Widget _reviewTile(BuildContext context, QuizReview item, int index) {
+    const letters = ['A', 'B', 'C', 'D'];
+    final color = item.correct ? AppColors.success : AppColors.primaryText;
+    final chosen = item.chosenIndex;
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: const EdgeInsets.only(bottom: 12),
+        iconColor: AppColors.textMuted,
+        collapsedIconColor: AppColors.textMuted,
+        leading: Icon(
+          item.correct ? Icons.check_circle : Icons.cancel,
+          color: color,
+          size: 20,
+        ),
+        title: Text(
+          '${index + 1}. ${item.question.prompt}',
+          style: AppTextStyles.bodyMedium,
+        ),
+        subtitle: Text(
+          item.correct
+              ? 'Jawabanmu benar'
+              : chosen == null
+              ? 'Tidak dijawab'
+              : 'Jawabanmu ${letters[chosen]}. ${item.chosenOption}',
+          style: AppTextStyles.bodySmallMuted,
+        ),
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Jawaban benar: '
+              '${letters[item.question.correctIndex]}. ${item.correctOption}',
+              style: AppTextStyles.bodySmallStrong.copyWith(
+                color: AppColors.success,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              item.question.explanation,
+              style: AppTextStyles.bodySmallRelaxedMuted,
             ),
           ),
         ],

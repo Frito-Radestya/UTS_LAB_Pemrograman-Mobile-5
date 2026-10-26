@@ -8,6 +8,23 @@ import 'package:kage/models/models.dart';
 
 typedef QuizCompleted = void Function(QuizResult result);
 
+/// Satu soal pada tinjauan hasil: apa yang dipilih dan mana yang benar.
+class QuizReview {
+  const QuizReview({required this.question, required this.chosenIndex});
+
+  final Question question;
+
+  /// Indeks opsi yang dipilih, `null` bila soal tidak dijawab.
+  final int? chosenIndex;
+
+  bool get correct => chosenIndex == question.correctIndex;
+
+  String? get chosenOption =>
+      chosenIndex == null ? null : question.options[chosenIndex!];
+
+  String get correctOption => question.options[question.correctIndex];
+}
+
 /// Mengelola satu sesi kuis: soal aktif, jawaban, penguncian, dan progres.
 ///
 /// Controller ini tidak mengetahui riwayat atau XP. Hasil akhir dikirim lewat
@@ -45,6 +62,19 @@ class QuizController extends ChangeNotifier {
   Duration _elapsedBeforeResume = Duration.zero;
   QuizResult? lastResult;
   bool showingCorrect = true;
+
+  /// Tinjauan kuis terakhir, disimpan setelah [finishQuiz] supaya halaman hasil
+  /// bisa menampilkan daftar soal beserta pembahasannya (U-04).
+  List<QuizReview> _review = <QuizReview>[];
+
+  /// Kuis yang dipakai untuk mengulang soal salah berasal dari daftar soal
+  /// sendiri, sehingga tidak bisa dilanjutkan dari Beranda.
+  bool _customSession = false;
+
+  List<QuizReview> get review => List<QuizReview>.unmodifiable(_review);
+
+  List<QuizReview> get wrongReview =>
+      List<QuizReview>.unmodifiable(_review.where((item) => !item.correct));
 
   InProgressQuiz? resume;
 
@@ -112,6 +142,8 @@ class QuizController extends ChangeNotifier {
         _submitted[i] = submitted[i];
       }
     }
+    _customSession = false;
+    _review = <QuizReview>[];
     _elapsedBeforeResume = elapsed;
     quizStartedAt = DateTime.now();
     notifyListeners();
@@ -185,6 +217,12 @@ class QuizController extends ChangeNotifier {
   void saveProgress() {
     final id = activeCategory;
     if (id == null) return;
+    if (_customSession) {
+      // Sesi latihan soal salah tidak punya padanan di bank soal, jadi tidak
+      // disimpan sebagai kuis yang bisa dilanjutkan.
+      discardProgress();
+      return;
+    }
     resume = InProgressQuiz(
       categoryId: id,
       difficulty: selectedDifficulty,
@@ -280,10 +318,43 @@ class QuizController extends ChangeNotifier {
       playedAt: DateTime.now(),
       difficulty: selectedDifficulty,
     );
+    _review = <QuizReview>[
+      for (var i = 0; i < list.length; i++)
+        QuizReview(
+          question: list[i],
+          chosenIndex: i < answers.length ? answers[i] : null,
+        ),
+    ];
     lastResult = result;
     resume = null;
     _progress.saveResume(null);
     onCompleted?.call(result);
     notifyListeners();
+  }
+
+  /// Mengulang hanya soal yang dijawab salah pada kuis terakhir.
+  ///
+  /// Mengembalikan `false` bila tidak ada soal salah untuk diulang.
+  bool retryWrongOnly() {
+    final wrong = wrongReview;
+    if (wrong.isEmpty) return false;
+
+    _customSession = true;
+    _activeQuestions = <Question>[for (final item in wrong) item.question];
+    _questionOrder = List<int>.generate(_activeQuestions.length, (i) => i);
+    _optionOrders = <List<int>>[
+      for (final question in _activeQuestions)
+        List<int>.generate(question.options.length, (i) => i),
+    ];
+    answers = List<int?>.filled(_activeQuestions.length, null);
+    _submitted = List<bool>.filled(_activeQuestions.length, false);
+    questionIndex = 0;
+    lastResult = null;
+    _review = <QuizReview>[];
+    _elapsedBeforeResume = Duration.zero;
+    quizStartedAt = DateTime.now();
+    discardProgress();
+    notifyListeners();
+    return true;
   }
 }
