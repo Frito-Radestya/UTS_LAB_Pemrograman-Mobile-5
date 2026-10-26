@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
+import 'package:kage/features/settings/haptics.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:kage/widgets/kage_widgets.dart';
@@ -137,7 +138,12 @@ class KuisPage extends StatelessWidget {
                             text: q.options[i],
                             selected: selected == i,
                             locked: locked,
-                            onTap: locked ? null : () => quiz.selectAnswer(i),
+                            onTap: locked
+                                ? null
+                                : () {
+                                    kageHaptic(context, KageHaptic.light);
+                                    quiz.selectAnswer(i);
+                                  },
                           ),
                           const SizedBox(height: 12),
                         ],

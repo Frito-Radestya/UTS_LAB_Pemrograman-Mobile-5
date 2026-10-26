@@ -3,12 +3,30 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:kage/features/quiz/quiz_controller.dart';
+import 'package:kage/features/settings/haptics.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:kage/widgets/kage_widgets.dart';
 
-class PenjelasanPage extends StatelessWidget {
+class PenjelasanPage extends StatefulWidget {
   const PenjelasanPage({super.key});
+
+  @override
+  State<PenjelasanPage> createState() => _PenjelasanPageState();
+}
+
+class _PenjelasanPageState extends State<PenjelasanPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Getaran penilaian dijalankan sekali saat pembahasan dibuka, bukan setiap
+    // kali halaman digambar ulang.
+    final quiz = context.read<QuizController>();
+    kageHaptic(
+      context,
+      quiz.showingCorrect ? KageHaptic.medium : KageHaptic.heavy,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +37,9 @@ class PenjelasanPage extends StatelessWidget {
     }
     const letters = ['A', 'B', 'C', 'D'];
     final correct = quiz.showingCorrect;
+    final chosen = quiz.questionIndex < quiz.answers.length
+        ? quiz.answers[quiz.questionIndex]
+        : null;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -61,7 +82,7 @@ class PenjelasanPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                   child: SizedBox(
-                    height: 44,
+                    height: 48,
                     child: Row(
                       children: [
                         Transform.translate(
@@ -144,11 +165,34 @@ class PenjelasanPage extends StatelessWidget {
                                                     : AppColors.primaryText,
                                               ),
                                         ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          'Jawaban benar: ${letters[q.correctIndex]}. ${q.options[q.correctIndex]}',
-                                          style: AppTextStyles.bodySmallRelaxed,
+                                        const SizedBox(height: 10),
+                                        _answerRow(
+                                          label: 'Jawabanmu',
+                                          value: chosen == null
+                                              ? 'Tidak dijawab'
+                                              : '${letters[chosen]}. '
+                                                    '${q.options[chosen]}',
+                                          correct: correct,
+                                          semanticLabel: chosen == null
+                                              ? 'Jawabanmu: tidak dijawab'
+                                              : 'Jawabanmu ${correct ? 'benar' : 'salah'}: '
+                                                    '${letters[chosen]}. '
+                                                    '${q.options[chosen]}',
                                         ),
+                                        if (!correct) ...[
+                                          const SizedBox(height: 8),
+                                          _answerRow(
+                                            label: 'Jawaban benar',
+                                            value:
+                                                '${letters[q.correctIndex]}. '
+                                                '${q.options[q.correctIndex]}',
+                                            correct: true,
+                                            semanticLabel:
+                                                'Jawaban benar: '
+                                                '${letters[q.correctIndex]}. '
+                                                '${q.options[q.correctIndex]}',
+                                          ),
+                                        ],
                                       ],
                                     ),
                                   ),
@@ -278,6 +322,47 @@ class PenjelasanPage extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Satu baris pembanding jawaban.
+  ///
+  /// Selain warna, ada ikon dan penanda ✓/✗ supaya perbedaan jawaban benar dan
+  /// jawaban pengguna tetap terbaca oleh pengguna dengan buta warna (U-03).
+  Widget _answerRow({
+    required String label,
+    required String value,
+    required bool correct,
+    required String semanticLabel,
+  }) {
+    final color = correct ? AppColors.success : AppColors.primaryText;
+    return Semantics(
+      label: semanticLabel,
+      excludeSemantics: true,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            correct ? Icons.check_circle : Icons.cancel,
+            size: 18,
+            color: color,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '$label ${correct ? '✓' : '✗'} ',
+                    style: AppTextStyles.bodySmallStrong.copyWith(color: color),
+                  ),
+                  TextSpan(text: value, style: AppTextStyles.bodySmallRelaxed),
+                ],
+              ),
             ),
           ),
         ],

@@ -11,11 +11,16 @@ abstract interface class SettingsRepository {
   bool loadNotifications();
 
   void saveNotifications(bool value);
+
+  bool loadHaptics();
+
+  void saveHaptics(bool value);
 }
 
 /// Penyimpanan sementara selama aplikasi berjalan.
 class InMemorySettingsRepository implements SettingsRepository {
   bool _notifications = true;
+  bool _haptics = true;
 
   @override
   bool loadNotifications() => _notifications;
@@ -24,6 +29,14 @@ class InMemorySettingsRepository implements SettingsRepository {
   void saveNotifications(bool value) {
     _notifications = value;
   }
+
+  @override
+  bool loadHaptics() => _haptics;
+
+  @override
+  void saveHaptics(bool value) {
+    _haptics = value;
+  }
 }
 
 /// Penyimpanan preferensi di `shared_preferences`.
@@ -31,6 +44,7 @@ class LocalSettingsRepository implements SettingsRepository {
   LocalSettingsRepository(this._preferences);
 
   static const String _notificationsKey = 'settings.notifications';
+  static const String _hapticsKey = 'settings.haptics';
 
   final SharedPreferences _preferences;
 
@@ -40,5 +54,13 @@ class LocalSettingsRepository implements SettingsRepository {
   @override
   void saveNotifications(bool value) {
     unawaited(_preferences.setBool(_notificationsKey, value));
+  }
+
+  @override
+  bool loadHaptics() => _preferences.getBool(_hapticsKey) ?? true;
+
+  @override
+  void saveHaptics(bool value) {
+    unawaited(_preferences.setBool(_hapticsKey, value));
   }
 }
