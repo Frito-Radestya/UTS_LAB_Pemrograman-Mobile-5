@@ -75,11 +75,23 @@ void main() {
     test('badge Streak 7 mengikuti nilai streak nyata', () {
       final app = AppState();
       addTearDown(app.dispose);
+      final now = DateTime.now();
+      QuizResult dayResult(int daysAgo) => QuizResult(
+        categoryId: CategoryId.sains,
+        score: 100,
+        correct: 10,
+        total: 10,
+        duration: const Duration(minutes: 2),
+        playedAt: DateTime(now.year, now.month, now.day - daysAgo, 20),
+        difficulty: Difficulty.pemula,
+      );
 
-      app.streak = 6;
+      app.history.addAll([for (var i = 0; i < 6; i++) dayResult(i)]);
+      expect(app.streak, 6);
       expect(app.badges.firstWhere((b) => b.id == 'streak').earned, isFalse);
 
-      app.streak = 7;
+      app.history.add(dayResult(6));
+      expect(app.streak, 7);
       expect(app.badges.firstWhere((b) => b.id == 'streak').earned, isTrue);
     });
 

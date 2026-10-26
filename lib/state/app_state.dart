@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../data/quiz_data.dart';
 import '../models/models.dart';
 import 'progress.dart';
+import 'streak.dart';
 
 class AppState extends ChangeNotifier {
   bool loggedIn = false;
@@ -13,9 +14,10 @@ class AppState extends ChangeNotifier {
   String fullName = '';
   String email = '';
   int xp = 0;
-  int streak = 0;
 
   int get level => levelFromXp(xp);
+
+  int get streak => calculateStreak(history, DateTime.now());
 
   Difficulty selectedDifficulty = Difficulty.pemula;
   CategoryId? activeCategory;
