@@ -132,8 +132,11 @@ void main() {
 
       await pumpKageApp(tester, app, '/kategori');
 
+      // Kartu menyebut jumlah soal dan status kategori (U-10).
       expect(
-        find.bySemanticsLabel('Kategori Sains, 30 soal, tersedia'),
+        find.bySemanticsLabel(
+          'Kategori Sains, 30 soal, belum pernah dimainkan',
+        ),
         findsOneWidget,
       );
     });

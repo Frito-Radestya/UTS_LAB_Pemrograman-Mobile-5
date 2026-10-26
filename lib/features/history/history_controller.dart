@@ -54,6 +54,13 @@ class HistoryController extends ChangeNotifier {
     return items.map((e) => e.score).reduce((a, b) => a > b ? a : b);
   }
 
+  /// Waktu main terakhir pada sebuah kategori, atau null jika belum pernah.
+  DateTime? lastPlayedAt(CategoryId id) {
+    final items = _items.where((e) => e.categoryId == id);
+    if (items.isEmpty) return null;
+    return items.map((e) => e.playedAt).reduce((a, b) => a.isAfter(b) ? a : b);
+  }
+
   List<BadgeItem> get badges {
     final hasQuiz = _items.isNotEmpty;
     final perfect = _items.any((e) => e.score == 100);
