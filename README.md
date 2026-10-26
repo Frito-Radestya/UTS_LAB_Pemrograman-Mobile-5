@@ -150,8 +150,25 @@ lib/
 │   ├── app_colors.dart             # Token warna
 │   └── app_theme.dart              # Onest, Cinzel, ThemeData
 └── widgets/
-    └── kage_widgets.dart           # Widget reusable: wordmark, tombol, progress bar,
-                                    # bottom nav, score row, ilustrasi, dll.
+    ├── kage_widgets.dart           # Barrel export untuk seluruh widget reusable
+    ├── kage_wordmark.dart
+    ├── sakura_petal.dart
+    ├── moon_glow.dart
+    ├── lantern.dart
+    ├── star_field.dart
+    ├── clippers.dart
+    ├── torii_art.dart
+    ├── emblem_mark.dart
+    ├── category_icon_badge.dart
+    ├── primary_button.dart
+    ├── outline_button.dart
+    ├── app_text_field.dart
+    ├── kage_progress_bar.dart
+    ├── back_icon_button.dart
+    ├── score_row.dart
+    ├── kage_bottom_nav.dart
+    ├── top_wash.dart
+    └── screen_scaffold.dart
 ```
 
 Aset visual berada di `assets/svg/` dan font di `assets/fonts/`. Paket desain asli
@@ -169,6 +186,10 @@ Folder `lib/features/` mengelompokkan controller dan halaman berdasarkan domain
 fitur tetap berada di `models/`, `data/`, `theme/`, dan `widgets/`. Seluruh import
 internal memakai `package:kage/...` agar pemindahan file tidak memutus jalur
 relatif.
+
+Setiap widget reusable memiliki file sendiri di `lib/widgets/`. Berkas
+`kage_widgets.dart` dipertahankan sebagai barrel export agar halaman cukup
+mengimpor satu jalur tanpa bergantung pada lokasi internal setiap komponen.
 
 ## Rute Aplikasi
 
