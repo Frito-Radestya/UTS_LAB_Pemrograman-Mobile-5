@@ -139,19 +139,11 @@ class _RiwayatPageState extends State<RiwayatPage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Container(
-                              width: 64,
-                              height: 64,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColors.surface,
-                                border: Border.all(color: AppColors.border),
-                              ),
-                              child: const Icon(
-                                Icons.history_rounded,
-                                color: AppColors.textMuted,
-                                size: 28,
-                              ),
+                            // Ilustrasi kuil yang sama dengan layar lain, agar
+                            // keadaan kosong tetap terasa bagian dari KAGE.
+                            const Opacity(
+                              opacity: 0.9,
+                              child: ToriiArt(width: 120, height: 100),
                             ),
                             const SizedBox(height: 14),
                             Text(
@@ -165,19 +157,26 @@ class _RiwayatPageState extends State<RiwayatPage> {
                             Text(
                               _hasFilter
                                   ? 'Coba longgarkan filter atau tampilkan semua riwayat.'
-                                  : 'Selesaikan satu kuis untuk melihat skormu di sini.',
+                                  : 'Jejak perjalananmu akan tercatat di sini. '
+                                        'Mulai satu kuis untuk mengisi kuil ini.',
                               textAlign: TextAlign.center,
                               style: AppTextStyles.bodySmallRelaxedMuted,
                             ),
-                            if (_hasFilter) ...[
-                              const SizedBox(height: 12),
+                            const SizedBox(height: 12),
+                            if (_hasFilter)
                               OutlineButton(
                                 label: 'Tampilkan semua',
                                 width: 180,
                                 height: 44,
                                 onTap: _resetFilters,
+                              )
+                            else
+                              OutlineButton(
+                                label: 'Mulai kuis pertama',
+                                width: 200,
+                                height: 44,
+                                onTap: () => context.go('/kategori'),
                               ),
-                            ],
                           ],
                         ),
                       ),

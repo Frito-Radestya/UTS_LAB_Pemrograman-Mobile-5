@@ -125,7 +125,8 @@ class BadgePage extends StatelessWidget {
       container: true,
       label:
           '${badge.title}, ${badge.subtitle}, '
-          '${badge.earned ? 'terbuka' : 'terkunci'}',
+          '${badge.earned ? 'terbuka' : 'terkunci'}'
+          '${badge.earned || badge.progressLabel == null ? '' : ', progres ${badge.progressLabel}'}',
       excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -155,6 +156,12 @@ class BadgePage extends StatelessWidget {
                     ),
                   ),
                   Text(badge.subtitle, style: AppTextStyles.bodySmallMuted),
+                  // Badge terkunci menyebut syaratnya, misalnya "3/5 kategori".
+                  if (!badge.earned && badge.progressLabel != null)
+                    Text(
+                      badge.progressLabel!,
+                      style: AppTextStyles.captionRelaxedMuted,
+                    ),
                 ],
               ),
             ),

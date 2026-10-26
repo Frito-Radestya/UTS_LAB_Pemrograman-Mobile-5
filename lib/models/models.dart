@@ -100,6 +100,7 @@ class BadgeItem {
     required this.subtitle,
     required this.asset,
     required this.earned,
+    this.progressLabel,
   });
 
   final String id;
@@ -107,6 +108,12 @@ class BadgeItem {
   final String subtitle;
   final String asset;
   final bool earned;
+
+  /// Syarat yang sudah dicapai, misalnya `3/5 kategori` (U-07).
+  ///
+  /// Ditampilkan pada badge yang masih terkunci supaya pengguna tahu seberapa
+  /// dekat mereka dengan pencapaian itu.
+  final String? progressLabel;
 }
 
 class InProgressQuiz {

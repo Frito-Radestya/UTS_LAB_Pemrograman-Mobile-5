@@ -386,6 +386,19 @@ didukung, `categoryId` tidak cocok, daftar soal kosong, `prompt`/`explanation`/
 `test/data/quiz_bank_test.dart` memuat **seluruh** berkas JSON, memvalidasi tiap
 soal, dan memastikan bank benar-benar terbaca lewat asset bundle aplikasi.
 
+## Keadaan Kosong, Memuat, dan Gagal
+
+`main.dart` menjalankan `KageBootstrap`, yang memuat sesi, riwayat, progres, dan
+bank soal sambil menampilkan indikator "Menyiapkan data…" beserta rangka kartu.
+Bila penyimpanan gagal dibuka, layar menampilkan pesan beserta tombol **Coba
+Lagi** alih-alih diam di layar kosong.
+
+Keadaan kosong lain juga dibuat eksplisit: akun baru melihat kartu "Mulai kuis
+pertamamu" di Beranda (bukan kartu progres 0/5), Riwayat kosong memakai
+ilustrasi kuil `torii.svg` dengan ajakan dan tombol mulai, badge terkunci
+menyebut syarat serta progresnya ("3/5 kategori"), dan halaman Hasil yang dibuka
+tanpa kuis aktif menjelaskan keadaannya.
+
 ## Riwayat Kuis
 
 Halaman Riwayat menyaring percobaan berdasarkan kategori, tingkat kesulitan
@@ -508,6 +521,7 @@ dan 2,0× tanpa luber.
 - [x] Kuis 50 soal, pembahasan, dan hasil
 - [x] Riwayat skor dan statistik
 - [x] Filter, tren skor, dan detail percobaan di Riwayat (U-11)
+- [x] Keadaan kosong, memuat, dan gagal di seluruh alur utama (U-07)
 - [x] Profil, badge, dan pengaturan
 - [x] Responsif untuk web/tablet
 - [x] Branding ikon, splash native, dan metadata web
