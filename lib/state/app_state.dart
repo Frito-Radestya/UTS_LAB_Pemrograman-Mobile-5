@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 
 import '../data/quiz_data.dart';
@@ -20,9 +22,23 @@ class AppState extends ChangeNotifier {
 
   /// Soal yang sudah dikirim ke halaman penjelasan dan dikunci untuk diubah.
   List<bool> _submitted = <bool>[];
+
+  /// Urutan soal dan opsi yang diacak untuk sesi kuis berjalan.
+  List<Question> _activeQuestions = <Question>[];
+  List<int> _questionOrder = <int>[];
+  List<List<int>> _optionOrders = <List<int>>[];
+
   DateTime? quizStartedAt;
   QuizResult? lastResult;
   bool showingCorrect = true;
+
+  List<Question> get activeQuestions =>
+      List<Question>.unmodifiable(_activeQuestions);
+
+  List<int> get questionOrder => List<int>.unmodifiable(_questionOrder);
+
+  List<List<int>> get optionOrders =>
+      List<List<int>>.unmodifiable(_optionOrders.map(List<int>.unmodifiable));
 
   InProgressQuiz? resume = const InProgressQuiz(
     categoryId: CategoryId.teknologi,
@@ -200,10 +216,19 @@ class AppState extends ChangeNotifier {
     int startIndex = 0,
     List<int?>? existing,
     List<bool>? submitted,
+    Random? random,
+    List<int>? questionOrder,
+    List<List<int>>? optionOrders,
   }) {
     activeCategory = id;
     questionIndex = startIndex;
-    final total = questionsByCategory[id]!.length;
+    _buildActiveQuestions(
+      id,
+      random: random ?? Random(),
+      savedQuestionOrder: questionOrder,
+      savedOptionOrders: optionOrders,
+    );
+    final total = _activeQuestions.length;
     answers = List<int?>.filled(total, null);
     _submitted = List<bool>.filled(total, false);
     if (existing != null) {
@@ -220,6 +245,68 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Mengacak urutan soal dan opsi, lalu memetakan ulang indeks jawaban benar.
+  ///
+  /// [savedQuestionOrder] dan [savedOptionOrders] dipakai saat melanjutkan sesi
+  /// agar urutan yang dilihat pengguna tetap sama seperti sebelumnya.
+  void _buildActiveQuestions(
+    CategoryId id, {
+    required Random random,
+    List<int>? savedQuestionOrder,
+    List<List<int>>? savedOptionOrders,
+  }) {
+    final source = questionsByCategory[id]!;
+    final order = <int>[];
+    if (savedQuestionOrder != null &&
+        _isPermutation(savedQuestionOrder, source.length)) {
+      order.addAll(savedQuestionOrder);
+    } else {
+      order.addAll(List<int>.generate(source.length, (i) => i));
+      order.shuffle(random);
+    }
+
+    _questionOrder = order;
+    _optionOrders = <List<int>>[];
+    _activeQuestions = <Question>[];
+    for (var position = 0; position < order.length; position++) {
+      final original = source[order[position]];
+      final optionsCount = original.options.length;
+      final saved =
+          savedOptionOrders != null &&
+              position < savedOptionOrders.length &&
+              _isPermutation(savedOptionOrders[position], optionsCount)
+          ? savedOptionOrders[position]
+          : null;
+      final optionOrder = <int>[];
+      if (saved != null) {
+        optionOrder.addAll(saved);
+      } else {
+        optionOrder.addAll(List<int>.generate(optionsCount, (i) => i));
+        optionOrder.shuffle(random);
+      }
+      _optionOrders.add(optionOrder);
+      _activeQuestions.add(
+        Question(
+          prompt: original.prompt,
+          options: [for (final index in optionOrder) original.options[index]],
+          correctIndex: optionOrder.indexOf(original.correctIndex),
+          explanation: original.explanation,
+          funFact: original.funFact,
+        ),
+      );
+    }
+  }
+
+  bool _isPermutation(List<int> values, int length) {
+    if (values.length != length) return false;
+    final seen = List<bool>.filled(length, false);
+    for (final value in values) {
+      if (value < 0 || value >= length || seen[value]) return false;
+      seen[value] = true;
+    }
+    return true;
+  }
+
   /// Menyimpan jawaban saat ini agar bisa dilanjutkan dari Beranda.
   void saveProgress() {
     final id = activeCategory;
@@ -230,6 +317,8 @@ class AppState extends ChangeNotifier {
       index: questionIndex,
       answers: List<int?>.from(answers),
       submitted: List<bool>.from(_submitted),
+      questionOrder: List<int>.from(_questionOrder),
+      optionOrders: [for (final order in _optionOrders) List<int>.from(order)],
     );
     notifyListeners();
   }
@@ -250,6 +339,8 @@ class AppState extends ChangeNotifier {
       startIndex: r.index,
       existing: List<int?>.from(r.answers),
       submitted: List<bool>.from(r.submitted),
+      questionOrder: List<int>.from(r.questionOrder),
+      optionOrders: [for (final order in r.optionOrders) List<int>.from(order)],
     );
   }
 
@@ -263,18 +354,11 @@ class AppState extends ChangeNotifier {
       questionIndex < answers.length && answers[questionIndex] != null;
 
   Question? get currentQuestion {
-    final id = activeCategory;
-    if (id == null) return null;
-    final list = questionsByCategory[id]!;
-    if (questionIndex >= list.length) return null;
-    return list[questionIndex];
+    if (questionIndex >= _activeQuestions.length) return null;
+    return _activeQuestions[questionIndex];
   }
 
-  int get totalQuestions {
-    final id = activeCategory;
-    if (id == null) return 0;
-    return questionsByCategory[id]!.length;
-  }
+  int get totalQuestions => _activeQuestions.length;
 
   void submitCurrent() {
     final q = currentQuestion;
@@ -287,9 +371,8 @@ class AppState extends ChangeNotifier {
   }
 
   bool get isLastQuestion {
-    final id = activeCategory;
-    if (id == null) return true;
-    return questionIndex >= questionsByCategory[id]!.length - 1;
+    if (activeCategory == null) return true;
+    return questionIndex >= _activeQuestions.length - 1;
   }
 
   void nextQuestion() {
@@ -303,7 +386,8 @@ class AppState extends ChangeNotifier {
 
   void finishQuiz() {
     final id = activeCategory!;
-    final list = questionsByCategory[id]!;
+    final list = _activeQuestions;
+    if (list.isEmpty) return;
     var correct = 0;
     for (var i = 0; i < list.length; i++) {
       if (answers[i] == list[i].correctIndex) correct++;
