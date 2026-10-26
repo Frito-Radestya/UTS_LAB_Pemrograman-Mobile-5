@@ -12,6 +12,7 @@ untuk UTS Lab Pemrograman Mobile.
 [![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-4A4F5E)](#menjalankan-aplikasi)
+[![CI](https://github.com/Frito-Radestya/UTS_LAB_Pemrograman-Mobile-5/actions/workflows/ci.yml/badge.svg)](https://github.com/Frito-Radestya/UTS_LAB_Pemrograman-Mobile-5/actions/workflows/ci.yml)
 
 </div>
 
