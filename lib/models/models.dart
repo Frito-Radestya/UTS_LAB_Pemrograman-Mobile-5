@@ -96,12 +96,16 @@ class InProgressQuiz {
     required this.difficulty,
     required this.index,
     required this.answers,
+    this.submitted = const [],
   });
 
   final CategoryId categoryId;
   final Difficulty difficulty;
   final int index;
   final List<int?> answers;
+
+  /// Soal yang sudah dikirim dan tidak boleh diubah lagi setelah dilanjutkan.
+  final List<bool> submitted;
 }
 
 extension CategoryIdX on CategoryId {

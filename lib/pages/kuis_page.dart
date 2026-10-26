@@ -23,6 +23,7 @@ class KuisPage extends StatelessWidget {
       return const Scaffold(backgroundColor: AppColors.background);
     }
     final selected = app.answers[app.questionIndex];
+    final locked = app.currentQuestionLocked;
     const letters = ['A', 'B', 'C', 'D'];
     final total = app.totalQuestions;
     final diff = switch (app.selectedDifficulty) {
@@ -147,11 +148,35 @@ class KuisPage extends StatelessWidget {
                             letter: letters[i],
                             text: q.options[i],
                             selected: selected == i,
-                            onTap: () => app.selectAnswer(i),
+                            locked: locked,
+                            onTap: locked ? null : () => app.selectAnswer(i),
                           ),
                           const SizedBox(height: 12),
                         ],
-                        const SizedBox(height: 16),
+                        if (locked) ...[
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.lock_outline,
+                                size: 16,
+                                color: AppColors.textMuted,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  'Jawaban sudah dikirim dan terkunci.',
+                                  style: AppTheme.onest(
+                                    size: 12,
+                                    heightPx: 18,
+                                    color: AppColors.textMuted,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        const SizedBox(height: 4),
                         Row(
                           children: [
                             OutlineButton(
@@ -172,8 +197,12 @@ class KuisPage extends StatelessWidget {
                             const SizedBox(width: 12),
                             Expanded(
                               child: PrimaryButton(
-                                label: 'Selanjutnya',
-                                onTap: selected == null
+                                label: locked
+                                    ? 'Lihat Penjelasan'
+                                    : 'Selanjutnya',
+                                onTap: locked
+                                    ? () => context.push('/penjelasan')
+                                    : selected == null
                                     ? null
                                     : () {
                                         app.submitCurrent();
@@ -258,7 +287,8 @@ class KuisPage extends StatelessWidget {
     required String letter,
     required String text,
     required bool selected,
-    required VoidCallback onTap,
+    required bool locked,
+    required VoidCallback? onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -267,14 +297,14 @@ class KuisPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: selected
-              ? AppColors.primary.withValues(alpha: 0.16)
+              ? AppColors.primary.withValues(alpha: locked ? 0.1 : 0.16)
               : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: selected ? AppColors.primary : AppColors.border,
             width: 1.5,
           ),
-          boxShadow: selected
+          boxShadow: selected && !locked
               ? [
                   BoxShadow(
                     color: AppColors.primary.withValues(alpha: 0.25),
@@ -318,7 +348,11 @@ class KuisPage extends StatelessWidget {
               ),
             ),
             if (selected)
-              const Icon(Icons.check, color: AppColors.text, size: 20),
+              Icon(
+                locked ? Icons.lock_outline : Icons.check,
+                color: AppColors.text,
+                size: 20,
+              ),
           ],
         ),
       ),

@@ -66,7 +66,10 @@ class PenjelasanPage extends StatelessWidget {
                       children: [
                         Transform.translate(
                           offset: const Offset(-12, 0),
-                          child: const BackIconButton(label: 'Kembali ke soal'),
+                          child: BackIconButton(
+                            label: 'Kembali ke soal terkunci',
+                            onTap: () => context.go('/kuis'),
+                          ),
                         ),
                         Expanded(
                           child: Text(
