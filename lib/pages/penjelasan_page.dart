@@ -239,9 +239,9 @@ class PenjelasanPage extends StatelessWidget {
                               Container(
                                 width: 64,
                                 height: 64,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
-                                  gradient: const RadialGradient(
+                                  gradient: RadialGradient(
                                     center: Alignment(-0.3, -0.4),
                                     colors: [
                                       Color(0xFFF28B5E),

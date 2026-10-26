@@ -114,14 +114,14 @@ class HasilPage extends StatelessWidget {
                     duration: const Duration(seconds: 7),
                     delayFraction: 0.2,
                   ),
-                  AnimatedSakuraPetal(
+                  const AnimatedSakuraPetal(
                     left: 16,
                     top: 80,
                     width: 10,
                     height: 7,
                     angle: -50,
                     opacity: 0.7,
-                    duration: const Duration(seconds: 5),
+                    duration: Duration(seconds: 5),
                     delayFraction: 0.8,
                   ),
                   AnimatedSakuraPetal(

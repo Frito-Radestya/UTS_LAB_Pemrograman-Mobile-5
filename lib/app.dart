@@ -182,7 +182,7 @@ class _KageAppState extends State<KageApp> {
     if (child == null) return const SizedBox.shrink();
     if (media == null || media.size.width <= _maxContentWidth) return child;
 
-    final frameWidth = _maxContentWidth;
+    const frameWidth = _maxContentWidth;
     return ColoredBox(
       color: const Color(0xFF05070C),
       child: Center(
