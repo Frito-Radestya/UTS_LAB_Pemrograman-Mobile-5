@@ -153,7 +153,11 @@ GoRouter createRouter(AppServices services, {String initialLocation = '/'}) {
 }
 
 class KageApp extends StatefulWidget {
-  const KageApp({super.key});
+  const KageApp({super.key, required this.services});
+
+  /// Layanan yang sudah memuat data dari penyimpanan lokal sebelum aplikasi
+  /// dijalankan.
+  final AppServices services;
 
   @override
   State<KageApp> createState() => _KageAppState();
@@ -166,7 +170,7 @@ class _KageAppState extends State<KageApp> {
   @override
   void initState() {
     super.initState();
-    _services = AppServices();
+    _services = widget.services;
     _router = createRouter(_services);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }

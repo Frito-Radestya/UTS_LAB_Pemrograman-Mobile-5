@@ -26,9 +26,10 @@ kelopak sakura, dan langit malam. Aplikasi memiliki alur lengkap mulai dari
 splash screen, login/registrasi, pemilihan kategori, pengerjaan kuis, pembahasan
 jawaban, hingga hasil dan riwayat skor.
 
-Seluruh data masih bersifat **lokal/dummy di dalam memori** — tidak ada backend,
-database, atau penyimpanan permanen. Cocok digunakan sebagai proyek pembelajaran
-Flutter dan demonstrasi UI/UX.
+Tidak ada backend: seluruh data disimpan **secara lokal di perangkat** memakai
+`shared_preferences` (sesi login dan pengaturan) serta Hive (riwayat kuis, XP, dan
+kuis yang sedang berjalan). Menutup aplikasi tidak menghilangkan progres belajar.
+Cocok digunakan sebagai proyek pembelajaran Flutter dan demonstrasi UI/UX.
 
 ## Fitur Utama
 
@@ -43,6 +44,8 @@ Flutter dan demonstrasi UI/UX.
 - **Pemilihan tingkat kesulitan**: Pemula, Menengah, dan Ahli dengan pengali XP
   berbeda serta jumlah soal aktual per tingkat.
 - **Penyimpanan progres kuis** ke Beranda, termasuk konfirmasi saat keluar di tengah kuis.
+- **Data tersimpan permanen** di perangkat: sesi login, riwayat, XP, kuis tersimpan,
+  dan pengaturan tetap ada setelah aplikasi ditutup.
 - **Halaman hasil** dengan animasi skor, jumlah benar, akurasi, dan durasi.
 - **Riwayat skor** dengan filter kategori dan ringkasan statistik.
 - **Badge & pencapaian** yang dihitung dari riwayat kuis.
@@ -90,6 +93,8 @@ Splash
 | Navigasi | [`go_router`](https://pub.dev/packages/go_router) 18.x |
 | State management | [`provider`](https://pub.dev/packages/provider) 6.x (`ChangeNotifier`) |
 | Aset vektor | [`flutter_svg`](https://pub.dev/packages/flutter_svg) 2.x |
+| Penyimpanan ringan | [`shared_preferences`](https://pub.dev/packages/shared_preferences) 2.5 (sesi & pengaturan) |
+| Basis data lokal | [`hive`](https://pub.dev/packages/hive) 2.2 + `hive_flutter` 1.1 (riwayat, XP, resume) |
 | Tipografi | Font lokal **Onest** & **Cinzel** (`assets/fonts/`) |
 | Ikon | Material Icons + aset SVG khusus KAGE |
 
@@ -116,10 +121,15 @@ lib/
 ├── app_services.dart               # Komposisi controller + penghubung hasil kuis
 ├── data/
 │   ├── quiz_data.dart              # Bank soal per kategori & tingkat
+│   ├── local/
+│   │   ├── local_box.dart          # Pembuka kotak Hive (riwayat, XP, resume)
+│   │   └── quiz_codec.dart         # Encode/decode JSON model kuis
 │   └── repositories/
-│       ├── quiz_repository.dart    # Kontrak bank soal + implementasi lokal
-│       ├── auth_repository.dart    # Kontrak sesi pengguna + in-memory
-│       └── history_repository.dart # Kontrak penyimpanan riwayat + in-memory
+│       ├── quiz_repository.dart     # Kontrak bank soal + implementasi lokal
+│       ├── auth_repository.dart     # Kontrak sesi + in-memory + shared_preferences
+│       ├── history_repository.dart  # Kontrak riwayat + in-memory + Hive
+│       ├── progress_repository.dart # Kontrak XP & resume + in-memory + Hive
+│       └── settings_repository.dart # Kontrak preferensi + shared_preferences
 ├── models/
 │   └── models.dart                 # CategoryId, Difficulty, Question, QuizResult, BadgeItem
 ├── features/
@@ -196,11 +206,17 @@ Setiap widget reusable memiliki file sendiri di `lib/widgets/`. Berkas
 mengimpor satu jalur tanpa bergantung pada lokasi internal setiap komponen.
 
 Akses data melewati repository. `QuizRepository` membungkus bank soal,
-`AuthRepository` menyimpan identitas sesi, dan `HistoryRepository` menangani
-penyimpanan riwayat. Controller hanya bergantung pada kontrak tersebut, sehingga
-sumber soal, autentikasi, atau media penyimpanan dapat diganti tanpa mengubah
-logika fitur. `AppServices` menyediakan implementasi lokal bawaan dan
-mendaftarkannya lewat `provider`.
+`AuthRepository` menyimpan identitas sesi, `HistoryRepository` menangani
+penyimpanan riwayat, `ProgressRepository` menyimpan XP dan kuis tersimpan, serta
+`SettingsRepository` menyimpan preferensi. Controller hanya bergantung pada
+kontrak tersebut, sehingga sumber soal, autentikasi, atau media penyimpanan
+dapat diganti tanpa mengubah logika fitur.
+
+`AppServices.create()` menyiapkan penyimpanan permanen lalu memakai implementasi
+lokal: `LocalAuthRepository` dan `LocalSettingsRepository` di atas
+`shared_preferences`, serta `LocalHistoryRepository` dan
+`LocalProgressRepository` di atas kotak Hive. Implementasi in-memory tetap tersedia
+untuk pengujian dan menjadi nilai bawaan `AppServices()`.
 
 Tipografi memakai gaya bernama di `AppTextStyles` (`displayLarge`, `titleLarge`,
 `body`, `caption`, `label`, dan variannya). Halaman tidak lagi menulis ukuran,
@@ -268,21 +284,36 @@ flutter build web --release
 Aplikasi menggunakan autentikasi simulasi: pengguna dapat masuk dengan email/
 username dan password apa pun yang tidak kosong, atau membuat akun baru melalui
 halaman registrasi. Nama dan email akan ditampilkan di Beranda dan Profil.
+Pemeriksaan kata sandi yang sebenarnya belum diterapkan (lihat D-03 pada
+`TASKS_KAGE.md`).
 
-Seluruh data berikut hanya tersimpan selama sesi aplikasi berjalan:
+Data disimpan **permanen di perangkat** dan dipulihkan sebelum aplikasi
+dijalankan (`AppServices.create()` di `lib/main.dart`):
 
-- akun dan profil pengguna,
-- progres kuis yang disimpan,
-- riwayat skor,
-- XP, level, dan badge.
+| Data | Penyimpanan | Keterangan |
+|---|---|---|
+| Sesi login dan profil (nama, email) | `shared_preferences` | Restart aplikasi tetap dalam keadaan masuk sampai pengguna logout |
+| Pengaturan (mis. notifikasi) | `shared_preferences` | Nilai awal dibaca `SettingsController` |
+| Riwayat skor | Hive (`kage_local` → `history`) | Disimpan sebagai JSON; data rusak diabaikan |
+| XP dan level | Hive (`kage_local` → `progress.xp`) | Level selalu diturunkan dari XP |
+| Kuis yang sedang berjalan | Hive (`kage_local` → `progress.resume`) | Termasuk urutan soal/opsi, jawaban, soal terkunci, dan durasi |
 
-Menutup atau me-restart aplikasi akan mengembalikan data ke kondisi awal.
+Logout menghapus sesi tersimpan, tetapi riwayat, XP, dan kuis tersimpan tetap
+ada agar progres belajar tidak hilang ketika pengguna masuk kembali.
+
+Untuk mengosongkan semuanya, jalankan aplikasi di perangkat tanpa data lama
+(atau hapus data aplikasi dari pengaturan sistem). Menu "Hapus semua data"
+belum tersedia karena termasuk lingkup U-08.
+
+Simulasi "menutup lalu membuka aplikasi" tercakup oleh
+`test/data/persistence_test.dart`, yang menutup kotak Hive, membukanya kembali
+dari berkas di disk, lalu membuat ulang seluruh controller.
 
 ## Level & XP
 
 XP diperoleh sebesar skor akhir kuis. Level tidak disimpan sebagai angka
 terpisah, melainkan selalu dihitung dari total XP melalui fungsi murni
-`levelFromXp(int xp)` di `lib/state/progress.dart`.
+`levelFromXp(int xp)` di `lib/features/profile/progress.dart`.
 
 Kurva level bersifat kumulatif dan tidak memiliki batas level. Selisih XP yang
 dibutuhkan bertambah 50 setiap level:
@@ -325,8 +356,9 @@ sesi kuis tidak pernah dimulai dengan bank soal kosong.
 - [x] Profil, badge, dan pengaturan
 - [x] Responsif untuk web/tablet
 - [x] Branding ikon, splash native, dan metadata web
-- [ ] Penyimpanan permanen (database/local storage)
+- [x] Penyimpanan permanen lokal (shared_preferences + Hive)
 - [ ] Integrasi backend dan akun nyata
+- [ ] Bank soal dari aset JSON (D-02)
 
 ## Kontribusi
 

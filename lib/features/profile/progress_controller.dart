@@ -1,10 +1,22 @@
 import 'package:flutter/foundation.dart';
 
+import 'package:kage/data/repositories/progress_repository.dart';
+
 import 'progress.dart';
 
 /// Total XP dan level pengguna. XP selalu dihitung ulang menjadi level agar
 /// tidak ada dua sumber kebenaran untuk batas level.
+///
+/// XP dipulihkan dari repository saat dibuat dan disimpan setiap kali berubah,
+/// sehingga level tidak hilang ketika aplikasi ditutup.
 class ProgressController extends ChangeNotifier {
+  ProgressController({ProgressRepository? repository})
+    : _repository = repository ?? InMemoryProgressRepository() {
+    _xp = _repository.loadXp();
+  }
+
+  final ProgressRepository _repository;
+
   int _xp = 0;
 
   int get xp => _xp;
@@ -13,6 +25,7 @@ class ProgressController extends ChangeNotifier {
     final safe = value < 0 ? 0 : value;
     if (_xp == safe) return;
     _xp = safe;
+    _repository.saveXp(safe);
     notifyListeners();
   }
 

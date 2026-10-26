@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:kage/data/repositories/progress_repository.dart';
 import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 
@@ -10,13 +11,22 @@ typedef QuizCompleted = void Function(QuizResult result);
 /// Mengelola satu sesi kuis: soal aktif, jawaban, penguncian, dan progres.
 ///
 /// Controller ini tidak mengetahui riwayat atau XP. Hasil akhir dikirim lewat
-/// [onCompleted] agar lapisan komposisi yang menghubungkannya.
+/// [onCompleted] agar lapisan komposisi yang menghubungkannya. Kuis yang
+/// disimpan dititipkan ke [ProgressRepository] supaya sesi tetap ada setelah
+/// aplikasi ditutup.
 class QuizController extends ChangeNotifier {
-  QuizController({this.onCompleted, QuizRepository? questions})
-    : _questions = questions ?? const LocalQuizRepository();
+  QuizController({
+    this.onCompleted,
+    QuizRepository? questions,
+    ProgressRepository? progress,
+  }) : _questions = questions ?? const LocalQuizRepository(),
+       _progress = progress ?? InMemoryProgressRepository() {
+    resume = _progress.loadResume();
+  }
 
   final QuizCompleted? onCompleted;
   final QuizRepository _questions;
+  final ProgressRepository _progress;
 
   Difficulty selectedDifficulty = Difficulty.pemula;
   CategoryId? activeCategory;
@@ -185,11 +195,13 @@ class QuizController extends ChangeNotifier {
       optionOrders: [for (final order in _optionOrders) List<int>.from(order)],
       elapsed: currentElapsed,
     );
+    _progress.saveResume(resume);
     notifyListeners();
   }
 
   void discardProgress() {
     resume = null;
+    _progress.saveResume(null);
     notifyListeners();
   }
 
@@ -270,6 +282,7 @@ class QuizController extends ChangeNotifier {
     );
     lastResult = result;
     resume = null;
+    _progress.saveResume(null);
     onCompleted?.call(result);
     notifyListeners();
   }
