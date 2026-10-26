@@ -9,11 +9,11 @@ class AppState extends ChangeNotifier {
   bool loggedIn = false;
   bool notifications = true;
 
-  String fullName = 'Frito Radestya S.';
-  String email = 'frito@example.com';
-  int xp = 1250;
-  int level = 3;
-  int streak = 3;
+  String fullName = '';
+  String email = '';
+  int xp = 0;
+  int level = 1;
+  int streak = 0;
 
   Difficulty selectedDifficulty = Difficulty.pemula;
   CategoryId? activeCategory;
@@ -40,84 +40,28 @@ class AppState extends ChangeNotifier {
   List<List<int>> get optionOrders =>
       List<List<int>>.unmodifiable(_optionOrders.map(List<int>.unmodifiable));
 
-  InProgressQuiz? resume = const InProgressQuiz(
-    categoryId: CategoryId.teknologi,
-    difficulty: Difficulty.pemula,
-    index: 2,
-    answers: [0, 2, null, null, null, null, null, null, null, null],
-    submitted: [
-      true,
-      true,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ],
-  );
+  InProgressQuiz? resume;
 
   bool isQuestionLocked(int index) =>
       index >= 0 && index < _submitted.length && _submitted[index];
 
   bool get currentQuestionLocked => isQuestionLocked(questionIndex);
 
-  final List<QuizResult> history = [
-    QuizResult(
-      categoryId: CategoryId.teknologi,
-      score: 80,
-      correct: 8,
-      total: 10,
-      duration: const Duration(minutes: 2, seconds: 45),
-      playedAt: DateTime(2025, 10, 8, 20, 12),
-      difficulty: Difficulty.pemula,
-    ),
-    QuizResult(
-      categoryId: CategoryId.sains,
-      score: 100,
-      correct: 10,
-      total: 10,
-      duration: const Duration(minutes: 2, seconds: 12),
-      playedAt: DateTime(2025, 10, 6, 19, 40),
-      difficulty: Difficulty.pemula,
-    ),
-    QuizResult(
-      categoryId: CategoryId.sejarah,
-      score: 70,
-      correct: 7,
-      total: 10,
-      duration: const Duration(minutes: 3, seconds: 1),
-      playedAt: DateTime(2025, 10, 4, 18, 5),
-      difficulty: Difficulty.pemula,
-    ),
-    QuizResult(
-      categoryId: CategoryId.logika,
-      score: 90,
-      correct: 9,
-      total: 10,
-      duration: const Duration(minutes: 2, seconds: 57),
-      playedAt: DateTime(2025, 10, 3, 21, 11),
-      difficulty: Difficulty.pemula,
-    ),
-    QuizResult(
-      categoryId: CategoryId.umum,
-      score: 80,
-      correct: 8,
-      total: 10,
-      duration: const Duration(minutes: 3, seconds: 20),
-      playedAt: DateTime(2025, 10, 1, 16, 48),
-      difficulty: Difficulty.pemula,
-    ),
-  ];
+  final List<QuizResult> history = <QuizResult>[];
 
   String get firstName {
-    final parts = fullName.trim().split(RegExp(r'\s+'));
-    return parts.isEmpty ? 'Frito' : parts.first;
+    final parts = fullName
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    return parts.isEmpty ? 'Pengguna' : parts.first;
   }
 
-  String get initial => firstName.isEmpty ? 'F' : firstName[0].toUpperCase();
+  String get initial {
+    final name = fullName.trim();
+    return name.isEmpty ? 'K' : name[0].toUpperCase();
+  }
 
   int get totalQuizzes => history.length;
   int get bestScore => history.isEmpty
@@ -139,8 +83,7 @@ class AppState extends ChangeNotifier {
     return ids.length;
   }
 
-  /// Angka di kartu Beranda mengikuti mock (3/5), terpisah dari jumlah riwayat.
-  int get learningPathDone => 3;
+  int get learningPathDone => completedCategories;
 
   List<BadgeItem> get badges {
     final hasQuiz = history.isNotEmpty;
@@ -169,7 +112,7 @@ class AppState extends ChangeNotifier {
         title: 'Streak 7',
         subtitle: 'Main 7 hari berturut-turut',
         asset: 'assets/svg/badge_streak_7.svg',
-        earned: true,
+        earned: streak >= 7,
       ),
       BadgeItem(
         id: 'explorer',
@@ -412,7 +355,7 @@ class AppState extends ChangeNotifier {
 
   int bestFor(CategoryId id) {
     final items = history.where((e) => e.categoryId == id);
-    if (items.isEmpty) return categoryById(id).bestScore;
+    if (items.isEmpty) return 0;
     return items.map((e) => e.score).reduce((a, b) => a > b ? a : b);
   }
 }

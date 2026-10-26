@@ -18,7 +18,6 @@ class QuizCategory {
     required this.gradientInner,
     required this.gradientOuter,
     this.questionCount = 10,
-    this.bestScore = 0,
     this.available = true,
   });
 
@@ -32,7 +31,6 @@ class QuizCategory {
   final Color gradientInner;
   final Color gradientOuter;
   final int questionCount;
-  final int bestScore;
   final bool available;
 }
 

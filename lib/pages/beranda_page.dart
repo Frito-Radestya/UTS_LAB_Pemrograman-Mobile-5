@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/quiz_data.dart';
-import '../models/models.dart';
 import '../state/app_state.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
@@ -15,10 +14,8 @@ class BerandaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-    final resumeCat = categoryById(
-      app.resume?.categoryId ?? CategoryId.teknologi,
-    );
-    final resumeIndex = app.resume?.index ?? 2;
+    final resume = app.resume;
+    final categoryCount = categories.length;
 
     return ScreenScaffold(
       navIndex: 0,
@@ -66,176 +63,223 @@ class BerandaPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          // Progress card
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Progres Belajar',
-                      style: AppTheme.onest(
-                        size: 14,
-                        heightPx: 20,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '${((app.learningPathDone / 5) * 100).round()}%',
-                      style: AppTheme.onest(
-                        size: 14,
-                        heightPx: 20,
-                        weight: FontWeight.w600,
-                        color: AppColors.gold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${app.learningPathDone} / 5 Kategori',
-                  style: AppTheme.onest(
-                    size: 18,
-                    heightPx: 26,
-                    weight: FontWeight.w600,
+          // Akun baru mendapat ajakan memulai, bukan progres kosong.
+          if (app.history.isEmpty)
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: AppColors.borderStrong),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.auto_awesome,
+                    color: AppColors.gold,
+                    size: 22,
                   ),
-                ),
-                const SizedBox(height: 12),
-                KageProgressBar(value: app.learningPathDone / 5),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          // "Lanjutkan Petualangan" card – fully responsive, no absolute positions
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
+                  const SizedBox(height: 10),
+                  Text(
+                    'Mulai kuis pertamamu',
+                    style: AppTheme.onest(
+                      size: 18,
+                      heightPx: 26,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Pilih satu kategori dan mulai perjalanan pengetahuanmu.',
+                    style: AppTheme.onest(
+                      size: 14,
+                      heightPx: 21,
+                      color: AppColors.textSoft,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  PrimaryButton(
+                    label: 'Pilih kategori',
+                    onTap: () => context.go('/kategori'),
+                  ),
+                ],
+              ),
+            )
+          else
+            Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF1A1440),
-                    Color(0xFF2D1534),
-                    Color(0xFF0F1A2A),
-                  ],
-                  stops: [0, 0.55, 1],
-                ),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.border),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: AppColors.gold),
-                              ),
-                              child: Text(
-                                resumeCat.name,
-                                style: AppTheme.onest(
-                                  size: 12,
-                                  heightPx: 18,
-                                  color: AppColors.gold,
+                      Text(
+                        'Progres Belajar',
+                        style: AppTheme.onest(
+                          size: 14,
+                          heightPx: 20,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '${((app.learningPathDone / categoryCount) * 100).round()}%',
+                        style: AppTheme.onest(
+                          size: 14,
+                          heightPx: 20,
+                          weight: FontWeight.w600,
+                          color: AppColors.gold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${app.learningPathDone} / $categoryCount Kategori',
+                    style: AppTheme.onest(
+                      size: 18,
+                      heightPx: 26,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  KageProgressBar(value: app.learningPathDone / categoryCount),
+                ],
+              ),
+            ),
+          const SizedBox(height: 16),
+          // "Lanjutkan Petualangan" hanya muncul jika ada kuis tersimpan.
+          if (resume != null) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF1A1440),
+                      Color(0xFF2D1534),
+                      Color(0xFF0F1A2A),
+                    ],
+                    stops: [0, 0.55, 1],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: AppColors.gold),
+                                ),
+                                child: Text(
+                                  categoryById(resume.categoryId).name,
+                                  style: AppTheme.onest(
+                                    size: 12,
+                                    heightPx: 18,
+                                    color: AppColors.gold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Lanjutkan Petualangan',
-                              style: AppTheme.onest(
-                                size: 18,
-                                heightPx: 26,
-                                weight: FontWeight.w600,
+                              const SizedBox(height: 6),
+                              Text(
+                                'Lanjutkan Petualangan',
+                                style: AppTheme.onest(
+                                  size: 18,
+                                  heightPx: 26,
+                                  weight: FontWeight.w600,
+                                ),
                               ),
+                              Text(
+                                'Soal ${resume.index + 1} dari ${categoryById(resume.categoryId).questionCount}',
+                                style: AppTheme.onest(
+                                  size: 14,
+                                  heightPx: 20,
+                                  color: AppColors.textSoft,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Torii art + moon as decorative overlay
+                        Stack(
+                          children: [
+                            const Opacity(
+                              opacity: 0.55,
+                              child: ToriiArt(width: 120, height: 100),
                             ),
-                            Text(
-                              'Soal ${resumeIndex + 1} dari ${resumeCat.questionCount}',
-                              style: AppTheme.onest(
-                                size: 14,
-                                heightPx: 20,
-                                color: AppColors.textSoft,
+                            const Positioned(
+                              right: 12,
+                              top: 8,
+                              child: MoonGlow(size: 22, glow: 16),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  app.continueAdventure();
+                                  context.push('/kuis');
+                                },
+                                child: Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.5,
+                                        ),
+                                        blurRadius: 18,
+                                        offset: const Offset(0, 6),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(
+                                    Icons.play_arrow_rounded,
+                                    color: AppColors.text,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Torii art + moon as decorative overlay
-                      Stack(
-                        children: [
-                          const Opacity(
-                            opacity: 0.55,
-                            child: ToriiArt(width: 120, height: 100),
-                          ),
-                          const Positioned(
-                            right: 12,
-                            top: 8,
-                            child: MoonGlow(size: 22, glow: 16),
-                          ),
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                app.continueAdventure();
-                                context.push('/kuis');
-                              },
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary.withValues(
-                                        alpha: 0.5,
-                                      ),
-                                      blurRadius: 18,
-                                      offset: const Offset(0, 6),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.play_arrow_rounded,
-                                  color: AppColors.text,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  KageProgressBar(
-                    value: (resumeIndex + 1) / resumeCat.questionCount,
-                    height: 4,
-                  ),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    KageProgressBar(
+                      value:
+                          (resume.index + 1) /
+                          categoryById(resume.categoryId).questionCount,
+                      height: 4,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
           const SizedBox(height: 16),
           // Stats row
           Row(
