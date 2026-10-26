@@ -97,6 +97,8 @@ class InProgressQuiz {
     required this.index,
     required this.answers,
     this.submitted = const [],
+    this.questionOrder = const [],
+    this.optionOrders = const [],
   });
 
   final CategoryId categoryId;
@@ -106,6 +108,12 @@ class InProgressQuiz {
 
   /// Soal yang sudah dikirim dan tidak boleh diubah lagi setelah dilanjutkan.
   final List<bool> submitted;
+
+  /// Urutan indeks soal pada bank soal asli.
+  final List<int> questionOrder;
+
+  /// Urutan indeks opsi asli untuk setiap soal pada [questionOrder].
+  final List<List<int>> optionOrders;
 }
 
 extension CategoryIdX on CategoryId {
