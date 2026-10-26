@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kage/data/quiz_data.dart';
+import 'package:kage/data/repositories/question_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
@@ -18,12 +18,13 @@ class DetailKategoriPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cat = categoryById(id);
+    final bank = context.read<QuestionRepository>();
+    final cat = bank.categoryById(id);
     final quiz = context.watch<QuizController>();
     final history = context.watch<HistoryController>();
     final counts = {
       for (final difficulty in Difficulty.values)
-        difficulty: questionsFor(id, difficulty).length,
+        difficulty: bank.questionsFor(id, difficulty).length,
     };
     final available = Difficulty.values
         .where((difficulty) => counts[difficulty]! > 0)

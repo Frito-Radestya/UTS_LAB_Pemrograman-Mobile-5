@@ -3,12 +3,19 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 
 import 'package:kage/data/quiz_data.dart';
+import 'package:kage/data/repositories/history_repository.dart';
 import 'package:kage/models/models.dart';
 
 import 'streak.dart';
 
 /// Riwayat kuis beserta statistik dan pencapaian yang diturunkan darinya.
 class HistoryController extends ChangeNotifier {
+  HistoryController({HistoryRepository? repository})
+    : _repository = repository ?? InMemoryHistoryRepository() {
+    _items.addAll(_repository.load());
+  }
+
+  final HistoryRepository _repository;
   final List<QuizResult> _items = <QuizResult>[];
 
   List<QuizResult> get history => UnmodifiableListView<QuizResult>(_items);
@@ -96,18 +103,23 @@ class HistoryController extends ChangeNotifier {
   /// Menambahkan hasil terbaru di urutan teratas riwayat.
   void addResult(QuizResult result) {
     _items.insert(0, result);
+    _persist();
     notifyListeners();
   }
 
   /// Menambahkan beberapa hasil sekaligus, dipakai saat memulihkan data.
   void addResults(Iterable<QuizResult> results) {
     _items.addAll(results);
+    _persist();
     notifyListeners();
   }
 
   void clear() {
     if (_items.isEmpty) return;
     _items.clear();
+    _repository.clear();
     notifyListeners();
   }
+
+  void _persist() => _repository.save(List<QuizResult>.unmodifiable(_items));
 }
