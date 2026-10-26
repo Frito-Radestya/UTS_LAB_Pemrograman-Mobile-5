@@ -238,7 +238,7 @@ class DetailKategoriPage extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          GestureDetector(
+          KageTappable(
             onTap: enabled ? () => quiz.setDifficulty(d) : null,
             child: Container(
               height: 44,

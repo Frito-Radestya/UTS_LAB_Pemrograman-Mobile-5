@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:kage/theme/app_colors.dart';
+import 'package:kage/widgets/kage_tappable.dart';
 import 'package:kage/theme/app_theme.dart';
 
 class KageBottomNav extends StatelessWidget {
@@ -38,8 +39,7 @@ class KageBottomNav extends StatelessWidget {
   ) {
     final active = index == i;
     return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+      child: KageTappable(
         onTap: () => context.go(path),
         child: Container(
           decoration: BoxDecoration(

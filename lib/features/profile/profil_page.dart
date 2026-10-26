@@ -167,7 +167,7 @@ class ProfilPage extends StatelessWidget {
                     ScoreRow(result: r, compact: true),
                     const SizedBox(height: 10),
                   ],
-                  GestureDetector(
+                  KageTappable(
                     onTap: () => context.go('/riwayat'),
                     child: SizedBox(
                       height: 44,
@@ -190,7 +190,7 @@ class ProfilPage extends StatelessWidget {
 
   Widget _tab(String label, bool on, VoidCallback tap) {
     return Expanded(
-      child: GestureDetector(
+      child: KageTappable(
         onTap: tap,
         child: Container(
           height: 44,

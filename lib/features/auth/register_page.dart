@@ -173,8 +173,11 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           // Form
           SafeArea(
+            // Latar halaman untuk menutup papan ketik, bukan elemen interaktif,
+            // jadi tetap GestureDetector agar tidak masuk urutan fokus Tab.
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
+              excludeFromSemantics: true,
               onTap: () => FocusScope.of(context).unfocus(),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 8, 24, 24),
@@ -252,7 +255,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                     WidgetSpan(
                                       alignment: PlaceholderAlignment.baseline,
                                       baseline: TextBaseline.alphabetic,
-                                      child: GestureDetector(
+                                      child: KageTappable(
+                                        semanticLabel: 'Masuk ke akun',
                                         onTap: () => context.go('/login'),
                                         child: Text(
                                           'Masuk',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:kage/theme/app_colors.dart';
+import 'package:kage/widgets/kage_tappable.dart';
 
 class BackIconButton extends StatelessWidget {
   const BackIconButton({super.key, this.onTap, this.label = 'Kembali'});
@@ -14,7 +15,7 @@ class BackIconButton extends StatelessWidget {
     return Semantics(
       button: true,
       label: label,
-      child: GestureDetector(
+      child: KageTappable(
         onTap: onTap ?? () => context.pop(),
         child: const SizedBox(
           width: 44,

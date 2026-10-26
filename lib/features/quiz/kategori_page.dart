@@ -119,7 +119,7 @@ class _KategoriPageState extends State<KategoriPage> {
                       separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (context, i) {
                         final c = items[i];
-                        return GestureDetector(
+                        return KageTappable(
                           onTap: () => context.push('/kategori/${c.id.name}'),
                           child: Container(
                             height: 92,
@@ -194,7 +194,7 @@ class _KategoriPageState extends State<KategoriPage> {
   Widget _seg(int i, String label) {
     final on = tab == i;
     return Expanded(
-      child: GestureDetector(
+      child: KageTappable(
         onTap: () => setState(() => tab = i),
         child: Container(
           alignment: Alignment.center,
