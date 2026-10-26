@@ -1,43 +1,47 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/data/quiz_data.dart';
 import 'package:kage/models/models.dart';
-import 'package:kage/state/app_state.dart';
+import 'package:kage/state/app_services.dart';
+import 'package:kage/state/auth_controller.dart';
 
 void main() {
   group('K-07 data akun baru tanpa mock', () {
     test('akun baru dimulai dari keadaan kosong', () {
-      final app = AppState();
+      final app = AppServices();
       addTearDown(app.dispose);
 
-      expect(app.loggedIn, isFalse);
-      expect(app.fullName, isEmpty);
-      expect(app.email, isEmpty);
-      expect(app.xp, 0);
-      expect(app.level, 1);
-      expect(app.streak, 0);
-      expect(app.history, isEmpty);
-      expect(app.resume, isNull);
-      expect(app.learningPathDone, 0);
-      expect(app.bestFor(CategoryId.sains), 0);
-      expect(app.badges.firstWhere((b) => b.id == 'streak').earned, isFalse);
+      expect(app.auth.loggedIn, isFalse);
+      expect(app.auth.fullName, isEmpty);
+      expect(app.auth.email, isEmpty);
+      expect(app.progress.xp, 0);
+      expect(app.progress.level, 1);
+      expect(app.history.streak, 0);
+      expect(app.history.history, isEmpty);
+      expect(app.quiz.resume, isNull);
+      expect(app.history.learningPathDone, 0);
+      expect(app.history.bestFor(CategoryId.sains), 0);
+      expect(
+        app.history.badges.firstWhere((b) => b.id == 'streak').earned,
+        isFalse,
+      );
     });
 
     test('nama dan email berasal dari data akun yang masuk', () {
-      final app = AppState();
-      addTearDown(app.dispose);
+      final auth = AuthController();
+      addTearDown(auth.dispose);
 
-      app.login(name: 'Ayu Lestari', mail: 'ayu@example.com');
+      auth.login(name: 'Ayu Lestari', mail: 'ayu@example.com');
 
-      expect(app.fullName, 'Ayu Lestari');
-      expect(app.email, 'ayu@example.com');
-      expect(app.firstName, 'Ayu');
-      expect(app.initial, 'A');
+      expect(auth.fullName, 'Ayu Lestari');
+      expect(auth.email, 'ayu@example.com');
+      expect(auth.firstName, 'Ayu');
+      expect(auth.initial, 'A');
     });
 
     test('progres belajar dihitung dari kategori yang diselesaikan', () {
-      final app = AppState();
+      final app = AppServices();
       addTearDown(app.dispose);
-      app.history.addAll([
+      app.history.addResults([
         QuizResult(
           categoryId: CategoryId.sains,
           score: 80,
@@ -67,13 +71,13 @@ void main() {
         ),
       ]);
 
-      expect(app.completedCategories, 2);
-      expect(app.learningPathDone, 2);
-      expect(app.bestFor(CategoryId.sains), 90);
+      expect(app.history.completedCategories, 2);
+      expect(app.history.learningPathDone, 2);
+      expect(app.history.bestFor(CategoryId.sains), 90);
     });
 
     test('badge Streak 7 mengikuti nilai streak nyata', () {
-      final app = AppState();
+      final app = AppServices();
       addTearDown(app.dispose);
       final now = DateTime.now();
       QuizResult dayResult(int daysAgo) => QuizResult(
@@ -86,13 +90,19 @@ void main() {
         difficulty: Difficulty.pemula,
       );
 
-      app.history.addAll([for (var i = 0; i < 6; i++) dayResult(i)]);
-      expect(app.streak, 6);
-      expect(app.badges.firstWhere((b) => b.id == 'streak').earned, isFalse);
+      app.history.addResults([for (var i = 0; i < 6; i++) dayResult(i)]);
+      expect(app.history.streak, 6);
+      expect(
+        app.history.badges.firstWhere((b) => b.id == 'streak').earned,
+        isFalse,
+      );
 
-      app.history.add(dayResult(6));
-      expect(app.streak, 7);
-      expect(app.badges.firstWhere((b) => b.id == 'streak').earned, isTrue);
+      app.history.addResult(dayResult(6));
+      expect(app.history.streak, 7);
+      expect(
+        app.history.badges.firstWhere((b) => b.id == 'streak').earned,
+        isTrue,
+      );
     });
 
     test('setiap kategori memiliki soal pemula tanpa skor bawaan', () {

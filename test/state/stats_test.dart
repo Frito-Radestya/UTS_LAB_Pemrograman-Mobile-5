@@ -1,7 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/data/quiz_data.dart';
 import 'package:kage/models/models.dart';
-import 'package:kage/state/app_state.dart';
+import 'package:kage/state/app_services.dart';
+import 'package:kage/state/auth_controller.dart';
+import 'package:kage/state/history_controller.dart';
+import 'package:kage/state/quiz_controller.dart';
 
 QuizResult _result({
   CategoryId categoryId = CategoryId.sains,
@@ -24,20 +27,20 @@ QuizResult _result({
 void main() {
   group('T-01 statistik riwayat', () {
     test('statistik kosong bernilai nol', () {
-      final app = AppState();
-      addTearDown(app.dispose);
+      final history = HistoryController();
+      addTearDown(history.dispose);
 
-      expect(app.totalQuizzes, 0);
-      expect(app.bestScore, 0);
-      expect(app.averageScore, 0);
-      expect(app.accuracyPercent, 0);
-      expect(app.completedCategories, 0);
+      expect(history.totalQuizzes, 0);
+      expect(history.bestScore, 0);
+      expect(history.averageScore, 0);
+      expect(history.accuracyPercent, 0);
+      expect(history.completedCategories, 0);
     });
 
     test('rata-rata, akurasi, skor terbaik, dan kategori dihitung benar', () {
-      final app = AppState();
-      addTearDown(app.dispose);
-      app.history.addAll([
+      final history = HistoryController();
+      addTearDown(history.dispose);
+      history.addResults([
         _result(score: 80, correct: 8, day: 22),
         _result(
           categoryId: CategoryId.logika,
@@ -48,95 +51,130 @@ void main() {
         _result(score: 60, correct: 6, day: 20),
       ]);
 
-      expect(app.totalQuizzes, 3);
-      expect(app.bestScore, 100);
-      expect(app.averageScore, 80);
-      expect(app.accuracyPercent, 80);
-      expect(app.completedCategories, 2);
-      expect(app.bestFor(CategoryId.sains), 80);
-      expect(app.bestFor(CategoryId.logika), 100);
-      expect(app.bestFor(CategoryId.sejarah), 0);
+      expect(history.totalQuizzes, 3);
+      expect(history.bestScore, 100);
+      expect(history.averageScore, 80);
+      expect(history.accuracyPercent, 80);
+      expect(history.completedCategories, 2);
+      expect(history.bestFor(CategoryId.sains), 80);
+      expect(history.bestFor(CategoryId.logika), 100);
+      expect(history.bestFor(CategoryId.sejarah), 0);
     });
 
     test('akurasi memperhitungkan total soal yang berbeda', () {
-      final app = AppState();
-      addTearDown(app.dispose);
-      app.history.addAll([
+      final history = HistoryController();
+      addTearDown(history.dispose);
+      history.addResults([
         _result(correct: 8, total: 10),
         _result(correct: 9, total: 20),
       ]);
 
-      expect(app.accuracyPercent, 57);
+      expect(history.accuracyPercent, 57);
     });
   });
 
   group('T-01 badge', () {
     test('badge pertama dan sempurna mengikuti riwayat', () {
-      final app = AppState();
-      addTearDown(app.dispose);
+      final history = HistoryController();
+      addTearDown(history.dispose);
 
-      expect(app.badges.firstWhere((b) => b.id == 'first').earned, isFalse);
-      app.history.add(_result(score: 100, correct: 10));
-      expect(app.badges.firstWhere((b) => b.id == 'first').earned, isTrue);
-      expect(app.badges.firstWhere((b) => b.id == 'perfect').earned, isTrue);
+      expect(history.badges.firstWhere((b) => b.id == 'first').earned, isFalse);
+      history.addResult(_result(score: 100, correct: 10));
+      expect(history.badges.firstWhere((b) => b.id == 'first').earned, isTrue);
+      expect(
+        history.badges.firstWhere((b) => b.id == 'perfect').earned,
+        isTrue,
+      );
     });
 
     test('explorer dan master membutuhkan semua kategori', () {
-      final app = AppState();
-      addTearDown(app.dispose);
+      final history = HistoryController();
+      addTearDown(history.dispose);
       for (final category in categories) {
-        app.history.add(_result(categoryId: category.id, score: 100));
+        history.addResult(_result(categoryId: category.id, score: 100));
       }
 
-      expect(app.badges.firstWhere((b) => b.id == 'explorer').earned, isTrue);
-      expect(app.badges.firstWhere((b) => b.id == 'master').earned, isTrue);
+      expect(
+        history.badges.firstWhere((b) => b.id == 'explorer').earned,
+        isTrue,
+      );
+      expect(history.badges.firstWhere((b) => b.id == 'master').earned, isTrue);
     });
   });
 
-  group('T-01 perilaku AppState', () {
+  group('T-01 perilaku kontroler', () {
     test('login, update profil, dan logout mengubah state auth', () {
-      final app = AppState();
-      addTearDown(app.dispose);
+      final auth = AuthController();
+      addTearDown(auth.dispose);
 
-      app.login(name: 'Budi', mail: 'budi@example.com');
-      expect(app.loggedIn, isTrue);
-      expect(app.fullName, 'Budi');
-      expect(app.email, 'budi@example.com');
+      auth.login(name: 'Budi', mail: 'budi@example.com');
+      expect(auth.loggedIn, isTrue);
+      expect(auth.fullName, 'Budi');
+      expect(auth.email, 'budi@example.com');
 
-      app.updateProfile(name: 'Budi Santoso');
-      expect(app.fullName, 'Budi Santoso');
-      expect(app.email, 'budi@example.com');
+      auth.updateProfile(name: 'Budi Santoso');
+      expect(auth.fullName, 'Budi Santoso');
+      expect(auth.email, 'budi@example.com');
 
-      app.logout();
-      expect(app.loggedIn, isFalse);
+      auth.logout();
+      expect(auth.loggedIn, isFalse);
     });
 
     test('discardProgress menghapus sesi tersimpan', () {
-      final app = AppState()..startQuiz(CategoryId.sains);
-      addTearDown(app.dispose);
-      app.saveProgress();
-      expect(app.resume, isNotNull);
+      final quiz = QuizController()..startQuiz(CategoryId.sains);
+      addTearDown(quiz.dispose);
+      quiz.saveProgress();
+      expect(quiz.resume, isNotNull);
 
-      app.discardProgress();
+      quiz.discardProgress();
 
-      expect(app.resume, isNull);
+      expect(quiz.resume, isNull);
     });
 
     test(
       'nextQuestion berhenti di soal terakhir dan finish mencatat hasil',
       () {
-        final app = AppState()..startQuiz(CategoryId.sains);
+        final app = AppServices()..quiz.startQuiz(CategoryId.sains);
         addTearDown(app.dispose);
 
-        while (!app.isLastQuestion) {
-          app.nextQuestion();
+        while (!app.quiz.isLastQuestion) {
+          app.quiz.nextQuestion();
         }
 
-        expect(app.questionIndex, app.totalQuestions - 1);
-        app.finishQuiz();
-        expect(app.totalQuizzes, 1);
-        expect(app.history.first, app.lastResult);
+        expect(app.quiz.questionIndex, app.quiz.totalQuestions - 1);
+        app.quiz.finishQuiz();
+        expect(app.history.totalQuizzes, 1);
+        expect(app.history.history.first, app.quiz.lastResult);
       },
     );
+
+    test('hasil kuis terhubung ke riwayat dan XP', () {
+      final app = AppServices()
+        ..quiz.startQuiz(CategoryId.sains, difficulty: Difficulty.ahli);
+      addTearDown(app.dispose);
+
+      while (!app.quiz.isLastQuestion) {
+        app.quiz.selectAnswer(app.quiz.currentQuestion!.correctIndex);
+        app.quiz.submitCurrent();
+        app.quiz.nextQuestion();
+      }
+      app.quiz.selectAnswer(app.quiz.currentQuestion!.correctIndex);
+      app.quiz.submitCurrent();
+      app.quiz.finishQuiz();
+
+      expect(app.history.totalQuizzes, 1);
+      expect(app.history.history.first.score, 100);
+      expect(app.progress.xp, 200);
+      expect(app.progress.level, 2);
+    });
+
+    test('pengaturan notifikasi dapat diubah', () {
+      final app = AppServices();
+      addTearDown(app.dispose);
+
+      expect(app.settings.notifications, isTrue);
+      app.settings.setNotifications(false);
+      expect(app.settings.notifications, isFalse);
+    });
   });
 }

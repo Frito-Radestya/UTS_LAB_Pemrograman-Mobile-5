@@ -1,40 +1,40 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/models/models.dart';
-import 'package:kage/state/app_state.dart';
+import 'package:kage/state/quiz_controller.dart';
 
 void main() {
   group('K-06 penilaian dinamis', () {
     test('jumlah jawaban mengikuti total soal aktif', () {
-      final app = AppState()..startQuiz(CategoryId.sains);
-      addTearDown(app.dispose);
+      final quiz = QuizController()..startQuiz(CategoryId.sains);
+      addTearDown(quiz.dispose);
 
-      expect(app.answers, hasLength(app.totalQuestions));
-      expect(app.totalQuestions, greaterThan(0));
+      expect(quiz.answers, hasLength(quiz.totalQuestions));
+      expect(quiz.totalQuestions, greaterThan(0));
     });
 
     test('skor kuis kosong berada di rentang 0-100', () {
-      final app = AppState()..startQuiz(CategoryId.sains);
-      addTearDown(app.dispose);
+      final quiz = QuizController()..startQuiz(CategoryId.sains);
+      addTearDown(quiz.dispose);
 
-      app.finishQuiz();
+      quiz.finishQuiz();
 
-      expect(app.lastResult!.score, 0);
-      expect(app.lastResult!.score, inInclusiveRange(0, 100));
+      expect(quiz.lastResult!.score, 0);
+      expect(quiz.lastResult!.score, inInclusiveRange(0, 100));
     });
 
     test('skor sempurna selalu 100 berapa pun jumlah soalnya', () {
-      final app = AppState()..startQuiz(CategoryId.sains);
-      addTearDown(app.dispose);
+      final quiz = QuizController()..startQuiz(CategoryId.sains);
+      addTearDown(quiz.dispose);
 
-      for (var i = 0; i < app.totalQuestions; i++) {
-        app.selectAnswer(app.currentQuestion!.correctIndex);
-        app.submitCurrent();
-        if (!app.isLastQuestion) app.nextQuestion();
+      for (var i = 0; i < quiz.totalQuestions; i++) {
+        quiz.selectAnswer(quiz.currentQuestion!.correctIndex);
+        quiz.submitCurrent();
+        if (!quiz.isLastQuestion) quiz.nextQuestion();
       }
-      app.finishQuiz();
+      quiz.finishQuiz();
 
-      expect(app.lastResult!.score, 100);
-      expect(app.lastResult!.correct, app.totalQuestions);
+      expect(quiz.lastResult!.score, 100);
+      expect(quiz.lastResult!.correct, quiz.totalQuestions);
     });
   });
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../state/app_state.dart';
+import '../state/auth_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
     if (emailError != null || passwordError != null) return;
 
     final isEmail = identifier.contains('@');
-    context.read<AppState>().login(
+    context.read<AuthController>().login(
       name: isEmail ? null : identifier,
       mail: isEmail ? identifier : null,
     );

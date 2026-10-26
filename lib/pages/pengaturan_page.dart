@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../state/app_state.dart';
+import '../state/auth_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -12,7 +12,7 @@ class PengaturanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
+    final auth = context.watch<AuthController>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -87,7 +87,7 @@ class PengaturanPage extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  app.initial,
+                                  auth.initial,
                                   style: AppTheme.onest(
                                     size: 22,
                                     heightPx: 26,
@@ -102,7 +102,7 @@ class PengaturanPage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      app.fullName,
+                                      auth.fullName,
                                       style: AppTheme.onest(
                                         size: 16,
                                         heightPx: 24,
@@ -110,7 +110,7 @@ class PengaturanPage extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      app.email,
+                                      auth.email,
                                       style: AppTheme.onest(
                                         size: 13,
                                         heightPx: 18,
@@ -128,7 +128,7 @@ class PengaturanPage extends StatelessWidget {
                           _tile(
                             Icons.person_outline,
                             'Edit Profil',
-                            () => _editProfile(context, app),
+                            () => _editProfile(context, auth),
                           ),
                           _tile(
                             Icons.lock_outline,
@@ -161,7 +161,7 @@ class PengaturanPage extends StatelessWidget {
                         const SizedBox(height: 24),
                         PrimaryButton(
                           label: 'Logout',
-                          onTap: () => _confirmLogout(context, app),
+                          onTap: () => _confirmLogout(context, auth),
                         ),
                         const SizedBox(height: 14),
                         Center(
@@ -259,9 +259,9 @@ class PengaturanPage extends StatelessWidget {
     );
   }
 
-  Future<void> _editProfile(BuildContext context, AppState app) async {
-    final nameController = TextEditingController(text: app.fullName);
-    final emailController = TextEditingController(text: app.email);
+  Future<void> _editProfile(BuildContext context, AuthController auth) async {
+    final nameController = TextEditingController(text: auth.fullName);
+    final emailController = TextEditingController(text: auth.email);
     final saved = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -340,7 +340,7 @@ class PengaturanPage extends StatelessWidget {
           ),
         );
       } else {
-        app.updateProfile(name: name, mail: mail);
+        auth.updateProfile(name: name, mail: mail);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Profil berhasil diperbarui.'),
@@ -354,7 +354,7 @@ class PengaturanPage extends StatelessWidget {
     emailController.dispose();
   }
 
-  Future<void> _confirmLogout(BuildContext context, AppState app) async {
+  Future<void> _confirmLogout(BuildContext context, AuthController auth) async {
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -409,7 +409,7 @@ class PengaturanPage extends StatelessWidget {
     );
 
     if (shouldLogout == true && context.mounted) {
-      app.logout();
+      auth.logout();
       context.go('/login');
     }
   }

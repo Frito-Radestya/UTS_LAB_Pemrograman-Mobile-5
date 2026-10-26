@@ -118,7 +118,14 @@ lib/
 ├── models/
 │   └── models.dart            # CategoryId, Difficulty, Question, QuizResult, BadgeItem
 ├── state/
-│   └── app_state.dart         # State global: auth, profil, progres kuis, riwayat, badge
+│   ├── app_services.dart      # Komposisi controller + penghubung hasil kuis
+│   ├── auth_controller.dart   # Sesi, identitas, dan profil pengguna
+│   ├── quiz_controller.dart   # Sesi kuis, jawaban, penguncian, resume
+│   ├── history_controller.dart # Riwayat, statistik, dan badge
+│   ├── progress_controller.dart # XP dan level
+│   ├── settings_controller.dart # Preferensi aplikasi
+│   ├── progress.dart          # Kurva XP murni
+│   └── streak.dart            # Perhitungan streak harian
 ├── pages/
 │   ├── splash_page.dart
 │   ├── login_page.dart
@@ -144,6 +151,12 @@ lib/
 Aset visual berada di `assets/svg/` dan font di `assets/fonts/`. Paket desain asli
 (spesifikasi dan sumber HTML) disimpan di `kage_package/` sebagai referensi.
 Tangkapan layar untuk dokumentasi berada di `docs/screenshots/`.
+
+State dipisahkan per tanggung jawab. `AuthController`, `QuizController`,
+`HistoryController`, `ProgressController`, dan `SettingsController` masing-masing
+memiliki `ChangeNotifier` sendiri. `AppServices` hanya menjadi titik komposisi:
+ia menghubungkan hasil kuis ke riwayat dan XP tanpa membuat controller saling
+mengenal. Halaman mengambil controller yang dibutuhkan lewat `provider`.
 
 ## Rute Aplikasi
 

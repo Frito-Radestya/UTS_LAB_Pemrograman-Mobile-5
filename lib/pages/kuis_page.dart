@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../data/quiz_data.dart';
 import '../models/models.dart';
-import '../state/app_state.dart';
+import '../state/quiz_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -14,19 +14,19 @@ class KuisPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
-    final q = app.currentQuestion;
-    final cat = app.activeCategory == null
+    final quiz = context.watch<QuizController>();
+    final q = quiz.currentQuestion;
+    final cat = quiz.activeCategory == null
         ? null
-        : categoryById(app.activeCategory!);
+        : categoryById(quiz.activeCategory!);
     if (q == null || cat == null) {
       return const Scaffold(backgroundColor: AppColors.background);
     }
-    final selected = app.answers[app.questionIndex];
-    final locked = app.currentQuestionLocked;
+    final selected = quiz.answers[quiz.questionIndex];
+    final locked = quiz.currentQuestionLocked;
     const letters = ['A', 'B', 'C', 'D'];
-    final total = app.totalQuestions;
-    final diff = switch (app.selectedDifficulty) {
+    final total = quiz.totalQuestions;
+    final diff = switch (quiz.selectedDifficulty) {
       Difficulty.pemula => 'PEMULA',
       Difficulty.menengah => 'MENENGAH',
       Difficulty.ahli => 'AHLI',
@@ -91,12 +91,12 @@ class KuisPage extends StatelessWidget {
                           offset: const Offset(-12, 0),
                           child: BackIconButton(
                             label: 'Keluar dari kuis',
-                            onTap: () => _confirmExit(context, app),
+                            onTap: () => _confirmExit(context, quiz),
                           ),
                         ),
                         Expanded(
                           child: KageProgressBar(
-                            value: (app.questionIndex + 1) / total,
+                            value: (quiz.questionIndex + 1) / total,
                             glow: true,
                           ),
                         ),
@@ -104,7 +104,7 @@ class KuisPage extends StatelessWidget {
                         SizedBox(
                           width: 36,
                           child: Text(
-                            '${app.questionIndex + 1}/$total',
+                            '${quiz.questionIndex + 1}/$total',
                             textAlign: TextAlign.right,
                             style: AppTheme.onest(
                               size: 14,
@@ -149,7 +149,7 @@ class KuisPage extends StatelessWidget {
                             text: q.options[i],
                             selected: selected == i,
                             locked: locked,
-                            onTap: locked ? null : () => app.selectAnswer(i),
+                            onTap: locked ? null : () => quiz.selectAnswer(i),
                           ),
                           const SizedBox(height: 12),
                         ],
@@ -183,7 +183,7 @@ class KuisPage extends StatelessWidget {
                               label: 'Simpan',
                               width: 112,
                               onTap: () {
-                                app.saveProgress();
+                                quiz.saveProgress();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
@@ -205,7 +205,7 @@ class KuisPage extends StatelessWidget {
                                     : selected == null
                                     ? null
                                     : () {
-                                        app.submitCurrent();
+                                        quiz.submitCurrent();
                                         context.push('/penjelasan');
                                       },
                               ),
@@ -224,7 +224,7 @@ class KuisPage extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmExit(BuildContext context, AppState app) async {
+  Future<void> _confirmExit(BuildContext context, QuizController quiz) async {
     final shouldLeave = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -278,7 +278,7 @@ class KuisPage extends StatelessWidget {
       ),
     );
     if (shouldLeave == true && context.mounted) {
-      app.saveProgress();
+      quiz.saveProgress();
       context.pop();
     }
   }

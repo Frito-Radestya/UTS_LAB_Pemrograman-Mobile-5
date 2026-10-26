@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../state/app_state.dart';
-import '../state/progress.dart';
+import '../state/auth_controller.dart';
+import '../state/history_controller.dart';
+import '../state/progress_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -13,13 +14,9 @@ class ProfilPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
-    final levelStart = xpAtLevelStart(app.xp);
-    final nextLevelXp = xpForLevel(app.level + 1);
-    final levelRange = nextLevelXp - levelStart;
-    final xpProgress = levelRange == 0
-        ? 1.0
-        : ((app.xp - levelStart) / levelRange).clamp(0.0, 1.0);
+    final auth = context.watch<AuthController>();
+    final history = context.watch<HistoryController>();
+    final progress = context.watch<ProgressController>();
 
     return ScreenScaffold(
       navIndex: 3,
@@ -93,7 +90,7 @@ class ProfilPage extends StatelessWidget {
                           ],
                         ),
                         child: Text(
-                          app.initial,
+                          auth.initial,
                           style: AppTheme.onest(
                             size: 32,
                             heightPx: 36,
@@ -108,7 +105,7 @@ class ProfilPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              app.fullName,
+                              auth.fullName,
                               style: AppTheme.onest(
                                 size: 20,
                                 heightPx: 28,
@@ -126,7 +123,7 @@ class ProfilPage extends StatelessWidget {
                                 border: Border.all(color: AppColors.gold),
                               ),
                               child: Text(
-                                'Level ${app.level} · Pembelajar',
+                                'Level ${progress.level} · Pembelajar',
                                 style: AppTheme.onest(
                                   size: 13,
                                   heightPx: 18,
@@ -156,7 +153,7 @@ class ProfilPage extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Menuju Level ${app.level + 1}',
+                              'Menuju Level ${progress.level + 1}',
                               style: AppTheme.onest(
                                 size: 13,
                                 heightPx: 18,
@@ -165,7 +162,7 @@ class ProfilPage extends StatelessWidget {
                             ),
                             const Spacer(),
                             Text(
-                              '${_xp(app.xp)} / ${_xp(nextLevelXp)} XP',
+                              '${_xp(progress.xp)} / ${_xp(progress.nextLevelXp)} XP',
                               style: AppTheme.onest(
                                 size: 13,
                                 heightPx: 18,
@@ -176,7 +173,7 @@ class ProfilPage extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        KageProgressBar(value: xpProgress),
+                        KageProgressBar(value: progress.levelProgress),
                       ],
                     ),
                   ),
@@ -192,7 +189,7 @@ class ProfilPage extends StatelessWidget {
                   Container(height: 1, color: AppColors.border),
                   const SizedBox(height: 12),
                   // History list
-                  for (final r in app.history.take(4)) ...[
+                  for (final r in history.history.take(4)) ...[
                     ScoreRow(result: r, compact: true),
                     const SizedBox(height: 10),
                   ],

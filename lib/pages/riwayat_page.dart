@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
-import '../state/app_state.dart';
+import '../state/history_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -20,10 +20,10 @@ class _RiwayatPageState extends State<RiwayatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
+    final history = context.watch<HistoryController>();
     final items = filter == null
-        ? app.history
-        : app.history.where((e) => e.categoryId == filter).toList();
+        ? history.history
+        : history.history.where((e) => e.categoryId == filter).toList();
 
     return ScreenScaffold(
       navIndex: 2,
@@ -79,11 +79,11 @@ class _RiwayatPageState extends State<RiwayatPage> {
               ),
               child: Row(
                 children: [
-                  _mini('${app.totalQuizzes}', 'Total Kuis'),
+                  _mini('${history.totalQuizzes}', 'Total Kuis'),
                   _div(),
-                  _mini('${app.averageScore}', 'Rata-rata Skor'),
+                  _mini('${history.averageScore}', 'Rata-rata Skor'),
                   _div(),
-                  _mini('${app.bestScore}', 'Skor Terbaik'),
+                  _mini('${history.bestScore}', 'Skor Terbaik'),
                 ],
               ),
             ),

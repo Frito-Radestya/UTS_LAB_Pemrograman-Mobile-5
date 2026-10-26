@@ -1,46 +1,46 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/models/models.dart';
-import 'package:kage/state/app_state.dart';
+import 'package:kage/state/quiz_controller.dart';
 
 void main() {
   group('K-04 resume kesulitan dan waktu', () {
     test('resume mempertahankan tingkat dan total waktu pengerjaan', () {
-      final app = AppState()
+      final quiz = QuizController()
         ..startQuiz(CategoryId.sains, difficulty: Difficulty.ahli);
-      addTearDown(app.dispose);
-      app.selectAnswer(app.currentQuestion!.correctIndex);
-      app.quizStartedAt = DateTime.now().subtract(const Duration(minutes: 3));
-      app.saveProgress();
+      addTearDown(quiz.dispose);
+      quiz.selectAnswer(quiz.currentQuestion!.correctIndex);
+      quiz.quizStartedAt = DateTime.now().subtract(const Duration(minutes: 3));
+      quiz.saveProgress();
 
-      expect(app.resume!.difficulty, Difficulty.ahli);
+      expect(quiz.resume!.difficulty, Difficulty.ahli);
       expect(
-        app.resume!.elapsed,
+        quiz.resume!.elapsed,
         greaterThanOrEqualTo(const Duration(minutes: 3)),
       );
 
-      app.startQuiz(CategoryId.teknologi, difficulty: Difficulty.pemula);
-      app.continueAdventure();
+      quiz.startQuiz(CategoryId.teknologi, difficulty: Difficulty.pemula);
+      quiz.continueAdventure();
 
-      expect(app.activeCategory, CategoryId.sains);
-      expect(app.selectedDifficulty, Difficulty.ahli);
+      expect(quiz.activeCategory, CategoryId.sains);
+      expect(quiz.selectedDifficulty, Difficulty.ahli);
       expect(
-        app.activeQuestions.every((q) => q.difficulty == Difficulty.ahli),
+        quiz.activeQuestions.every((q) => q.difficulty == Difficulty.ahli),
         isTrue,
       );
 
-      app.finishQuiz();
+      quiz.finishQuiz();
 
-      expect(app.lastResult!.difficulty, Difficulty.ahli);
+      expect(quiz.lastResult!.difficulty, Difficulty.ahli);
       expect(
-        app.lastResult!.duration,
+        quiz.lastResult!.duration,
         greaterThanOrEqualTo(const Duration(minutes: 3)),
       );
     });
 
     test('waktu setelah resume ditambahkan ke waktu tersimpan', () {
-      final app = AppState();
-      addTearDown(app.dispose);
-      app.resume = const InProgressQuiz(
+      final quiz = QuizController();
+      addTearDown(quiz.dispose);
+      quiz.resume = const InProgressQuiz(
         categoryId: CategoryId.sains,
         difficulty: Difficulty.menengah,
         index: 0,
@@ -48,29 +48,29 @@ void main() {
         elapsed: Duration(minutes: 5),
       );
 
-      app.continueAdventure();
-      app.quizStartedAt = DateTime.now().subtract(const Duration(minutes: 1));
+      quiz.continueAdventure();
+      quiz.quizStartedAt = DateTime.now().subtract(const Duration(minutes: 1));
 
       expect(
-        app.currentElapsed,
+        quiz.currentElapsed,
         greaterThanOrEqualTo(const Duration(minutes: 6)),
       );
-      app.saveProgress();
+      quiz.saveProgress();
       expect(
-        app.resume!.elapsed,
+        quiz.resume!.elapsed,
         greaterThanOrEqualTo(const Duration(minutes: 6)),
       );
     });
 
     test('continueAdventure tanpa resume tidak memulai kuis palsu', () {
-      final app = AppState();
-      addTearDown(app.dispose);
+      final quiz = QuizController();
+      addTearDown(quiz.dispose);
 
-      app.continueAdventure();
+      quiz.continueAdventure();
 
-      expect(app.activeCategory, isNull);
-      expect(app.currentQuestion, isNull);
-      expect(app.totalQuestions, 0);
+      expect(quiz.activeCategory, isNull);
+      expect(quiz.currentQuestion, isNull);
+      expect(quiz.totalQuestions, 0);
     });
   });
 }

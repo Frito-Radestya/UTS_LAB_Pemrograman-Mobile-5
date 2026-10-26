@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kage/state/app_state.dart';
 import 'package:kage/state/progress.dart';
+import 'package:kage/state/progress_controller.dart';
 
 void main() {
   group('K-08 level dan XP', () {
@@ -43,15 +43,15 @@ void main() {
       expect(xpAtLevelStart(450), 450);
     });
 
-    test('AppState menghitung level dari XP yang tersimpan', () {
-      final app = AppState();
-      addTearDown(app.dispose);
+    test('ProgressController menghitung level dari XP yang tersimpan', () {
+      final progress = ProgressController();
+      addTearDown(progress.dispose);
 
-      expect(app.level, 1);
-      app.xp = 250;
-      expect(app.level, 3);
-      app.xp = 700;
-      expect(app.level, 5);
+      expect(progress.level, 1);
+      progress.xp = 250;
+      expect(progress.level, 3);
+      progress.xp = 700;
+      expect(progress.level, 5);
     });
   });
 }
