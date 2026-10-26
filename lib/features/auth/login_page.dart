@@ -28,6 +28,27 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  /// Menghapus pesan error begitu pengguna memperbaiki isiannya.
+  void _clearError(String? error, VoidCallback clear) {
+    if (error == null) return;
+    setState(clear);
+  }
+
+  /// Dipanggil saat kolom kehilangan fokus, bukan hanya saat menekan Masuk.
+  void _validateIdentifier() {
+    setState(() {
+      emailError = email.text.trim().isEmpty
+          ? 'Email atau username wajib diisi.'
+          : null;
+    });
+  }
+
+  void _validatePasswordField() {
+    setState(() {
+      passwordError = password.text.isEmpty ? 'Password wajib diisi.' : null;
+    });
+  }
+
   void _enter() {
     FocusScope.of(context).unfocus();
 
@@ -45,6 +66,35 @@ class _LoginPageState extends State<LoginPage> {
     if (!result.ok) return;
 
     context.go('/beranda');
+  }
+
+  /// Akun disimpan di perangkat ini, jadi tidak ada email pemulihan; pengguna
+  /// diberi tahu cara memulai ulang dengan jelas (U-09).
+  Future<void> _showForgotPassword(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppColors.borderStrong),
+        ),
+        title: Text('Lupa password?', style: AppTextStyles.titleLarge),
+        content: Text(
+          'Akun KAGE tersimpan di perangkat ini dan tidak terhubung ke email, '
+          'sehingga kata sandi tidak bisa dikirim ulang. Kamu bisa memulai '
+          'ulang dengan membuka Profil > Pengaturan > Hapus semua data, lalu '
+          'mendaftar lagi.',
+          style: AppTextStyles.bodyRelaxedSoft,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text('Mengerti', style: AppTextStyles.labelPrimary),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -195,43 +245,56 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 22),
-                    AppTextField(
-                      controller: email,
-                      hint: 'Email atau Username',
-                      icon: Icons.person_outline,
-                      errorText: emailError,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [
-                        AutofillHints.username,
-                        AutofillHints.email,
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    AppTextField(
-                      controller: password,
-                      hint: 'Password',
-                      icon: Icons.lock_outline,
-                      obscure: hide,
-                      errorText: passwordError,
-                      textInputAction: TextInputAction.done,
-                      autofillHints: const [AutofillHints.password],
-                      onSubmitted: (_) => _enter(),
-                      onToggleObscure: () => setState(() => hide = !hide),
+                    // AutofillGroup mengelompokkan kedua kolom supaya pengelola
+                    // kata sandi dapat mengisi sekaligus (U-09).
+                    AutofillGroup(
+                      child: Column(
+                        children: [
+                          AppTextField(
+                            controller: email,
+                            hint: 'Email atau Username',
+                            icon: Icons.person_outline,
+                            errorText: emailError,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            autofillHints: const [
+                              AutofillHints.username,
+                              AutofillHints.email,
+                            ],
+                            onChanged: (_) => _clearError(
+                              emailError,
+                              () => emailError = null,
+                            ),
+                            onFocusChange: (focused) {
+                              if (!focused) _validateIdentifier();
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          AppTextField(
+                            controller: password,
+                            hint: 'Password',
+                            icon: Icons.lock_outline,
+                            obscure: hide,
+                            errorText: passwordError,
+                            textInputAction: TextInputAction.done,
+                            autofillHints: const [AutofillHints.password],
+                            onSubmitted: (_) => _enter(),
+                            onChanged: (_) => _clearError(
+                              passwordError,
+                              () => passwordError = null,
+                            ),
+                            onFocusChange: (focused) {
+                              if (!focused) _validatePasswordField();
+                            },
+                            onToggleObscure: () => setState(() => hide = !hide),
+                          ),
+                        ],
+                      ),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Fitur atur ulang password belum tersedia.',
-                              ),
-                              backgroundColor: AppColors.surface,
-                            ),
-                          );
-                        },
+                        onPressed: () => _showForgotPassword(context),
                         child: Text(
                           'Lupa password?',
                           style: AppTextStyles.bodySmallPrimary,

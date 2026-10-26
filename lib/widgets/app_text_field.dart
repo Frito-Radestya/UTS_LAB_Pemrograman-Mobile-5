@@ -17,6 +17,8 @@ class AppTextField extends StatefulWidget {
     this.textInputAction,
     this.onSubmitted,
     this.autofillHints,
+    this.onChanged,
+    this.onFocusChange,
   });
 
   final TextEditingController controller;
@@ -29,6 +31,12 @@ class AppTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
   final Iterable<String>? autofillHints;
+
+  /// Dipakai untuk memeriksa isian saat pengguna masih mengetik.
+  final ValueChanged<String>? onChanged;
+
+  /// Dipakai halaman untuk memvalidasi kolom saat fokus berpindah (U-09).
+  final ValueChanged<bool>? onFocusChange;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -51,7 +59,10 @@ class _AppTextFieldState extends State<AppTextField> {
     super.dispose();
   }
 
-  void _handleFocus() => setState(() {});
+  void _handleFocus() {
+    setState(() {});
+    widget.onFocusChange?.call(_focusNode.hasFocus);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +114,7 @@ class _AppTextFieldState extends State<AppTextField> {
                   keyboardType: widget.keyboardType,
                   textInputAction: widget.textInputAction,
                   onSubmitted: widget.onSubmitted,
+                  onChanged: widget.onChanged,
                   autofillHints: widget.autofillHints,
                   enableSuggestions: !widget.obscure,
                   autocorrect: !widget.obscure,

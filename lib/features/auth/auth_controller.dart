@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:kage/data/local/password_hash.dart';
 import 'package:kage/data/repositories/auth_repository.dart';
+import 'package:kage/features/auth/validation.dart' as validation;
 
 /// Kolom formulir yang terkait dengan sebuah kegagalan autentikasi, supaya
 /// halaman bisa menaruh pesan di bawah input yang tepat.
@@ -37,9 +38,7 @@ class AuthController extends ChangeNotifier {
   }
 
   /// Panjang minimum kata sandi saat mendaftar dan saat menggantinya.
-  static const int minPasswordLength = 8;
-
-  static final RegExp _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+  static const int minPasswordLength = validation.minPasswordLength;
 
   final AuthRepository _repository;
 
@@ -76,22 +75,15 @@ class AuthController extends ChangeNotifier {
     String? confirmPassword,
   }) {
     final trimmedName = name.trim();
-    if (trimmedName.isEmpty) {
-      return const AuthResult.failure(
-        AuthField.name,
-        'Nama lengkap wajib diisi.',
-      );
+    final nameError = validation.validateName(trimmedName);
+    if (nameError != null) {
+      return AuthResult.failure(AuthField.name, nameError);
     }
 
     final normalizedEmail = email.trim().toLowerCase();
-    if (normalizedEmail.isEmpty) {
-      return const AuthResult.failure(AuthField.email, 'Email wajib diisi.');
-    }
-    if (!_emailPattern.hasMatch(normalizedEmail)) {
-      return const AuthResult.failure(
-        AuthField.email,
-        'Format email belum valid.',
-      );
+    final emailError = validation.validateEmail(normalizedEmail);
+    if (emailError != null) {
+      return AuthResult.failure(AuthField.email, emailError);
     }
 
     final passwordError = _validatePassword(password, confirmPassword);
@@ -191,11 +183,9 @@ class AuthController extends ChangeNotifier {
     final trimmedMail = mail?.trim();
 
     if (mail != null && trimmedMail != null && trimmedMail.isNotEmpty) {
-      if (!_emailPattern.hasMatch(trimmedMail.toLowerCase())) {
-        return const AuthResult.failure(
-          AuthField.email,
-          'Format email belum valid.',
-        );
+      final emailError = validation.validateEmail(trimmedMail);
+      if (emailError != null) {
+        return AuthResult.failure(AuthField.email, emailError);
       }
       final owner = _accountFor(trimmedMail);
       if (owner != null && owner.email.toLowerCase() != _email.toLowerCase()) {
@@ -244,10 +234,8 @@ class AuthController extends ChangeNotifier {
   }
 
   String? _validatePassword(String password, String? confirmPassword) {
-    if (password.isEmpty) return 'Password wajib diisi.';
-    if (password.length < minPasswordLength) {
-      return 'Password minimal $minPasswordLength karakter.';
-    }
+    final error = validation.validatePassword(password);
+    if (error != null) return error;
     if (confirmPassword != null && confirmPassword != password) {
       return 'Konfirmasi password tidak cocok.';
     }

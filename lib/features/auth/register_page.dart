@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:kage/features/auth/auth_controller.dart';
+import 'package:kage/features/auth/validation.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:kage/widgets/kage_widgets.dart';
@@ -23,12 +24,85 @@ class _RegisterPageState extends State<RegisterPage> {
   String? emailError;
   String? passwordError;
 
+  /// Salinan isi kolom kata sandi agar aturan bisa ditampilkan langsung saat
+  /// pengguna mengetik, bukan setelah menekan Daftar (U-09).
+  String _password = '';
+
   @override
   void dispose() {
     name.dispose();
     email.dispose();
     password.dispose();
     super.dispose();
+  }
+
+  void _clearError(String? error, VoidCallback clear) {
+    if (error == null) return;
+    setState(clear);
+  }
+
+  /// Aturan kata sandi dan kekuatannya, ditampilkan sebelum pengguna menekan
+  /// tombol Daftar.
+  Widget _passwordRules(String value) {
+    final strength = passwordStrength(value);
+    final rules = <(String, bool)>[
+      ('Minimal $minPasswordLength karakter', hasMinLength(value)),
+      ('Mengandung huruf', hasLetter(value)),
+      ('Mengandung angka', hasDigit(value)),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (value.isNotEmpty) ...[
+          Row(
+            children: [
+              Text('Kekuatan: ', style: AppTextStyles.captionMuted),
+              Text(
+                strength.label,
+                style: AppTextStyles.captionMuted.copyWith(
+                  color: switch (strength) {
+                    PasswordStrength.lemah => AppColors.primaryText,
+                    PasswordStrength.sedang => AppColors.gold,
+                    PasswordStrength.kuat => AppColors.success,
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          KageProgressBar(
+            value: strength.value,
+            height: 4,
+            color: switch (strength) {
+              PasswordStrength.lemah => AppColors.primary,
+              PasswordStrength.sedang => AppColors.gold,
+              PasswordStrength.kuat => AppColors.success,
+            },
+            semanticLabel: 'Kekuatan password: ${strength.label}',
+          ),
+          const SizedBox(height: 8),
+        ],
+        for (final (label, met) in rules)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              children: [
+                Icon(
+                  met ? Icons.check_circle : Icons.radio_button_unchecked,
+                  size: 14,
+                  color: met ? AppColors.success : AppColors.textMuted,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '$label${met ? ' ✓' : ''}',
+                  style: AppTextStyles.captionMuted,
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
   }
 
   void _register() {
@@ -41,12 +115,19 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     setState(() {
-      nameError = result.field == AuthField.name ? result.message : null;
-      emailError = result.field == AuthField.email ? result.message : null;
+      nameError = result.field == AuthField.name
+          ? result.message
+          : validateName(name.text);
+      emailError = result.field == AuthField.email
+          ? result.message
+          : validateEmail(email.text);
       passwordError = result.field == AuthField.password
           ? result.message
-          : null;
+          : validatePassword(password.text);
     });
+    if (nameError != null || emailError != null || passwordError != null) {
+      return;
+    }
     if (!result.ok) return;
 
     context.go('/beranda');
@@ -203,46 +284,86 @@ class _RegisterPageState extends State<RegisterPage> {
                               style: AppTextStyles.bodyMuted,
                             ),
                             const SizedBox(height: 28),
-                            AppTextField(
-                              controller: name,
-                              hint: 'Nama Lengkap',
-                              icon: Icons.person_outline,
-                              errorText: nameError,
-                              textInputAction: TextInputAction.next,
-                              autofillHints: const [AutofillHints.name],
-                            ),
-                            const SizedBox(height: 12),
-                            AppTextField(
-                              controller: email,
-                              hint: 'Email',
-                              icon: Icons.mail_outline,
-                              errorText: emailError,
-                              keyboardType: TextInputType.emailAddress,
-                              textInputAction: TextInputAction.next,
-                              autofillHints: const [AutofillHints.email],
-                            ),
-                            const SizedBox(height: 12),
-                            AppTextField(
-                              controller: password,
-                              hint: 'Password',
-                              icon: Icons.lock_outline,
-                              obscure: hide,
-                              errorText: passwordError,
-                              textInputAction: TextInputAction.done,
-                              autofillHints: const [AutofillHints.newPassword],
-                              onSubmitted: (_) => _register(),
-                              onToggleObscure: () =>
-                                  setState(() => hide = !hide),
-                            ),
-                            const SizedBox(height: 8),
-                            if (passwordError == null)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 4),
-                                child: Text(
-                                  'Minimal 8 karakter, gunakan kombinasi huruf dan angka.',
-                                  style: AppTextStyles.captionMuted,
-                                ),
+                            // Satu grup agar pengelola kata sandi dapat mengisi
+                            // nama, email, dan kata sandi sekaligus (U-09).
+                            AutofillGroup(
+                              child: Column(
+                                children: [
+                                  AppTextField(
+                                    controller: name,
+                                    hint: 'Nama Lengkap',
+                                    icon: Icons.person_outline,
+                                    errorText: nameError,
+                                    textInputAction: TextInputAction.next,
+                                    autofillHints: const [AutofillHints.name],
+                                    onChanged: (_) => _clearError(
+                                      nameError,
+                                      () => nameError = null,
+                                    ),
+                                    onFocusChange: (focused) {
+                                      if (!focused) {
+                                        setState(() {
+                                          nameError = validateName(name.text);
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(height: 12),
+                                  AppTextField(
+                                    controller: email,
+                                    hint: 'Email',
+                                    icon: Icons.mail_outline,
+                                    errorText: emailError,
+                                    keyboardType: TextInputType.emailAddress,
+                                    textInputAction: TextInputAction.next,
+                                    autofillHints: const [AutofillHints.email],
+                                    onChanged: (_) => _clearError(
+                                      emailError,
+                                      () => emailError = null,
+                                    ),
+                                    onFocusChange: (focused) {
+                                      if (!focused) {
+                                        setState(() {
+                                          emailError = validateEmail(
+                                            email.text,
+                                          );
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(height: 12),
+                                  AppTextField(
+                                    controller: password,
+                                    hint: 'Password',
+                                    icon: Icons.lock_outline,
+                                    obscure: hide,
+                                    errorText: passwordError,
+                                    textInputAction: TextInputAction.done,
+                                    autofillHints: const [
+                                      AutofillHints.newPassword,
+                                    ],
+                                    onSubmitted: (_) => _register(),
+                                    onChanged: (value) => setState(() {
+                                      _password = value;
+                                      passwordError = null;
+                                    }),
+                                    onFocusChange: (focused) {
+                                      if (!focused) {
+                                        setState(() {
+                                          passwordError = validatePassword(
+                                            password.text,
+                                          );
+                                        });
+                                      }
+                                    },
+                                    onToggleObscure: () =>
+                                        setState(() => hide = !hide),
+                                  ),
+                                ],
                               ),
+                            ),
+                            const SizedBox(height: 12),
+                            _passwordRules(_password),
                             const SizedBox(height: 24),
                             PrimaryButton(label: 'Daftar', onTap: _register),
                             const SizedBox(height: 22),
