@@ -18,7 +18,7 @@ class AppState extends ChangeNotifier {
   Difficulty selectedDifficulty = Difficulty.pemula;
   CategoryId? activeCategory;
   int questionIndex = 0;
-  List<int?> answers = List<int?>.filled(10, null);
+  List<int?> answers = <int?>[];
 
   /// Soal yang sudah dikirim ke halaman penjelasan dan dikunci untuk diubah.
   List<bool> _submitted = <bool>[];
@@ -395,7 +395,7 @@ class AppState extends ChangeNotifier {
     final duration = DateTime.now().difference(quizStartedAt ?? DateTime.now());
     final result = QuizResult(
       categoryId: id,
-      score: correct * 10,
+      score: ((correct / list.length) * 100).round(),
       correct: correct,
       total: list.length,
       duration: duration,
