@@ -228,7 +228,7 @@ class _SplashPageState extends State<SplashPage>
                 left: 0,
                 right: 0,
                 top: h * 0.52,
-                child: GestureDetector(
+                child: KageTappable(
                   onTap: () => context.go('/login'),
                   child: Column(
                     children: [

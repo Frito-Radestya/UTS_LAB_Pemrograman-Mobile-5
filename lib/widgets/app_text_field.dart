@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:kage/theme/app_colors.dart';
+import 'package:kage/widgets/kage_tappable.dart';
 import 'package:kage/theme/app_theme.dart';
 
 class AppTextField extends StatefulWidget {
@@ -121,7 +122,7 @@ class _AppTextFieldState extends State<AppTextField> {
                   label: widget.obscure
                       ? 'Tampilkan password'
                       : 'Sembunyikan password',
-                  child: GestureDetector(
+                  child: KageTappable(
                     onTap: widget.onToggleObscure,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),

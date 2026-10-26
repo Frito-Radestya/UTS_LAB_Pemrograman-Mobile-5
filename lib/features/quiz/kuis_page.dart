@@ -243,7 +243,7 @@ class KuisPage extends StatelessWidget {
     required bool locked,
     required VoidCallback? onTap,
   }) {
-    return GestureDetector(
+    return KageTappable(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),

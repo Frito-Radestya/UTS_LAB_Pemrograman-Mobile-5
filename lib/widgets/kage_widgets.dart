@@ -14,5 +14,6 @@ export 'kage_progress_bar.dart';
 export 'back_icon_button.dart';
 export 'score_row.dart';
 export 'kage_bottom_nav.dart';
+export 'kage_tappable.dart';
 export 'top_wash.dart';
 export 'screen_scaffold.dart';

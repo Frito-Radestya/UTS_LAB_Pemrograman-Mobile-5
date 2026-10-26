@@ -48,7 +48,7 @@ class BerandaPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                GestureDetector(
+                KageTappable(
                   onTap: () => context.go('/profil'),
                   child: Semantics(
                     button: true,
@@ -197,7 +197,7 @@ class BerandaPage extends StatelessWidget {
                             Positioned(
                               right: 0,
                               bottom: 0,
-                              child: GestureDetector(
+                              child: KageTappable(
                                 onTap: () {
                                   quiz.continueAdventure();
                                   context.push('/kuis');
@@ -263,7 +263,7 @@ class BerandaPage extends StatelessWidget {
             children: [
               Text('Kategori Kuis', style: AppTextStyles.titleLarge),
               const Spacer(),
-              GestureDetector(
+              KageTappable(
                 onTap: () => context.go('/kategori'),
                 child: SizedBox(
                   height: 44,
@@ -283,7 +283,7 @@ class BerandaPage extends StatelessWidget {
             children: [
               for (final c in bank.categories)
                 Expanded(
-                  child: GestureDetector(
+                  child: KageTappable(
                     onTap: () => context.push('/kategori/${c.id.name}'),
                     child: Column(
                       children: [

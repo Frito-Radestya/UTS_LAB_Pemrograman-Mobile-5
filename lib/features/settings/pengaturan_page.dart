@@ -189,7 +189,7 @@ class PengaturanPage extends StatelessWidget {
   }
 
   Widget _tile(IconData icon, String label, VoidCallback onTap) {
-    return GestureDetector(
+    return KageTappable(
       onTap: onTap,
       child: SizedBox(
         height: 56,

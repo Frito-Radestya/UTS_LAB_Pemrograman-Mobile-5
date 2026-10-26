@@ -145,8 +145,11 @@ class _LoginPageState extends State<LoginPage> {
           ),
           // Scrollable form on top
           SafeArea(
+            // Latar halaman untuk menutup papan ketik, bukan elemen interaktif,
+            // jadi tetap GestureDetector agar tidak masuk urutan fokus Tab.
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
+              excludeFromSemantics: true,
               onTap: () => FocusScope.of(context).unfocus(),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -271,7 +274,8 @@ class _LoginPageState extends State<LoginPage> {
                           WidgetSpan(
                             alignment: PlaceholderAlignment.baseline,
                             baseline: TextBaseline.alphabetic,
-                            child: GestureDetector(
+                            child: KageTappable(
+                              semanticLabel: 'Daftar akun baru',
                               onTap: () => context.push('/register'),
                               child: Text(
                                 'Daftar',
@@ -294,7 +298,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _social(String mark, String label) {
-    return GestureDetector(
+    return KageTappable(
+      borderRadius: BorderRadius.circular(12),
+      semanticLabel: 'Masuk dengan $label',
       onTap: _enter,
       child: Container(
         height: 48,

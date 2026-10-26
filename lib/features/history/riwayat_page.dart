@@ -144,7 +144,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
     final on = filter == id;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: GestureDetector(
+      child: KageTappable(
         onTap: () => setState(() => filter = id),
         child: Container(
           height: 36,
