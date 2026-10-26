@@ -10,8 +10,17 @@ import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:kage/widgets/kage_widgets.dart';
 
-class KuisPage extends StatelessWidget {
+class KuisPage extends StatefulWidget {
   const KuisPage({super.key});
+
+  @override
+  State<KuisPage> createState() => _KuisPageState();
+}
+
+class _KuisPageState extends State<KuisPage> {
+  /// Diaktifkan sesaat sebelum keluar supaya _PopScope tidak menahan pop yang
+  /// sudah dikonfirmasi pengguna.
+  bool _leaving = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +42,37 @@ class KuisPage extends StatelessWidget {
       Difficulty.ahli => 'AHLI',
     };
 
+    return PopScope(
+      canPop: _leaving,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _confirmExit(context, quiz);
+      },
+      child: _body(
+        context,
+        quiz,
+        q,
+        cat,
+        selected,
+        locked,
+        letters,
+        total,
+        diff,
+      ),
+    );
+  }
+
+  Widget _body(
+    BuildContext context,
+    QuizController quiz,
+    Question q,
+    QuizCategory cat,
+    int? selected,
+    bool locked,
+    List<String> letters,
+    int total,
+    String diff,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -114,6 +154,37 @@ class KuisPage extends StatelessWidget {
                             style: AppTextStyles.label,
                           ),
                         ),
+                        // Tombol lain dipindah ke menu agar tombol utama tidak
+                        // berdesakan di layar kecil (U-05).
+                        PopupMenuButton<String>(
+                          tooltip: 'Menu kuis',
+                          icon: const Icon(
+                            Icons.more_vert,
+                            color: AppColors.textMuted,
+                          ),
+                          color: AppColors.surface,
+                          onSelected: (value) {
+                            if (value != 'save') return;
+                            quiz.saveProgress();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Progres disimpan. Lanjutkan kapan saja dari Beranda.',
+                                ),
+                                backgroundColor: AppColors.surface,
+                              ),
+                            );
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem<String>(
+                              value: 'save',
+                              child: Text(
+                                'Simpan progres',
+                                style: AppTextStyles.body,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -131,7 +202,9 @@ class KuisPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(q.prompt, style: AppTextStyles.headlineSmallLoose),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
+                        _indicator(quiz),
+                        const SizedBox(height: 20),
                         for (var i = 0; i < q.options.length; i++) ...[
                           _option(
                             letter: letters[i],
@@ -167,40 +240,20 @@ class KuisPage extends StatelessWidget {
                           const SizedBox(height: 12),
                         ],
                         const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            OutlineButton(
-                              label: 'Simpan',
-                              width: 112,
-                              onTap: () {
-                                quiz.saveProgress();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Progres disimpan. Lanjutkan kapan saja dari Beranda.',
-                                    ),
-                                    backgroundColor: AppColors.surface,
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: PrimaryButton(
-                                label: locked
-                                    ? 'Lihat Penjelasan'
-                                    : 'Selanjutnya',
-                                onTap: locked
-                                    ? () => context.push('/penjelasan')
-                                    : selected == null
-                                    ? null
-                                    : () {
-                                        quiz.submitCurrent();
-                                        context.push('/penjelasan');
-                                      },
-                              ),
-                            ),
-                          ],
+                        PrimaryButton(
+                          label: locked
+                              ? 'Lihat Penjelasan'
+                              : quiz.isLastQuestion
+                              ? 'Selesai'
+                              : 'Selanjutnya',
+                          onTap: locked
+                              ? () => context.push('/penjelasan')
+                              : selected == null
+                              ? null
+                              : () {
+                                  quiz.submitCurrent();
+                                  context.push('/penjelasan');
+                                },
                         ),
                       ],
                     ),
@@ -242,8 +295,61 @@ class KuisPage extends StatelessWidget {
     );
     if (shouldLeave == true && context.mounted) {
       quiz.saveProgress();
-      context.pop();
+      setState(() => _leaving = true);
+      // Halaman kuis bisa dibuka langsung dari resume tanpa tumpukan rute,
+      // jadi kembali ke Beranda bila tidak ada yang bisa di-pop.
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/beranda');
+      }
     }
+  }
+
+  /// Indikator soal terjawab dan belum.
+  Widget _indicator(QuizController quiz) {
+    final answered = quiz.answers.where((answer) => answer != null).length;
+    return Semantics(
+      label:
+          'Soal ${quiz.questionIndex + 1} dari ${quiz.totalQuestions}, '
+          '$answered terjawab',
+      excludeSemantics: true,
+      child: SizedBox(
+        height: 26,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: quiz.totalQuestions,
+          separatorBuilder: (_, _) => const SizedBox(width: 6),
+          itemBuilder: (context, i) {
+            final filled = i < quiz.answers.length && quiz.answers[i] != null;
+            final current = i == quiz.questionIndex;
+            return Container(
+              width: 26,
+              height: 26,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: filled ? AppColors.primary : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: current
+                      ? AppColors.gold
+                      : filled
+                      ? AppColors.primary
+                      : AppColors.borderStrong,
+                  width: current ? 2 : 1,
+                ),
+              ),
+              child: Text(
+                '${i + 1}',
+                style: AppTextStyles.caption.copyWith(
+                  color: filled ? AppColors.text : AppColors.textMuted,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Widget _option({
