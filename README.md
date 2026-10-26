@@ -212,6 +212,28 @@ Seluruh data berikut hanya tersimpan selama sesi aplikasi berjalan:
 
 Menutup atau me-restart aplikasi akan mengembalikan data ke kondisi awal.
 
+## Level & XP
+
+XP diperoleh sebesar skor akhir kuis. Level tidak disimpan sebagai angka
+terpisah, melainkan selalu dihitung dari total XP melalui fungsi murni
+`levelFromXp(int xp)` di `lib/state/progress.dart`.
+
+Kurva level bersifat kumulatif dan tidak memiliki batas level. Selisih XP yang
+dibutuhkan bertambah 50 setiap level:
+
+| Level | Total XP minimum | Selisih dari level sebelumnya |
+|---|---|---|
+| 1 | 0 | — |
+| 2 | 100 | 100 |
+| 3 | 250 | 150 |
+| 4 | 450 | 200 |
+| 5 | 700 | 250 |
+| 6 | 1.000 | 300 |
+| 7 | 1.350 | 350 |
+
+Fungsi `xpToNextLevel(int xp)` mengembalikan sisa XP menuju level berikutnya dan
+dipakai oleh bar progres di halaman Profil.
+
 ## Status Pengembangan
 
 - [x] Splash, login, dan registrasi
