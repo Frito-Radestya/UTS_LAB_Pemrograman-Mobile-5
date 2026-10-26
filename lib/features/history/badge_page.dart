@@ -121,49 +121,59 @@ class BadgePage extends StatelessWidget {
   }
 
   Widget _badgeCard(BadgeItem badge) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: badge.earned ? AppColors.surface : const Color(0xFF13151B),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: badge.earned ? AppColors.border : AppColors.borderStrong,
+    return Semantics(
+      container: true,
+      label:
+          '${badge.title}, ${badge.subtitle}, '
+          '${badge.earned ? 'terbuka' : 'terkunci'}',
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: badge.earned ? AppColors.surface : const Color(0xFF13151B),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: badge.earned ? AppColors.border : AppColors.borderStrong,
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Opacity(
-            opacity: badge.earned ? 1.0 : 0.55,
-            child: SvgPicture.asset(badge.asset, width: 64, height: 64),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  badge.title,
-                  style: AppTextStyles.titleMedium.copyWith(
-                    color: badge.earned ? AppColors.text : AppColors.textSoft,
+        child: Row(
+          children: [
+            Opacity(
+              opacity: badge.earned ? 1.0 : 0.55,
+              child: SvgPicture.asset(badge.asset, width: 64, height: 64),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    badge.title,
+                    style: AppTextStyles.titleMedium.copyWith(
+                      color: badge.earned ? AppColors.text : AppColors.textSoft,
+                    ),
                   ),
-                ),
-                Text(badge.subtitle, style: AppTextStyles.bodySmallMuted),
-              ],
-            ),
-          ),
-          if (badge.earned)
-            const Icon(Icons.check, color: AppColors.success)
-          else
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.borderStrong),
+                  Text(badge.subtitle, style: AppTextStyles.bodySmallMuted),
+                ],
               ),
-              child: Text('Terkunci', style: AppTextStyles.captionMuted),
             ),
-        ],
+            if (badge.earned)
+              const Icon(Icons.check, color: AppColors.success)
+            else
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.borderStrong),
+                ),
+                child: Text('Terkunci', style: AppTextStyles.captionMuted),
+              ),
+          ],
+        ),
       ),
     );
   }

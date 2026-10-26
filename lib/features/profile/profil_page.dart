@@ -170,7 +170,8 @@ class ProfilPage extends StatelessWidget {
                   KageTappable(
                     onTap: () => context.go('/riwayat'),
                     child: SizedBox(
-                      height: 44,
+                      // Area sentuh minimal 48 dp (U-02).
+                      height: 48,
                       child: Center(
                         child: Text(
                           'Lihat semua riwayat',
@@ -192,8 +193,12 @@ class ProfilPage extends StatelessWidget {
     return Expanded(
       child: KageTappable(
         onTap: tap,
+        selected: on,
+        semanticLabel: 'Tab $label${on ? ', aktif' : ''}',
+        excludeChildSemantics: true,
         child: Container(
-          height: 44,
+          // Area sentuh minimal 48 dp (U-02).
+          height: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             border: Border(
