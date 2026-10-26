@@ -3,10 +3,11 @@ import 'package:kage/app_services.dart';
 import 'package:kage/data/quiz_data.dart' as bank;
 import 'package:kage/data/repositories/auth_repository.dart';
 import 'package:kage/data/repositories/history_repository.dart';
-import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/features/auth/auth_controller.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/models/models.dart';
+
+import '../support/quiz_bank.dart';
 
 QuizResult _result({
   CategoryId categoryId = CategoryId.sains,
@@ -26,7 +27,7 @@ QuizResult _result({
 
 void main() {
   group('LocalQuizRepository', () {
-    const repository = LocalQuizRepository();
+    final repository = testQuizBank();
 
     test('meneruskan katalog dan detail kategori dari bank soal', () {
       expect(repository.categories, bank.categories);
@@ -165,7 +166,7 @@ void main() {
     test('memakai repository yang disuntikkan', () {
       final authRepository = InMemoryAuthRepository();
       final historyRepository = InMemoryHistoryRepository();
-      const quizRepository = LocalQuizRepository();
+      final quizRepository = testQuizBank();
       final app = AppServices(
         authRepository: authRepository,
         historyRepository: historyRepository,
@@ -180,7 +181,10 @@ void main() {
 
     test('hasil kuis tersimpan ke repository riwayat bersama', () {
       final historyRepository = InMemoryHistoryRepository();
-      final app = AppServices(historyRepository: historyRepository);
+      final app = AppServices(
+        historyRepository: historyRepository,
+        quizRepository: testQuizBank(),
+      );
       addTearDown(app.dispose);
       app.auth.login(name: 'Budi');
       app.quiz.startQuiz(CategoryId.sains);

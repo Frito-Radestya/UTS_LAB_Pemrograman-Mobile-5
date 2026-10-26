@@ -1,18 +1,22 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kage/data/quiz_data.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
+
+import '../support/quiz_bank.dart';
 
 void main() {
   group('K-02 pengacakan soal dan opsi', () {
     test('correctIndex dipetakan ke opsi hasil acak', () {
-      final quiz = QuizController();
+      final quiz = QuizController(questions: testQuizBank());
       addTearDown(quiz.dispose);
       quiz.startQuiz(CategoryId.sains, random: Random(42));
 
-      final source = questionsFor(CategoryId.sains, Difficulty.pemula);
+      final source = testQuizBank().questionsFor(
+        CategoryId.sains,
+        Difficulty.pemula,
+      );
       expect(quiz.activeQuestions, hasLength(source.length));
       for (final question in quiz.activeQuestions) {
         final original = source.firstWhere((q) => q.prompt == question.prompt);
@@ -24,9 +28,9 @@ void main() {
     });
 
     test('seed yang sama menghasilkan urutan yang sama', () {
-      final first = QuizController()
+      final first = QuizController(questions: testQuizBank())
         ..startQuiz(CategoryId.sains, random: Random(7));
-      final second = QuizController()
+      final second = QuizController(questions: testQuizBank())
         ..startQuiz(CategoryId.sains, random: Random(7));
       addTearDown(first.dispose);
       addTearDown(second.dispose);
@@ -42,9 +46,9 @@ void main() {
     });
 
     test('seed berbeda menghasilkan urutan berbeda', () {
-      final first = QuizController()
+      final first = QuizController(questions: testQuizBank())
         ..startQuiz(CategoryId.sains, random: Random(1));
-      final second = QuizController()
+      final second = QuizController(questions: testQuizBank())
         ..startQuiz(CategoryId.sains, random: Random(2));
       addTearDown(first.dispose);
       addTearDown(second.dispose);
@@ -56,7 +60,7 @@ void main() {
     });
 
     test('menjawab semua opsi benar tetap bernilai 100', () {
-      final quiz = QuizController();
+      final quiz = QuizController(questions: testQuizBank());
       addTearDown(quiz.dispose);
       quiz.startQuiz(CategoryId.sains, random: Random(99));
 
@@ -75,7 +79,7 @@ void main() {
     });
 
     test('urutan acak dipertahankan saat melanjutkan kuis', () {
-      final quiz = QuizController();
+      final quiz = QuizController(questions: testQuizBank());
       addTearDown(quiz.dispose);
       quiz.startQuiz(CategoryId.sains, random: Random(11));
       final prompts = quiz.activeQuestions.map((q) => q.prompt).toList();

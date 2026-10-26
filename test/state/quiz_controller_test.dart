@@ -2,10 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 
+import '../support/quiz_bank.dart';
+
 void main() {
   group('K-01 kunci jawaban', () {
     test('selectAnswer menolak perubahan setelah soal dikirim', () {
-      final quiz = QuizController()..startQuiz(CategoryId.sains);
+      final quiz = QuizController(questions: testQuizBank())
+        ..startQuiz(CategoryId.sains);
 
       quiz.selectAnswer(0);
       expect(quiz.answers[quiz.questionIndex], 0);
@@ -19,7 +22,8 @@ void main() {
     });
 
     test('status terkunci ikut tersimpan saat progres disimpan', () {
-      final quiz = QuizController()..startQuiz(CategoryId.sains);
+      final quiz = QuizController(questions: testQuizBank())
+        ..startQuiz(CategoryId.sains);
 
       quiz.selectAnswer(1);
       quiz.submitCurrent();
@@ -30,7 +34,8 @@ void main() {
     });
 
     test('soal yang terkunci tetap terkunci setelah dilanjutkan', () {
-      final quiz = QuizController()..startQuiz(CategoryId.sains);
+      final quiz = QuizController(questions: testQuizBank())
+        ..startQuiz(CategoryId.sains);
 
       quiz.selectAnswer(1);
       quiz.submitCurrent();

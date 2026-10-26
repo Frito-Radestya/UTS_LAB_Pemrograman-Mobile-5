@@ -1,28 +1,41 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kage/data/quiz_data.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/app_services.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 
+import '../support/quiz_bank.dart';
+
 void main() {
   group('K-03 tingkat kesulitan', () {
     test('questionsFor menyaring soal sesuai tingkat', () {
-      expect(questionsFor(CategoryId.sains, Difficulty.pemula), hasLength(10));
       expect(
-        questionsFor(CategoryId.sains, Difficulty.menengah),
+        testQuizBank().questionsFor(CategoryId.sains, Difficulty.pemula),
         hasLength(10),
       );
-      expect(questionsFor(CategoryId.sains, Difficulty.ahli), hasLength(10));
+      expect(
+        testQuizBank().questionsFor(CategoryId.sains, Difficulty.menengah),
+        hasLength(10),
+      );
+      expect(
+        testQuizBank().questionsFor(CategoryId.sains, Difficulty.ahli),
+        hasLength(10),
+      );
 
-      for (final question in questionsFor(CategoryId.sains, Difficulty.ahli)) {
+      for (final question in testQuizBank().questionsFor(
+        CategoryId.sains,
+        Difficulty.ahli,
+      )) {
         expect(question.difficulty, Difficulty.ahli);
       }
-      expect(questionsFor(CategoryId.teknologi, Difficulty.menengah), isEmpty);
+      expect(
+        testQuizBank().questionsFor(CategoryId.teknologi, Difficulty.menengah),
+        isEmpty,
+      );
     });
 
     test('bank soal memiliki opsi dan correctIndex yang valid', () {
       final prompts = <String>{};
-      for (final entry in questionsByCategory.entries) {
+      for (final entry in testQuizBankData().entries) {
         for (final question in entry.value) {
           expect(question.options, isNotEmpty);
           expect(
@@ -37,12 +50,12 @@ void main() {
           expect(prompts.add('${entry.key.name}:${question.prompt}'), isTrue);
         }
       }
-      expect(questionCountFor(CategoryId.sains), 30);
+      expect(testQuizBank().questionCountFor(CategoryId.sains), 30);
     });
 
     test('tingkat berbeda menghasilkan XP berbeda', () {
       int xpFor(Difficulty difficulty) {
-        final app = AppServices()
+        final app = AppServices(quizRepository: testQuizBank())
           ..quiz.startQuiz(CategoryId.sains, difficulty: difficulty);
         addTearDown(app.dispose);
         for (var i = 0; i < app.quiz.totalQuestions; i++) {
@@ -60,7 +73,7 @@ void main() {
     });
 
     test('tingkat tanpa soal tidak bisa dipakai untuk memulai sesi', () {
-      final quiz = QuizController();
+      final quiz = QuizController(questions: testQuizBank());
       addTearDown(quiz.dispose);
       quiz.setDifficulty(Difficulty.menengah);
 
@@ -73,7 +86,7 @@ void main() {
     });
 
     test('sesi memakai soal dari tingkat yang dipilih', () {
-      final quiz = QuizController()
+      final quiz = QuizController(questions: testQuizBank())
         ..startQuiz(CategoryId.sains, difficulty: Difficulty.menengah);
       addTearDown(quiz.dispose);
 

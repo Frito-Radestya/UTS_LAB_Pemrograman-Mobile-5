@@ -2,10 +2,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 
+import '../support/quiz_bank.dart';
+
 void main() {
   group('K-04 resume kesulitan dan waktu', () {
     test('resume mempertahankan tingkat dan total waktu pengerjaan', () {
-      final quiz = QuizController()
+      final quiz = QuizController(questions: testQuizBank())
         ..startQuiz(CategoryId.sains, difficulty: Difficulty.ahli);
       addTearDown(quiz.dispose);
       quiz.selectAnswer(quiz.currentQuestion!.correctIndex);
@@ -38,7 +40,7 @@ void main() {
     });
 
     test('waktu setelah resume ditambahkan ke waktu tersimpan', () {
-      final quiz = QuizController();
+      final quiz = QuizController(questions: testQuizBank());
       addTearDown(quiz.dispose);
       quiz.resume = const InProgressQuiz(
         categoryId: CategoryId.sains,
@@ -63,7 +65,7 @@ void main() {
     });
 
     test('continueAdventure tanpa resume tidak memulai kuis palsu', () {
-      final quiz = QuizController();
+      final quiz = QuizController(questions: testQuizBank());
       addTearDown(quiz.dispose);
 
       quiz.continueAdventure();
