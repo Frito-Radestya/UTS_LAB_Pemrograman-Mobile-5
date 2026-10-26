@@ -210,7 +210,8 @@ class BerandaPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'Soal ${resume.index + 1} dari ${categoryById(resume.categoryId).questionCount}',
+                                'Soal ${resume.index + 1} dari '
+                                '${questionsFor(resume.categoryId, resume.difficulty).length}',
                                 style: AppTheme.onest(
                                   size: 14,
                                   heightPx: 20,
@@ -272,7 +273,10 @@ class BerandaPage extends StatelessWidget {
                     KageProgressBar(
                       value:
                           (resume.index + 1) /
-                          categoryById(resume.categoryId).questionCount,
+                          questionsFor(
+                            resume.categoryId,
+                            resume.difficulty,
+                          ).length,
                       height: 4,
                     ),
                   ],

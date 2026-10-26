@@ -95,9 +95,9 @@ void main() {
       expect(app.badges.firstWhere((b) => b.id == 'streak').earned, isTrue);
     });
 
-    test('data kategori tidak lagi membawa skor terbaik bawaan', () {
+    test('setiap kategori memiliki soal pemula tanpa skor bawaan', () {
       for (final category in categories) {
-        expect(category.questionCount, greaterThan(0));
+        expect(questionsFor(category.id, Difficulty.pemula), isNotEmpty);
       }
     });
   });

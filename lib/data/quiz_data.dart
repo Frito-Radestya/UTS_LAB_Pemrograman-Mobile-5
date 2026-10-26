@@ -137,6 +137,195 @@ const questionsByCategory = <CategoryId, List<Question>>{
       explanation: 'Pada tekanan atmosfer standar, air mendidih pada 100 derajat Celsius.',
       funFact: 'Di puncak gunung, air bisa mendidih di bawah 100°C karena tekanan lebih rendah.',
     ),
+    Question(
+      prompt: 'Satuan SI untuk gaya adalah…',
+      options: ['Joule', 'Newton', 'Watt', 'Pascal'],
+      correctIndex: 1,
+      explanation:
+          'Gaya diukur dalam newton (N), sesuai nama fisikawan Isaac Newton.',
+      funFact: 'Satu newton setara dengan gaya yang mempercepat 1 kg sebesar 1 m/s².',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Planet yang memiliki satu hari lebih lama daripada satu tahunnya adalah…',
+      options: ['Merkurius', 'Venus', 'Mars', 'Jupiter'],
+      correctIndex: 1,
+      explanation: 'Venus berotasi sangat lambat: satu hari Venus sekitar 243 hari Bumi, sedangkan revolusinya sekitar 225 hari Bumi.',
+      funFact: 'Venus juga berputar berlawanan arah dibandingkan sebagian besar planet lain.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Basa nitrogen yang berpasangan dengan adenin pada DNA adalah…',
+      options: ['Guanin', 'Sitosin', 'Timin', 'Urasil'],
+      correctIndex: 2,
+      explanation: 'Pada DNA, adenin (A) selalu berpasangan dengan timin (T) melalui dua ikatan hidrogen.',
+      funFact: 'RNA menggunakan urasil sebagai pengganti timin.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Kecepatan cahaya di ruang hampa mendekati…',
+      options: ['3.000 km/s', '30.000 km/s', '300.000 km/s', '3.000.000 km/s'],
+      correctIndex: 2,
+      explanation: 'Cahaya merambat sekitar 299.792 kilometer per detik, sering dibulatkan menjadi 300.000 km/s.',
+      funFact: 'Cahaya Matahari membutuhkan sekitar 8 menit 20 detik untuk mencapai Bumi.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Sel darah yang berperan utama mengangkut oksigen adalah…',
+      options: ['Leukosit', 'Trombosit', 'Eritrosit', 'Plasma'],
+      correctIndex: 2,
+      explanation: 'Eritrosit atau sel darah merah mengandung hemoglobin yang mengikat oksigen.',
+      funFact: 'Satu tetes darah mengandung jutaan sel darah merah.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'pH air murni pada suhu 25°C adalah…',
+      options: ['0', '5', '7', '14'],
+      correctIndex: 2,
+      explanation: 'Air murni bersifat netral dengan pH 7 pada suhu 25°C.',
+      funFact: 'Skala pH mengukur konsentrasi ion hidrogen secara logaritmik.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Lapisan atmosfer tempat sebagian besar cuaca terjadi adalah…',
+      options: ['Stratosfer', 'Troposfer', 'Mesosfer', 'Termosfer'],
+      correctIndex: 1,
+      explanation: 'Troposfer adalah lapisan paling bawah atmosfer dan menjadi tempat terbentuknya awan serta cuaca.',
+      funFact:
+          'Semakin tinggi di troposfer, suhu udara umumnya semakin rendah.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Satuan terkecil suatu unsur yang masih memiliki sifat unsur tersebut adalah…',
+      options: ['Molekul', 'Atom', 'Sel', 'Proton'],
+      correctIndex: 1,
+      explanation: 'Atom adalah satuan dasar unsur. Molekul terbentuk dari gabungan atom.',
+      funFact: 'Atom tersusun dari proton, neutron, dan elektron.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Manakah sumber energi yang termasuk terbarukan?',
+      options: ['Batu bara', 'Gas alam', 'Energi surya', 'Minyak bumi'],
+      correctIndex: 2,
+      explanation: 'Energi surya berasal dari Matahari dan terus tersedia, sehingga termasuk sumber terbarukan.',
+      funFact: 'Panel surya mengubah energi cahaya menjadi energi listrik melalui efek fotovoltaik.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Hukum Newton III menyatakan bahwa…',
+      options: [
+        'Benda diam akan tetap diam',
+        'Gaya aksi menimbulkan reaksi sama besar dan berlawanan arah',
+        'Percepatan sebanding dengan gaya',
+        'Energi tidak dapat diciptakan',
+      ],
+      correctIndex: 1,
+      explanation: 'Setiap gaya aksi menghasilkan gaya reaksi yang sama besar namun berlawanan arah.',
+      funFact: 'Roket dapat meluncur karena gas yang disemburkan ke bawah menghasilkan reaksi ke atas.',
+      difficulty: Difficulty.menengah,
+    ),
+    Question(
+      prompt: 'Dalam sistem terisolasi, entropi cenderung…',
+      options: ['Tetap', 'Berkurang', 'Bertambah', 'Menjadi nol'],
+      correctIndex: 2,
+      explanation: 'Hukum kedua termodinamika menyatakan entropi sistem terisolasi cenderung bertambah.',
+      funFact: 'Entropi sering dipahami sebagai ukuran ketidakteraturan suatu sistem.',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Organel yang menjadi tempat utama produksi ATP adalah…',
+      options: ['Ribosom', 'Mitokondria', 'Lisosom', 'Badan Golgi'],
+      correctIndex: 1,
+      explanation: 'Mitokondria menghasilkan ATP melalui respirasi sel dan sering disebut rumah energi sel.',
+      funFact: 'Mitokondria memiliki DNA sendiri yang diwariskan dari ibu.',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Partikel subatom yang bermuatan negatif adalah…',
+      options: ['Proton', 'Neutron', 'Elektron', 'Foton'],
+      correctIndex: 2,
+      explanation: 'Elektron bermuatan negatif, proton positif, sedangkan neutron netral.',
+      funFact: 'Massa elektron jauh lebih kecil daripada proton atau neutron.',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Teori relativitas khusus menyatakan bahwa kecepatan cahaya di ruang hampa…',
+      options: [
+        'Bergantung pada pengamat',
+        'Konstan untuk semua pengamat inersia',
+        'Bertambah di dekat gravitasi',
+        'Menjadi nol di ruang hampa',
+      ],
+      correctIndex: 1,
+      explanation: 'Kecepatan cahaya dalam ruang hampa sama bagi semua pengamat dalam kerangka inersia.',
+      funFact: 'Konsep ini menjadi dasar persamaan terkenal E = mc².',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Penggabungan inti atom ringan menjadi inti yang lebih berat disebut…',
+      options: ['Fisi nuklir', 'Fusi nuklir', 'Peluruhan alfa', 'Ionisasi'],
+      correctIndex: 1,
+      explanation: 'Fusi nuklir menggabungkan inti ringan, sedangkan fisi memecah inti berat.',
+      funFact:
+          'Matahari menghasilkan energi melalui fusi hidrogen menjadi helium.',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Hukum kekekalan energi menyatakan bahwa energi…',
+      options: [
+        'Dapat diciptakan dari ketiadaan',
+        'Tidak dapat diciptakan atau dimusnahkan',
+        'Selalu berkurang setiap saat',
+        'Hanya dimiliki benda bergerak',
+      ],
+      correctIndex: 1,
+      explanation: 'Energi dapat berubah bentuk, tetapi total energi dalam sistem tertutup tetap.',
+      funFact: 'Energi potensial dapat berubah menjadi energi kinetik saat benda jatuh.',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Planet dengan medan magnet terkuat di tata surya adalah…',
+      options: ['Bumi', 'Saturnus', 'Jupiter', 'Neptunus'],
+      correctIndex: 2,
+      explanation: 'Jupiter memiliki medan magnet sangat besar, jauh lebih kuat daripada medan magnet Bumi.',
+      funFact: 'Medan magnet Jupiter menciptakan aurora raksasa di kutubnya.',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Enzim mempercepat reaksi kimia dengan cara…',
+      options: [
+        'Menaikkan suhu reaksi',
+        'Menurunkan energi aktivasi',
+        'Mengubah pH larutan',
+        'Menambah jumlah substrat',
+      ],
+      correctIndex: 1,
+      explanation: 'Enzim menyediakan jalur reaksi dengan energi aktivasi lebih rendah sehingga reaksi berlangsung lebih cepat.',
+      funFact: 'Enzim bersifat spesifik terhadap substrat tertentu.',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Peristiwa penguraian cahaya putih saat melewati prisma disebut…',
+      options: ['Refleksi', 'Difraksi', 'Dispersi', 'Polarisasi'],
+      correctIndex: 2,
+      explanation: 'Dispersi terjadi karena setiap warna cahaya dibiaskan dengan sudut berbeda.',
+      funFact:
+          'Pelangi terbentuk dari dispersi cahaya Matahari oleh tetesan air.',
+      difficulty: Difficulty.ahli,
+    ),
+    Question(
+      prompt: 'Usia alam semesta diperkirakan sekitar…',
+      options: [
+        '4,6 miliar tahun',
+        '9,8 miliar tahun',
+        '13,8 miliar tahun',
+        '20 miliar tahun',
+      ],
+      correctIndex: 2,
+      explanation: 'Pengamatan kosmologi modern memperkirakan usia alam semesta sekitar 13,8 miliar tahun.',
+      funFact: 'Angka ini berasal antara lain dari pengukuran radiasi latar belakang kosmik.',
+      difficulty: Difficulty.ahli,
+    ),
   ],
   CategoryId.teknologi: [
     Question(
@@ -489,3 +678,23 @@ const questionsByCategory = <CategoryId, List<Question>>{
 
 QuizCategory categoryById(CategoryId id) =>
     categories.firstWhere((c) => c.id == id);
+
+/// Soal untuk kategori dan tingkat tertentu. Tingkat tanpa soal mengembalikan
+/// daftar kosong agar UI dapat menandainya sebagai "Segera hadir".
+List<Question> questionsFor(CategoryId id, Difficulty difficulty) {
+  final bank = questionsByCategory[id] ?? const <Question>[];
+  return List<Question>.unmodifiable(
+    bank.where((question) => question.difficulty == difficulty),
+  );
+}
+
+bool hasQuestionsFor(CategoryId id, Difficulty difficulty) =>
+    questionsFor(id, difficulty).isNotEmpty;
+
+int questionCountFor(CategoryId id) =>
+    (questionsByCategory[id] ?? const <Question>[]).length;
+
+List<Difficulty> difficultiesWithQuestions(CategoryId id) => [
+  for (final difficulty in Difficulty.values)
+    if (hasQuestionsFor(id, difficulty)) difficulty,
+];

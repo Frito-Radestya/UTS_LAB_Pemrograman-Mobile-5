@@ -19,6 +19,19 @@ class DetailKategoriPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cat = categoryById(id);
     final app = context.watch<AppState>();
+    final counts = {
+      for (final difficulty in Difficulty.values)
+        difficulty: questionsFor(id, difficulty).length,
+    };
+    final available = Difficulty.values
+        .where((difficulty) => counts[difficulty]! > 0)
+        .toList();
+    final effective = available.contains(app.selectedDifficulty)
+        ? app.selectedDifficulty
+        : available.isEmpty
+        ? null
+        : available.first;
+    final activeCount = effective == null ? 0 : counts[effective]!;
     // Header height: 30% of screen, min 220, max 320
     final headerH = (MediaQuery.sizeOf(context).height * 0.30).clamp(
       220.0,
@@ -170,12 +183,28 @@ class DetailKategoriPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _diff(context, app, Difficulty.pemula, 'Pemula'),
+                      _diff(
+                        app,
+                        Difficulty.pemula,
+                        counts[Difficulty.pemula]!,
+                        effective == Difficulty.pemula,
+                      ),
                       const SizedBox(width: 10),
-                      _diff(context, app, Difficulty.menengah, 'Menengah'),
+                      _diff(
+                        app,
+                        Difficulty.menengah,
+                        counts[Difficulty.menengah]!,
+                        effective == Difficulty.menengah,
+                      ),
                       const SizedBox(width: 10),
-                      _diff(context, app, Difficulty.ahli, 'Ahli'),
+                      _diff(
+                        app,
+                        Difficulty.ahli,
+                        counts[Difficulty.ahli]!,
+                        effective == Difficulty.ahli,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -189,7 +218,7 @@ class DetailKategoriPage extends StatelessWidget {
                       children: [
                         _row(
                           Icons.assignment_outlined,
-                          '${cat.questionCount} Soal',
+                          '$activeCount Soal',
                           trailing: const Icon(
                             Icons.chevron_right,
                             color: AppColors.textMuted,
@@ -216,10 +245,12 @@ class DetailKategoriPage extends StatelessWidget {
                   const SizedBox(height: 24),
                   PrimaryButton(
                     label: 'Mulai',
-                    onTap: () {
-                      app.startQuiz(id);
-                      context.push('/kuis');
-                    },
+                    onTap: effective == null
+                        ? null
+                        : () {
+                            app.startQuiz(id, difficulty: effective);
+                            context.push('/kuis');
+                          },
                   ),
                 ],
               ),
@@ -230,34 +261,53 @@ class DetailKategoriPage extends StatelessWidget {
     );
   }
 
-  Widget _diff(BuildContext context, AppState app, Difficulty d, String label) {
-    final on = app.selectedDifficulty == d;
+  Widget _diff(AppState app, Difficulty d, int count, bool selected) {
+    final enabled = count > 0;
+    final on = enabled && selected;
     return Expanded(
-      child: GestureDetector(
-        onTap: () => app.setDifficulty(d),
-        child: Container(
-          height: 44,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: on
-                ? AppColors.success.withValues(alpha: 0.14)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(
-              color: on ? AppColors.success : AppColors.borderStrong,
-              width: 1.5,
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: enabled ? () => app.setDifficulty(d) : null,
+            child: Container(
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: on
+                    ? AppColors.success.withValues(alpha: 0.14)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: on ? AppColors.success : AppColors.borderStrong,
+                  width: 1.5,
+                ),
+              ),
+              child: Text(
+                d.label,
+                style: AppTheme.onest(
+                  size: 13,
+                  heightPx: 20,
+                  weight: on ? FontWeight.w600 : FontWeight.w500,
+                  color: on
+                      ? AppColors.success
+                      : enabled
+                      ? AppColors.textMuted
+                      : AppColors.textMuted.withValues(alpha: 0.55),
+                ),
+              ),
             ),
           ),
-          child: Text(
-            label,
+          const SizedBox(height: 5),
+          Text(
+            enabled ? '$count soal' : 'Segera hadir',
+            textAlign: TextAlign.center,
             style: AppTheme.onest(
-              size: 13,
-              heightPx: 20,
-              weight: on ? FontWeight.w600 : FontWeight.w500,
-              color: on ? AppColors.success : AppColors.textMuted,
+              size: 12,
+              heightPx: 16,
+              color: AppColors.textMuted,
             ),
           ),
-        ),
+        ],
       ),
     );
   }
