@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/quiz_data.dart';
 import '../models/models.dart';
+import 'progress.dart';
 
 class AppState extends ChangeNotifier {
   bool loggedIn = false;
@@ -12,8 +13,9 @@ class AppState extends ChangeNotifier {
   String fullName = '';
   String email = '';
   int xp = 0;
-  int level = 1;
   int streak = 0;
+
+  int get level => levelFromXp(xp);
 
   Difficulty selectedDifficulty = Difficulty.pemula;
   CategoryId? activeCategory;
@@ -348,7 +350,6 @@ class AppState extends ChangeNotifier {
     lastResult = result;
     history.insert(0, result);
     xp += result.score;
-    if (xp >= 1500 && level < 4) level = 4;
     resume = null;
     notifyListeners();
   }

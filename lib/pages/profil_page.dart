@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../state/app_state.dart';
+import '../state/progress.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/kage_widgets.dart';
@@ -13,7 +14,12 @@ class ProfilPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-    final xpProgress = (app.xp / 1500).clamp(0.0, 1.0);
+    final levelStart = xpAtLevelStart(app.xp);
+    final nextLevelXp = xpForLevel(app.level + 1);
+    final levelRange = nextLevelXp - levelStart;
+    final xpProgress = levelRange == 0
+        ? 1.0
+        : ((app.xp - levelStart) / levelRange).clamp(0.0, 1.0);
 
     return ScreenScaffold(
       navIndex: 3,
@@ -159,7 +165,7 @@ class ProfilPage extends StatelessWidget {
                             ),
                             const Spacer(),
                             Text(
-                              '${_xp(app.xp)} XP',
+                              '${_xp(app.xp)} / ${_xp(nextLevelXp)} XP',
                               style: AppTheme.onest(
                                 size: 13,
                                 heightPx: 18,
