@@ -105,17 +105,13 @@ class _AppTextFieldState extends State<AppTextField> {
                   autofillHints: widget.autofillHints,
                   enableSuggestions: !widget.obscure,
                   autocorrect: !widget.obscure,
-                  style: AppTheme.onest(size: 14, heightPx: 20),
+                  style: AppTextStyles.body,
                   cursorColor: AppColors.gold,
                   decoration: InputDecoration(
                     isDense: true,
                     border: InputBorder.none,
                     hintText: widget.hint,
-                    hintStyle: AppTheme.onest(
-                      size: 14,
-                      heightPx: 20,
-                      color: AppColors.textMuted,
-                    ),
+                    hintStyle: AppTextStyles.bodyMuted,
                   ),
                 ),
               ),
@@ -156,11 +152,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 Expanded(
                   child: Text(
                     widget.errorText!,
-                    style: AppTheme.onest(
-                      size: 12,
-                      heightPx: 16,
-                      color: AppColors.primaryText,
-                    ),
+                    style: AppTextStyles.captionPrimary,
                   ),
                 ),
               ],

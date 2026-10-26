@@ -54,11 +54,7 @@ class BadgePage extends StatelessWidget {
                         ),
                         Text(
                           'Badge & Pencapaian',
-                          style: AppTheme.onest(
-                            size: 18,
-                            heightPx: 26,
-                            weight: FontWeight.w600,
-                          ),
+                          style: AppTextStyles.titleLarge,
                         ),
                       ],
                     ),
@@ -85,21 +81,12 @@ class BadgePage extends StatelessWidget {
                                 children: [
                                   Text(
                                     'Koleksi badge',
-                                    style: AppTheme.onest(
-                                      size: 14,
-                                      heightPx: 20,
-                                      color: AppColors.textMuted,
-                                    ),
+                                    style: AppTextStyles.bodyMuted,
                                   ),
                                   const Spacer(),
                                   Text(
                                     '$earned dari ${badges.length}',
-                                    style: AppTheme.onest(
-                                      size: 14,
-                                      heightPx: 20,
-                                      weight: FontWeight.w600,
-                                      color: AppColors.gold,
-                                    ),
+                                    style: AppTextStyles.labelGold,
                                   ),
                                 ],
                               ),
@@ -119,12 +106,7 @@ class BadgePage extends StatelessWidget {
                         ],
                         Text(
                           'Small Steps, Greater Knowledge',
-                          style: AppTheme.onest(
-                            size: 13,
-                            heightPx: 20,
-                            color: AppColors.textMuted,
-                            letterSpacing: 0.5,
-                          ),
+                          style: AppTextStyles.labelRelaxedMuted,
                         ),
                       ],
                     ),
@@ -162,21 +144,11 @@ class BadgePage extends StatelessWidget {
               children: [
                 Text(
                   badge.title,
-                  style: AppTheme.onest(
-                    size: 16,
-                    heightPx: 24,
-                    weight: FontWeight.w600,
+                  style: AppTextStyles.titleMedium.copyWith(
                     color: badge.earned ? AppColors.text : AppColors.textSoft,
                   ),
                 ),
-                Text(
-                  badge.subtitle,
-                  style: AppTheme.onest(
-                    size: 13,
-                    heightPx: 18,
-                    color: AppColors.textMuted,
-                  ),
-                ),
+                Text(badge.subtitle, style: AppTextStyles.bodySmallMuted),
               ],
             ),
           ),
@@ -189,14 +161,7 @@ class BadgePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: AppColors.borderStrong),
               ),
-              child: Text(
-                'Terkunci',
-                style: AppTheme.onest(
-                  size: 12,
-                  heightPx: 16,
-                  color: AppColors.textMuted,
-                ),
-              ),
+              child: Text('Terkunci', style: AppTextStyles.captionMuted),
             ),
         ],
       ),

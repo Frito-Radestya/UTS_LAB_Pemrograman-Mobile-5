@@ -44,14 +44,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
                       onTap: () => context.go('/beranda'),
                     ),
                   ),
-                  Text(
-                    'Riwayat Skor',
-                    style: AppTheme.onest(
-                      size: 22,
-                      heightPx: 32,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
+                  Text('Riwayat Skor', style: AppTextStyles.headlineLarge),
                 ],
               ),
             ),
@@ -114,21 +107,13 @@ class _RiwayatPageState extends State<RiwayatPage> {
                             Text(
                               'Belum ada riwayat di kategori ini',
                               textAlign: TextAlign.center,
-                              style: AppTheme.onest(
-                                size: 15,
-                                heightPx: 22,
-                                weight: FontWeight.w600,
-                              ),
+                              style: AppTextStyles.titleSmall,
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Selesaikan satu kuis untuk melihat skormu di sini.',
                               textAlign: TextAlign.center,
-                              style: AppTheme.onest(
-                                size: 13,
-                                heightPx: 19,
-                                color: AppColors.textMuted,
-                              ),
+                              style: AppTextStyles.bodySmallRelaxedMuted,
                             ),
                             if (filter != null) ...[
                               const SizedBox(height: 12),
@@ -172,10 +157,8 @@ class _RiwayatPageState extends State<RiwayatPage> {
           ),
           child: Text(
             label,
-            style: AppTheme.onest(
-              size: 14,
-              heightPx: 20,
-              weight: on ? FontWeight.w600 : FontWeight.w400,
+            style: AppTextStyles.body.copyWith(
+              fontWeight: on ? FontWeight.w600 : FontWeight.w400,
               color: on ? AppColors.text : AppColors.textSoft,
             ),
           ),
@@ -188,23 +171,8 @@ class _RiwayatPageState extends State<RiwayatPage> {
     return Expanded(
       child: Column(
         children: [
-          Text(
-            v,
-            style: AppTheme.onest(
-              size: 20,
-              heightPx: 26,
-              weight: FontWeight.w700,
-              color: AppColors.gold,
-            ),
-          ),
-          Text(
-            l,
-            style: AppTheme.onest(
-              size: 12,
-              heightPx: 16,
-              color: AppColors.textMuted,
-            ),
-          ),
+          Text(v, style: AppTextStyles.headlineSmallGold),
+          Text(l, style: AppTextStyles.captionMuted),
         ],
       ),
     );

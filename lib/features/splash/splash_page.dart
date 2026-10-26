@@ -241,12 +241,7 @@ class _SplashPageState extends State<SplashPage>
                       const SizedBox(height: 4),
                       Text(
                         'THE QUIZ SANCTUARY',
-                        style: AppTheme.onest(
-                          size: 14,
-                          heightPx: 20,
-                          color: AppColors.gold,
-                          letterSpacing: 4,
-                        ),
+                        style: AppTextStyles.bodyGoldWide,
                       ),
                       const SizedBox(height: 20),
                       Row(
@@ -259,14 +254,7 @@ class _SplashPageState extends State<SplashPage>
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(
-                              '知の道',
-                              style: AppTheme.onest(
-                                size: 14,
-                                heightPx: 20,
-                                color: AppColors.gold,
-                              ),
-                            ),
+                            child: Text('知の道', style: AppTextStyles.bodyGold),
                           ),
                           Container(
                             width: 48,
@@ -287,7 +275,7 @@ class _SplashPageState extends State<SplashPage>
                 child: Text(
                   'Kuis bukan sekadar permainan, tapi perjalanan untuk menjadi versi terbaik dari dirimu.',
                   textAlign: TextAlign.center,
-                  style: AppTheme.onest(size: 14, heightPx: 21),
+                  style: AppTextStyles.bodyRelaxed,
                 ),
               ),
               // Loading bar

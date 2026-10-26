@@ -106,11 +106,7 @@ class KuisPage extends StatelessWidget {
                           child: Text(
                             '${quiz.questionIndex + 1}/$total',
                             textAlign: TextAlign.right,
-                            style: AppTheme.onest(
-                              size: 14,
-                              heightPx: 20,
-                              weight: FontWeight.w600,
-                            ),
+                            style: AppTextStyles.label,
                           ),
                         ),
                       ],
@@ -126,22 +122,10 @@ class KuisPage extends StatelessWidget {
                       children: [
                         Text(
                           '${cat.name.toUpperCase()} · $diff',
-                          style: AppTheme.onest(
-                            size: 13,
-                            heightPx: 18,
-                            color: AppColors.gold,
-                            letterSpacing: 1,
-                          ),
+                          style: AppTextStyles.bodySmallGoldSpaced,
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          q.prompt,
-                          style: AppTheme.onest(
-                            size: 20,
-                            heightPx: 30,
-                            weight: FontWeight.w600,
-                          ),
-                        ),
+                        Text(q.prompt, style: AppTextStyles.headlineSmallLoose),
                         const SizedBox(height: 24),
                         for (var i = 0; i < q.options.length; i++) ...[
                           _option(
@@ -165,11 +149,7 @@ class KuisPage extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   'Jawaban sudah dikirim dan terkunci.',
-                                  style: AppTheme.onest(
-                                    size: 12,
-                                    heightPx: 18,
-                                    color: AppColors.textMuted,
-                                  ),
+                                  style: AppTextStyles.captionRelaxedMuted,
                                 ),
                               ),
                             ],
@@ -233,46 +213,19 @@ class KuisPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: AppColors.borderStrong),
         ),
-        title: Text(
-          'Keluar dari kuis?',
-          style: AppTheme.onest(
-            size: 18,
-            heightPx: 26,
-            weight: FontWeight.w600,
-          ),
-        ),
+        title: Text('Keluar dari kuis?', style: AppTextStyles.titleLarge),
         content: Text(
           'Progres jawabanmu akan disimpan dan bisa dilanjutkan dari Beranda.',
-          style: AppTheme.onest(
-            size: 14,
-            heightPx: 21,
-            color: AppColors.textSoft,
-          ),
+          style: AppTextStyles.bodyRelaxedSoft,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(
-              'Batal',
-              style: AppTheme.onest(
-                size: 14,
-                heightPx: 20,
-                weight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
-            ),
+            child: Text('Batal', style: AppTextStyles.labelMuted),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(
-              'Simpan & keluar',
-              style: AppTheme.onest(
-                size: 14,
-                heightPx: 20,
-                weight: FontWeight.w600,
-                color: AppColors.primaryText,
-              ),
-            ),
+            child: Text('Simpan & keluar', style: AppTextStyles.labelPrimary),
           ),
         ],
       ),
@@ -328,10 +281,8 @@ class KuisPage extends StatelessWidget {
               ),
               child: Text(
                 letter,
-                style: AppTheme.onest(
-                  size: 14,
-                  heightPx: 18,
-                  weight: selected ? FontWeight.w700 : FontWeight.w600,
+                style: AppTextStyles.answerLetter.copyWith(
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                   color: selected ? AppColors.text : AppColors.textSoft,
                 ),
               ),
@@ -340,10 +291,8 @@ class KuisPage extends StatelessWidget {
             Expanded(
               child: Text(
                 text,
-                style: AppTheme.onest(
-                  size: 15,
-                  heightPx: 22,
-                  weight: selected ? FontWeight.w600 : FontWeight.w400,
+                style: AppTextStyles.bodyLarge.copyWith(
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
             ),

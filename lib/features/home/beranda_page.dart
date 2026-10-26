@@ -39,19 +39,11 @@ class BerandaPage extends StatelessWidget {
                     children: [
                       Text(
                         'Halo, ${auth.firstName}',
-                        style: AppTheme.onest(
-                          size: 22,
-                          heightPx: 28,
-                          weight: FontWeight.w600,
-                        ),
+                        style: AppTextStyles.headline,
                       ),
                       Text(
                         'Terus belajar, terus berkembang.',
-                        style: AppTheme.onest(
-                          size: 14,
-                          heightPx: 20,
-                          color: AppColors.textMuted,
-                        ),
+                        style: AppTextStyles.bodyMuted,
                       ),
                     ],
                   ),
@@ -86,22 +78,11 @@ class BerandaPage extends StatelessWidget {
                     size: 22,
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    'Mulai kuis pertamamu',
-                    style: AppTheme.onest(
-                      size: 18,
-                      heightPx: 26,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
+                  Text('Mulai kuis pertamamu', style: AppTextStyles.titleLarge),
                   const SizedBox(height: 4),
                   Text(
                     'Pilih satu kategori dan mulai perjalanan pengetahuanmu.',
-                    style: AppTheme.onest(
-                      size: 14,
-                      heightPx: 21,
-                      color: AppColors.textSoft,
-                    ),
+                    style: AppTextStyles.bodyRelaxedSoft,
                   ),
                   const SizedBox(height: 14),
                   PrimaryButton(
@@ -124,34 +105,18 @@ class BerandaPage extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        'Progres Belajar',
-                        style: AppTheme.onest(
-                          size: 14,
-                          heightPx: 20,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
+                      Text('Progres Belajar', style: AppTextStyles.bodyMuted),
                       const Spacer(),
                       Text(
                         '${((history.learningPathDone / categoryCount) * 100).round()}%',
-                        style: AppTheme.onest(
-                          size: 14,
-                          heightPx: 20,
-                          weight: FontWeight.w600,
-                          color: AppColors.gold,
-                        ),
+                        style: AppTextStyles.labelGold,
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${history.learningPathDone} / $categoryCount Kategori',
-                    style: AppTheme.onest(
-                      size: 18,
-                      heightPx: 26,
-                      weight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.titleLarge,
                   ),
                   const SizedBox(height: 12),
                   KageProgressBar(
@@ -200,30 +165,18 @@ class BerandaPage extends StatelessWidget {
                                 ),
                                 child: Text(
                                   bank.categoryById(resume.categoryId).name,
-                                  style: AppTheme.onest(
-                                    size: 12,
-                                    heightPx: 18,
-                                    color: AppColors.gold,
-                                  ),
+                                  style: AppTextStyles.captionRelaxedGold,
                                 ),
                               ),
                               const SizedBox(height: 6),
                               Text(
                                 'Lanjutkan Petualangan',
-                                style: AppTheme.onest(
-                                  size: 18,
-                                  heightPx: 26,
-                                  weight: FontWeight.w600,
-                                ),
+                                style: AppTextStyles.titleLarge,
                               ),
                               Text(
                                 'Soal ${resume.index + 1} dari '
                                 '${bank.questionsFor(resume.categoryId, resume.difficulty).length}',
-                                style: AppTheme.onest(
-                                  size: 14,
-                                  heightPx: 20,
-                                  color: AppColors.textSoft,
-                                ),
+                                style: AppTextStyles.bodySoft,
                               ),
                             ],
                           ),
@@ -308,14 +261,7 @@ class BerandaPage extends StatelessWidget {
           // Category section header
           Row(
             children: [
-              Text(
-                'Kategori Kuis',
-                style: AppTheme.onest(
-                  size: 18,
-                  heightPx: 26,
-                  weight: FontWeight.w600,
-                ),
-              ),
+              Text('Kategori Kuis', style: AppTextStyles.titleLarge),
               const Spacer(),
               GestureDetector(
                 onTap: () => context.go('/kategori'),
@@ -324,11 +270,7 @@ class BerandaPage extends StatelessWidget {
                   child: Center(
                     child: Text(
                       'Lihat Semua',
-                      style: AppTheme.onest(
-                        size: 14,
-                        heightPx: 20,
-                        color: AppColors.primaryText,
-                      ),
+                      style: AppTextStyles.bodyPrimary,
                     ),
                   ),
                 ),
@@ -350,7 +292,7 @@ class BerandaPage extends StatelessWidget {
                         Text(
                           c.shortName,
                           textAlign: TextAlign.center,
-                          style: AppTheme.onest(size: 11, heightPx: 15),
+                          style: AppTextStyles.captionSmall,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
@@ -375,11 +317,7 @@ class BerandaPage extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Pengetahuan adalah cahaya yang tak pernah padam.',
-                    style: AppTheme.onest(
-                      size: 14,
-                      heightPx: 20,
-                      color: AppColors.textQuote,
-                    ),
+                    style: AppTextStyles.bodyQuote,
                   ),
                 ),
               ],
@@ -401,23 +339,8 @@ class BerandaPage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(
-              value,
-              style: AppTheme.onest(
-                size: 22,
-                heightPx: 28,
-                weight: FontWeight.w700,
-                color: AppColors.gold,
-              ),
-            ),
-            Text(
-              label,
-              style: AppTheme.onest(
-                size: 12,
-                heightPx: 16,
-                color: AppColors.textMuted,
-              ),
-            ),
+            Text(value, style: AppTextStyles.headlineGold),
+            Text(label, style: AppTextStyles.captionMuted),
           ],
         ),
       ),
@@ -437,15 +360,7 @@ class BerandaPage extends StatelessWidget {
         ),
         border: Border.all(color: AppColors.gold, width: 1.5),
       ),
-      child: Text(
-        initial,
-        style: AppTheme.onest(
-          size: font,
-          heightPx: font + 4,
-          weight: FontWeight.w600,
-          color: AppColors.gold,
-        ),
-      ),
+      child: Text(initial, style: AppTextStyles.avatarInitial(font)),
     );
   }
 }

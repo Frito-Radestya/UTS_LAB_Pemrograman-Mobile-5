@@ -202,6 +202,11 @@ sumber soal, autentikasi, atau media penyimpanan dapat diganti tanpa mengubah
 logika fitur. `AppServices` menyediakan implementasi lokal bawaan dan
 mendaftarkannya lewat `provider`.
 
+Tipografi memakai gaya bernama di `AppTextStyles` (`displayLarge`, `titleLarge`,
+`body`, `caption`, `label`, dan variannya). Halaman tidak lagi menulis ukuran,
+tinggi baris, atau warna teks secara berulang; nilai dinamis seperti warna status
+cukup diturunkan dengan `copyWith`.
+
 ## Rute Aplikasi
 
 | Rute | Halaman |

@@ -175,23 +175,14 @@ class _LoginPageState extends State<LoginPage> {
                     const KageWordmark(),
                     Text(
                       'THE QUIZ SANCTUARY',
-                      style: AppTheme.onest(
-                        size: 11,
-                        heightPx: 16,
-                        color: AppColors.gold,
-                        letterSpacing: 3,
-                      ),
+                      style: AppTextStyles.overlineGold,
                     ),
                     const SizedBox(height: 48),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Selamat Datang',
-                        style: AppTheme.onest(
-                          size: 28,
-                          heightPx: 36,
-                          weight: FontWeight.w700,
-                        ),
+                        style: AppTextStyles.displayLarge,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -199,11 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Masuk untuk melanjutkan perjalanan pengetahuanmu.',
-                        style: AppTheme.onest(
-                          size: 14,
-                          heightPx: 20,
-                          color: AppColors.textMuted,
-                        ),
+                        style: AppTextStyles.bodyMuted,
                       ),
                     ),
                     const SizedBox(height: 22),
@@ -246,11 +233,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: Text(
                           'Lupa password?',
-                          style: AppTheme.onest(
-                            size: 13,
-                            heightPx: 18,
-                            color: AppColors.primaryText,
-                          ),
+                          style: AppTextStyles.bodySmallPrimary,
                         ),
                       ),
                     ),
@@ -265,11 +248,7 @@ class _LoginPageState extends State<LoginPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Text(
                             'atau masuk dengan',
-                            style: AppTheme.onest(
-                              size: 13,
-                              heightPx: 18,
-                              color: AppColors.textMuted,
-                            ),
+                            style: AppTextStyles.bodySmallMuted,
                           ),
                         ),
                         const Expanded(
@@ -289,11 +268,7 @@ class _LoginPageState extends State<LoginPage> {
                     Text.rich(
                       TextSpan(
                         text: 'Belum punya akun? ',
-                        style: AppTheme.onest(
-                          size: 14,
-                          heightPx: 20,
-                          color: AppColors.textMuted,
-                        ),
+                        style: AppTextStyles.bodyMuted,
                         children: [
                           WidgetSpan(
                             alignment: PlaceholderAlignment.baseline,
@@ -302,12 +277,7 @@ class _LoginPageState extends State<LoginPage> {
                               onTap: () => context.push('/register'),
                               child: Text(
                                 'Daftar',
-                                style: AppTheme.onest(
-                                  size: 14,
-                                  heightPx: 20,
-                                  weight: FontWeight.w600,
-                                  color: AppColors.primaryText,
-                                ),
+                                style: AppTextStyles.labelPrimary,
                               ),
                             ),
                           ),
@@ -345,25 +315,10 @@ class _LoginPageState extends State<LoginPage> {
                 color: AppColors.text,
                 shape: BoxShape.circle,
               ),
-              child: Text(
-                mark,
-                style: AppTheme.onest(
-                  size: 12,
-                  heightPx: 16,
-                  weight: FontWeight.w700,
-                  color: AppColors.background,
-                ),
-              ),
+              child: Text(mark, style: AppTextStyles.captionStrong),
             ),
             const SizedBox(width: 10),
-            Text(
-              label,
-              style: AppTheme.onest(
-                size: 14,
-                heightPx: 20,
-                weight: FontWeight.w500,
-              ),
-            ),
+            Text(label, style: AppTextStyles.bodyMedium),
           ],
         ),
       ),
