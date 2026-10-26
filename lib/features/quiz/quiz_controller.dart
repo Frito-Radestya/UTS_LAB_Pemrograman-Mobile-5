@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
-import '../data/quiz_data.dart';
-import '../models/models.dart';
+import 'package:kage/data/quiz_data.dart';
+import 'package:kage/models/models.dart';
 
 typedef QuizCompleted = void Function(QuizResult result);
 

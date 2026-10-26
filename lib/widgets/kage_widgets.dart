@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../data/quiz_data.dart';
-import '../models/models.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_theme.dart';
+import 'package:kage/data/quiz_data.dart';
+import 'package:kage/models/models.dart';
+import 'package:kage/theme/app_colors.dart';
+import 'package:kage/theme/app_theme.dart';
 
 class KageWordmark extends StatelessWidget {
   const KageWordmark({

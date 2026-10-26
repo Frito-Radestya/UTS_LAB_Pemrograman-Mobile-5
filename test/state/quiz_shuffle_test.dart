@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/data/quiz_data.dart';
 import 'package:kage/models/models.dart';
-import 'package:kage/state/quiz_controller.dart';
+import 'package:kage/features/quiz/quiz_controller.dart';
 
 void main() {
   group('K-02 pengacakan soal dan opsi', () {

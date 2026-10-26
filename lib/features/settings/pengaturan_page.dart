@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../state/auth_controller.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_theme.dart';
-import '../widgets/kage_widgets.dart';
+import 'package:kage/features/auth/auth_controller.dart';
+import 'package:kage/theme/app_colors.dart';
+import 'package:kage/theme/app_theme.dart';
+import 'package:kage/widgets/kage_widgets.dart';
 
 class PengaturanPage extends StatelessWidget {
   const PengaturanPage({super.key});

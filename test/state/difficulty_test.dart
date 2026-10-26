@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kage/data/quiz_data.dart';
 import 'package:kage/models/models.dart';
-import 'package:kage/state/app_services.dart';
-import 'package:kage/state/quiz_controller.dart';
+import 'package:kage/app_services.dart';
+import 'package:kage/features/quiz/quiz_controller.dart';
 
 void main() {
   group('K-03 tingkat kesulitan', () {
