@@ -58,7 +58,11 @@ void main() {
     ) async {
       final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
-      app.auth.login(name: 'Budi');
+      app.auth.register(
+        name: 'Budi',
+        email: 'budi@example.com',
+        password: 'rahasia123',
+      );
 
       await _pumpAt(tester, app, '/login');
 
@@ -69,7 +73,11 @@ void main() {
     testWidgets('kuis tanpa sesi aktif diarahkan ke beranda', (tester) async {
       final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
-      app.auth.login(name: 'Budi');
+      app.auth.register(
+        name: 'Budi',
+        email: 'budi@example.com',
+        password: 'rahasia123',
+      );
 
       await _pumpAt(tester, app, '/kuis');
 
@@ -81,7 +89,11 @@ void main() {
     ) async {
       final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
-      app.auth.login(name: 'Budi');
+      app.auth.register(
+        name: 'Budi',
+        email: 'budi@example.com',
+        password: 'rahasia123',
+      );
 
       await _pumpAt(tester, app, '/penjelasan');
 
@@ -91,7 +103,11 @@ void main() {
     testWidgets('hasil tanpa sesi aktif diarahkan ke beranda', (tester) async {
       final app = AppServices(quizRepository: testQuizBank());
       addTearDown(app.dispose);
-      app.auth.login(name: 'Budi');
+      app.auth.register(
+        name: 'Budi',
+        email: 'budi@example.com',
+        password: 'rahasia123',
+      );
 
       await _pumpAt(tester, app, '/hasil');
 
