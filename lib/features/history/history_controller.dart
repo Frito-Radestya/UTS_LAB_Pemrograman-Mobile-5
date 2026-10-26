@@ -64,10 +64,12 @@ class HistoryController extends ChangeNotifier {
   List<BadgeItem> get badges {
     final hasQuiz = _items.isNotEmpty;
     final perfect = _items.any((e) => e.score == 100);
+    final currentStreak = streak;
     final explorer = completedCategories >= categories.length;
-    final master = categories.every((c) {
-      return _items.any((h) => h.categoryId == c.id && h.score == 100);
-    });
+    final perfectCategories = categories
+        .where((c) => _items.any((h) => h.categoryId == c.id && h.score == 100))
+        .length;
+    final master = perfectCategories >= categories.length;
     return [
       BadgeItem(
         id: 'first',
@@ -75,6 +77,7 @@ class HistoryController extends ChangeNotifier {
         subtitle: 'Selesaikan kuis pertama',
         asset: 'assets/svg/badge_first_quiz.svg',
         earned: hasQuiz,
+        progressLabel: '${hasQuiz ? 1 : 0}/1 kuis',
       ),
       BadgeItem(
         id: 'perfect',
@@ -82,13 +85,15 @@ class HistoryController extends ChangeNotifier {
         subtitle: 'Dapatkan 100% benar',
         asset: 'assets/svg/badge_perfect_10.svg',
         earned: perfect,
+        progressLabel: '${perfect ? 1 : 0}/1 kuis sempurna',
       ),
       BadgeItem(
         id: 'streak',
         title: 'Streak 7',
         subtitle: 'Main 7 hari berturut-turut',
         asset: 'assets/svg/badge_streak_7.svg',
-        earned: streak >= 7,
+        earned: currentStreak >= 7,
+        progressLabel: '$currentStreak/7 hari',
       ),
       BadgeItem(
         id: 'explorer',
@@ -96,6 +101,7 @@ class HistoryController extends ChangeNotifier {
         subtitle: 'Selesaikan semua kategori',
         asset: 'assets/svg/badge_explorer.svg',
         earned: explorer,
+        progressLabel: '$completedCategories/${categories.length} kategori',
       ),
       BadgeItem(
         id: 'master',
@@ -103,6 +109,8 @@ class HistoryController extends ChangeNotifier {
         subtitle: 'Raih skor sempurna di semua kategori',
         asset: 'assets/svg/badge_master_locked.svg',
         earned: master,
+        progressLabel:
+            '$perfectCategories/${categories.length} kategori sempurna',
       ),
     ];
   }

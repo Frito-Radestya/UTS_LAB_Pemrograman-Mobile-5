@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'app.dart';
-import 'app_services.dart';
+import 'features/splash/bootstrap.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  final services = await AppServices.create();
-  runApp(KageApp(services: services));
+  // Data lokal (sesi login, riwayat, progres) dimuat setelah frame pertama
+  // supaya pengguna melihat indikator memuat alih-alih layar diam (U-07).
+  runApp(const KageBootstrap());
 }

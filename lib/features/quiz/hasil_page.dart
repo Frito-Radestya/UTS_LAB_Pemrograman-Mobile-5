@@ -23,7 +23,46 @@ class HasilPage extends StatelessWidget {
     final quiz = context.watch<QuizController>();
     final r = quiz.lastResult;
     if (r == null) {
-      return const Scaffold(backgroundColor: AppColors.background);
+      // Router mengalihkan halaman ini bila tidak ada kuis, tetapi bila dibuka
+      // langsung tetap ada pesan yang jelas, bukan layar kosong (U-07).
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Opacity(
+                    opacity: 0.9,
+                    child: ToriiArt(width: 120, height: 100),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Belum ada hasil kuis',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.titleSmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Selesaikan satu kuis dulu untuk melihat hasilnya di sini.',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.bodySmallRelaxedMuted,
+                  ),
+                  const SizedBox(height: 16),
+                  OutlineButton(
+                    label: 'Kembali ke Beranda',
+                    width: 200,
+                    height: 44,
+                    onTap: () => context.go('/beranda'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
     }
     final cat = context.read<QuizRepository>().categoryById(r.categoryId);
     final time =
