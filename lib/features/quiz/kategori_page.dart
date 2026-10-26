@@ -3,9 +3,26 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:kage/data/repositories/quiz_repository.dart';
+import 'package:kage/features/history/history_controller.dart';
+import 'package:kage/models/models.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:kage/widgets/kage_widgets.dart';
+
+/// Kategori bisa dimainkan bila bank soal sudah menyediakan soalnya (U-10).
+bool isPlayable(QuizRepository bank, QuizCategory category) =>
+    category.available && bank.questionCountFor(category.id) > 0;
+
+/// Urutan daftar kategori pada halaman Kategori (U-10).
+enum CategorySort {
+  nama('A-Z'),
+  terbaru('Terbaru'),
+  skor('Skor');
+
+  const CategorySort(this.label);
+
+  final String label;
+}
 
 class KategoriPage extends StatefulWidget {
   const KategoriPage({super.key});
@@ -16,13 +33,62 @@ class KategoriPage extends StatefulWidget {
 
 class _KategoriPageState extends State<KategoriPage> {
   int tab = 0;
+  final TextEditingController _search = TextEditingController();
+  String _query = '';
+
+  CategorySort _sort = CategorySort.nama;
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  /// Daftar kategori setelah disaring dan diurutkan (U-10).
+  List<QuizCategory> _visible(QuizRepository bank, HistoryController history) {
+    final query = _query.trim().toLowerCase();
+    final items = bank.categories.where((category) {
+      // Kategori tanpa soal diperlakukan sama seperti kategori yang belum
+      // dirilis, sehingga tidak pernah bisa dimainkan (U-10).
+      if (tab == 1 && !isPlayable(bank, category)) return false;
+      if (query.isEmpty) return true;
+      final haystack = <String>[
+        category.name,
+        category.shortName,
+        category.description,
+        ...category.tags,
+      ].join(' ').toLowerCase();
+      return haystack.contains(query);
+    }).toList();
+
+    switch (_sort) {
+      case CategorySort.nama:
+        items.sort((a, b) => a.name.compareTo(b.name));
+      case CategorySort.terbaru:
+        items.sort((a, b) {
+          final first = history.lastPlayedAt(a.id);
+          final second = history.lastPlayedAt(b.id);
+          if (first == null && second == null) return a.name.compareTo(b.name);
+          if (first == null) return 1;
+          if (second == null) return -1;
+          return second.compareTo(first);
+        });
+      case CategorySort.skor:
+        items.sort((a, b) {
+          final byScore = history
+              .bestFor(b.id)
+              .compareTo(history.bestFor(a.id));
+          return byScore != 0 ? byScore : a.name.compareTo(b.name);
+        });
+    }
+    return items;
+  }
 
   @override
   Widget build(BuildContext context) {
     final bank = context.read<QuizRepository>();
-    final items = bank.categories
-        .where((c) => tab == 0 || c.available)
-        .toList();
+    final history = context.watch<HistoryController>();
+    final items = _visible(bank, history);
 
     return ScreenScaffold(
       navIndex: 1,
@@ -52,6 +118,58 @@ class _KategoriPageState extends State<KategoriPage> {
               style: AppTextStyles.bodyMuted,
             ),
             const SizedBox(height: 16),
+            AppTextField(
+              controller: _search,
+              hint: 'Cari kategori atau topik',
+              icon: Icons.search,
+              textInputAction: TextInputAction.search,
+              onChanged: (value) => setState(() => _query = value),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                for (final option in CategorySort.values) ...[
+                  Expanded(
+                    child: KageTappable(
+                      onTap: () => setState(() => _sort = option),
+                      borderRadius: BorderRadius.circular(12),
+                      selected: _sort == option,
+                      semanticLabel:
+                          'Urutkan ${option.label}'
+                          '${_sort == option ? ', aktif' : ''}',
+                      excludeChildSemantics: true,
+                      child: Container(
+                        // Area sentuh minimal 48 dp (U-02).
+                        constraints: const BoxConstraints(minHeight: 48),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: _sort == option
+                              ? AppColors.surface
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _sort == option
+                                ? AppColors.gold
+                                : AppColors.border,
+                          ),
+                        ),
+                        child: Text(
+                          option.label,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.captionMuted.copyWith(
+                            color: _sort == option
+                                ? AppColors.gold
+                                : AppColors.textMuted,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                ],
+              ],
+            ),
+            const SizedBox(height: 12),
             Container(
               // Tinggi 58 = target sentuh 48 dp + padding 4 dp di tiap sisi
               // + tebal garis 1 dp (U-02).
@@ -121,12 +239,22 @@ class _KategoriPageState extends State<KategoriPage> {
                       separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (context, i) {
                         final c = items[i];
+                        final count = bank.questionCountFor(c.id);
+                        final available = isPlayable(bank, c);
+                        final best = history.bestFor(c.id);
+                        final status = !available
+                            ? 'Segera hadir'
+                            : best > 0
+                            ? 'Skor terbaik $best'
+                            : 'Belum pernah dimainkan';
                         return KageTappable(
-                          onTap: () => context.push('/kategori/${c.id.name}'),
+                          onTap: available
+                              ? () => context.push('/kategori/${c.id.name}')
+                              : null,
                           borderRadius: BorderRadius.circular(16),
                           semanticLabel:
-                              'Kategori ${c.name}, '
-                              '${bank.questionCountFor(c.id)} soal, tersedia',
+                              'Kategori ${c.name}, $count soal, '
+                              '${status.toLowerCase()}',
                           excludeChildSemantics: true,
                           child: Container(
                             // Tinggi minimum, bukan tetap, supaya kartu tumbuh
@@ -169,17 +297,24 @@ class _KategoriPageState extends State<KategoriPage> {
                                           horizontal: 8,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.success.withValues(
-                                            alpha: 0.14,
-                                          ),
+                                          color:
+                                              (available
+                                                      ? AppColors.success
+                                                      : AppColors.textMuted)
+                                                  .withValues(alpha: 0.14),
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),
                                         ),
                                         child: Text(
-                                          'Tersedia',
+                                          status,
                                           style: AppTextStyles
-                                              .captionRelaxedSuccess,
+                                              .captionRelaxedSuccess
+                                              .copyWith(
+                                                color: available
+                                                    ? AppColors.success
+                                                    : AppColors.textMuted,
+                                              ),
                                         ),
                                       ),
                                     ],
