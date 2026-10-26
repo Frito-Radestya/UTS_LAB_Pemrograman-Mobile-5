@@ -14,6 +14,13 @@ Map<String, Object?> quizResultToJson(QuizResult result) {
     'durationMs': result.duration.inMilliseconds,
     'playedAt': result.playedAt.toIso8601String(),
     'difficulty': result.difficulty.name,
+    // Rincian percobaan disimpan agar tinjauan jawaban lama masih bisa dibuka
+    // dari halaman Riwayat (U-11).
+    'answers': List<int?>.from(result.answers),
+    'questionOrder': List<int>.from(result.questionOrder),
+    'optionOrders': [
+      for (final order in result.optionOrders) List<int>.from(order),
+    ],
   };
 }
 
@@ -41,6 +48,13 @@ QuizResult? quizResultFromJson(Object? json) {
     return null;
   }
 
+  // Riwayat lama belum menyimpan rincian jawaban; kolom yang tidak ada dibaca
+  // sebagai daftar kosong dan halaman detail menampilkan pesannya sendiri.
+  final answers = _asAnswers(map['answers']) ?? const <int?>[];
+  final questionOrder = _asInts(map['questionOrder']) ?? const <int>[];
+  final optionOrders =
+      _asNestedIntList(map['optionOrders']) ?? const <List<int>>[];
+
   return QuizResult(
     categoryId: category,
     score: score.clamp(0, 100),
@@ -49,6 +63,9 @@ QuizResult? quizResultFromJson(Object? json) {
     duration: Duration(milliseconds: durationMs),
     playedAt: playedAt,
     difficulty: difficulty,
+    answers: answers,
+    questionOrder: questionOrder,
+    optionOrders: optionOrders,
   );
 }
 

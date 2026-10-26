@@ -59,6 +59,9 @@ class QuizResult {
     required this.duration,
     required this.playedAt,
     required this.difficulty,
+    this.answers = const [],
+    this.questionOrder = const [],
+    this.optionOrders = const [],
   });
 
   final CategoryId categoryId;
@@ -69,7 +72,25 @@ class QuizResult {
   final DateTime playedAt;
   final Difficulty difficulty;
 
+  /// Jawaban yang dipilih pengguna pada urutan tampil, `null` bila kosong.
+  ///
+  /// Dipakai untuk membuka kembali tinjauan jawaban dari halaman Riwayat
+  /// (U-11). Daftar kosong berarti rincian percobaan tidak tersimpan.
+  final List<int?> answers;
+
+  /// Posisi soal pada bank soal asli sesuai urutan tampil.
+  final List<int> questionOrder;
+
+  /// Urutan indeks opsi asli untuk setiap soal pada [questionOrder].
+  final List<List<int>> optionOrders;
+
   int get accuracy => total == 0 ? 0 : ((correct / total) * 100).round();
+
+  /// `true` bila rincian jawaban percobaan ini tersimpan lengkap.
+  bool get hasDetail =>
+      questionOrder.length == total &&
+      optionOrders.length == total &&
+      total > 0;
 }
 
 class BadgeItem {

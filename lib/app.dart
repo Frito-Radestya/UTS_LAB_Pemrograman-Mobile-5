@@ -8,6 +8,7 @@ import 'package:kage/data/repositories/history_repository.dart';
 import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/history/badge_page.dart';
+import 'package:kage/features/history/detail_riwayat_page.dart';
 import 'package:kage/features/home/beranda_page.dart';
 import 'package:kage/features/quiz/detail_kategori_page.dart';
 import 'package:kage/features/quiz/hasil_page.dart';
@@ -78,6 +79,11 @@ GoRouter createRouter(AppServices services, {String initialLocation = '/'}) {
         return '/beranda';
       }
 
+      // Detail riwayat butuh data percobaan yang dititipkan saat navigasi.
+      if (location == '/riwayat/detail' && state.extra is! QuizResult) {
+        return '/riwayat';
+      }
+
       // Halaman kuis hanya boleh dibuka jika ada sesi kuis yang berjalan.
       if (location == '/kuis' ||
           location == '/penjelasan' ||
@@ -135,6 +141,13 @@ GoRouter createRouter(AppServices services, {String initialLocation = '/'}) {
       GoRoute(
         path: '/riwayat',
         pageBuilder: (context, state) => _page(const RiwayatPage()),
+        routes: [
+          GoRoute(
+            path: 'detail',
+            pageBuilder: (context, state) =>
+                _page(DetailRiwayatPage(result: state.extra! as QuizResult)),
+          ),
+        ],
       ),
       GoRoute(
         path: '/profil',

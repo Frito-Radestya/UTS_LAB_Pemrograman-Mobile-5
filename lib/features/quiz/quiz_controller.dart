@@ -317,6 +317,15 @@ class QuizController extends ChangeNotifier {
       duration: currentElapsed,
       playedAt: DateTime.now(),
       difficulty: selectedDifficulty,
+      // Sesi latihan soal salah memakai soal di luar bank, jadi rinciannya
+      // tidak bisa disusun ulang dari bank dan sengaja tidak disimpan (U-11).
+      answers: _customSession ? const <int?>[] : List<int?>.from(answers),
+      questionOrder: _customSession
+          ? const <int>[]
+          : List<int>.from(_questionOrder),
+      optionOrders: _customSession
+          ? const <List<int>>[]
+          : [for (final order in _optionOrders) List<int>.from(order)],
     );
     _review = <QuizReview>[
       for (var i = 0; i < list.length; i++)
