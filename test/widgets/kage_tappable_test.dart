@@ -1,3 +1,5 @@
+import 'dart:ui' show PointerDeviceKind;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -154,6 +156,62 @@ void main() {
       );
 
       semantics.dispose();
+    });
+
+    testWidgets('kursor hover tidak menggeser atau mengubah lebar anak', (
+      tester,
+    ) async {
+      // Anak berukuran intrinsik seperti kartu kategori (ikon + label) di
+      // dalam sel yang lebih lebar: bila batasan dilonggarkan dan anak
+      // ditempatkan di topStart, isinya bergeser ke kiri saat hover.
+      final boxKey = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.dark(),
+          home: Scaffold(
+            body: Row(
+              children: [
+                Expanded(
+                  child: KageTappable(
+                    onTap: () {},
+                    child: Column(
+                      key: boxKey,
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.science, size: 32),
+                        SizedBox(height: 6),
+                        Text('Sains'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final before = tester.getRect(find.byKey(boxKey));
+      expect(before.width, greaterThan(0));
+
+      final gesture = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+      );
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+      await gesture.moveTo(tester.getCenter(find.byKey(boxKey)));
+      await tester.pump();
+
+      // Sorotan hover tetap muncul…
+      expect(
+        find.descendant(
+          of: find.byType(KageTappable),
+          matching: find.byType(DecoratedBox),
+        ),
+        findsOneWidget,
+      );
+      // …tanpa mengubah geometri anak.
+      expect(tester.getRect(find.byKey(boxKey)), before);
     });
   });
 }

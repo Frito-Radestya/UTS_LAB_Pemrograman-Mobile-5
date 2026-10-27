@@ -126,20 +126,27 @@ class _KageTappableState extends State<KageTappable> {
       ),
     );
 
-    if (overlay != null) {
-      content = Stack(
-        children: [
-          content,
+    // Stack dibangun sejak awal, bukan hanya saat hover/tekan, supaya bentuk
+    // pohon widget tidak berubah saat kursor masuk. `StackFit.passthrough`
+    // meneruskan batasan orang tua apa adanya sehingga ukuran dan posisi anak
+    // tetap persis sama sebelum dan sesudah sorotan muncul.
+    content = Stack(
+      fit: StackFit.passthrough,
+      children: [
+        content,
+        if (overlay != null)
           Positioned.fill(
             child: IgnorePointer(
               child: DecoratedBox(
-                decoration: BoxDecoration(color: overlay, borderRadius: radius),
+                decoration: BoxDecoration(
+                  color: overlay,
+                  borderRadius: radius,
+                ),
               ),
             ),
           ),
-        ],
-      );
-    }
+      ],
+    );
 
     final excludeChildren = widget.excludeChildSemantics;
     return Semantics(
