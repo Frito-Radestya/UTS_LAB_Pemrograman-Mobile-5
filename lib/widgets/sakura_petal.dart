@@ -83,11 +83,18 @@ class AnimatedSakuraPetal extends StatefulWidget {
 
 class _AnimatedSakuraPetalState extends State<AnimatedSakuraPetal>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
+  AnimationController? _ctrl;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduce = MediaQuery.of(context).disableAnimations;
+    if (reduce) {
+      _ctrl?.dispose();
+      _ctrl = null;
+      return;
+    }
+    if (_ctrl != null) return;
     _ctrl = AnimationController(vsync: this, duration: widget.duration)
       ..value = widget.delayFraction.clamp(0.0, 1.0)
       ..repeat();
@@ -95,50 +102,60 @@ class _AnimatedSakuraPetalState extends State<AnimatedSakuraPetal>
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _ctrl?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (context, child) {
-        final t = _ctrl.value;
-        final dy = t * widget.fallDistance;
-        final dx = math.sin(t * 2 * math.pi) * widget.swayAmplitude;
-        final spin = t * 2 * math.pi; // full rotation over one fall cycle
-        return Positioned(
-          left: widget.left,
-          top: widget.top,
-          child: Opacity(
-            opacity: widget.opacity * (1 - (t > 0.85 ? (t - 0.85) / 0.15 : 0)),
-            child: Transform.translate(
-              offset: Offset(dx, dy),
-              child: Transform.rotate(
-                angle: widget.angle * math.pi / 180 + spin,
-                child: Container(
-                  width: widget.width,
-                  height: widget.height,
-                  decoration: BoxDecoration(
-                    color: widget.color,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.elliptical(
-                        widget.width * 0.7,
-                        widget.height * 0.7,
-                      ),
-                      bottomRight: Radius.elliptical(
-                        widget.width * 0.7,
-                        widget.height * 0.7,
-                      ),
-                    ),
-                  ),
+    final reduce = MediaQuery.of(context).disableAnimations;
+    final petal = Container(
+      width: widget.width,
+      height: widget.height,
+      decoration: BoxDecoration(
+        color: widget.color,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.elliptical(widget.width * 0.7, widget.height * 0.7),
+          bottomRight: Radius.elliptical(widget.width * 0.7, widget.height * 0.7),
+        ),
+      ),
+    );
+
+    if (reduce || _ctrl == null) {
+      return Positioned(
+        left: widget.left,
+        top: widget.top,
+        child: RepaintBoundary(
+          child: Opacity(opacity: widget.opacity, child: petal),
+        ),
+      );
+    }
+
+    return Positioned(
+      left: widget.left,
+      top: widget.top,
+      child: RepaintBoundary(
+        child: AnimatedBuilder(
+          animation: _ctrl!,
+          builder: (context, child) {
+            final t = _ctrl!.value;
+            final dy = t * widget.fallDistance;
+            final dx = math.sin(t * 2 * math.pi) * widget.swayAmplitude;
+            final spin = t * 2 * math.pi;
+            return Opacity(
+              opacity:
+                  widget.opacity * (1 - (t > 0.85 ? (t - 0.85) / 0.15 : 0)),
+              child: Transform.translate(
+                offset: Offset(dx, dy),
+                child: Transform.rotate(
+                  angle: widget.angle * math.pi / 180 + spin,
+                  child: petal,
                 ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }
