@@ -15,6 +15,7 @@ import 'package:kage/features/quiz/hasil_page.dart';
 import 'package:kage/features/quiz/kategori_page.dart';
 import 'package:kage/features/quiz/kuis_page.dart';
 import 'package:kage/features/auth/login_page.dart';
+import 'package:kage/features/settings/bantuan_page.dart';
 import 'package:kage/features/settings/pengaturan_page.dart';
 import 'package:kage/features/quiz/penjelasan_page.dart';
 import 'package:kage/features/profile/profil_page.dart';
@@ -161,6 +162,10 @@ GoRouter createRouter(AppServices services, {String initialLocation = '/'}) {
         path: '/pengaturan',
         pageBuilder: (context, state) => _page(const PengaturanPage()),
       ),
+      GoRoute(
+        path: '/bantuan',
+        pageBuilder: (context, state) => _page(const BantuanPage()),
+      ),
     ],
   );
 }
@@ -185,7 +190,6 @@ class _KageAppState extends State<KageApp> {
     super.initState();
     _services = widget.services;
     _router = createRouter(_services);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }
 
   @override
@@ -214,13 +218,33 @@ class _KageAppState extends State<KageApp> {
         Provider<QuizRepository>.value(value: _services.quizRepository),
         Provider<HistoryRepository>.value(value: _services.historyRepository),
       ],
-      child: MaterialApp.router(
-        title: 'KAGE — The Quiz Sanctuary',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.dark(),
-        routerConfig: _router,
-        builder: _responsiveFrame,
+      child: Consumer<SettingsController>(
+        builder: (context, settings, _) {
+          _applySystemBars(context, settings.theme);
+          return MaterialApp.router(
+            title: 'KAGE — The Quiz Sanctuary',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.dark(),
+            routerConfig: _router,
+            builder: _responsiveFrame,
+          );
+        },
       ),
+    );
+  }
+
+  /// Menyamakan warna bilah sistem dengan pilihan tema.
+  ///
+  /// Palet KAGE selalu gelap; pilihan "Sistem" hanya membuat bilah status dan
+  /// navigasi mengikuti mode perangkat (U-08).
+  void _applySystemBars(BuildContext context, KageTheme theme) {
+    final brightness = theme == KageTheme.sistem
+        ? MediaQuery.platformBrightnessOf(context)
+        : Brightness.dark;
+    SystemChrome.setSystemUIOverlayStyle(
+      brightness == Brightness.dark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
     );
   }
 
