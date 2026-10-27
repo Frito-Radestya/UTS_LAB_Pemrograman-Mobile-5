@@ -176,6 +176,12 @@ class PengaturanPage extends StatelessWidget {
                             trailing: settings.theme.label,
                           ),
                           _tile(
+                            Icons.translate,
+                            'Bahasa',
+                            () => _pickLanguage(context, settings),
+                            trailing: settings.language.label,
+                          ),
+                          _tile(
                             Icons.help_outline,
                             'Bantuan',
                             () => context.push('/bantuan'),
@@ -454,6 +460,42 @@ class PengaturanPage extends StatelessWidget {
     );
     if (picked == null || !context.mounted) return;
     settings.setTheme(picked);
+  }
+
+  Future<void> _pickLanguage(
+    BuildContext context,
+    SettingsController settings,
+  ) async {
+    final picked = await showDialog<AppLanguage>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        backgroundColor: AppColors.surface,
+        title: Text('Pilih Bahasa', style: AppTextStyles.titleLarge),
+        children: [
+          for (final option in AppLanguage.values)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(dialogContext).pop(option),
+              child: Row(
+                children: [
+                  Icon(
+                    option == settings.language
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    size: 20,
+                    color: option == settings.language
+                        ? AppColors.gold
+                        : AppColors.textMuted,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(option.label, style: AppTextStyles.bodyLarge),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+    if (picked == null || !context.mounted) return;
+    settings.setLanguage(picked);
   }
 
   Future<void> _exportHistory(BuildContext context) async {

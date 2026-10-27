@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import 'package:kage/l10n/app_localizations.dart';
 
 import 'package:kage/data/repositories/auth_repository.dart';
 import 'package:kage/data/repositories/history_repository.dart';
@@ -225,6 +228,14 @@ class _KageAppState extends State<KageApp> {
             title: 'KAGE — The Quiz Sanctuary',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.dark(),
+            locale: Locale(settings.localeCode),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
             routerConfig: _router,
             builder: _responsiveFrame,
           );

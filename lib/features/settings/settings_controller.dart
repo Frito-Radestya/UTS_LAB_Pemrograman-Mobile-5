@@ -20,6 +20,7 @@ class SettingsController extends ChangeNotifier {
     _theme = _repository.loadTheme();
     _reminderMinutes = _repository.loadReminderMinutes();
     _timerEnabled = _repository.loadTimerEnabled();
+    _localeCode = _repository.loadLocale();
   }
 
   final SettingsRepository _repository;
@@ -31,6 +32,7 @@ class SettingsController extends ChangeNotifier {
   KageTheme _theme = KageTheme.gelap;
   int _reminderMinutes = SettingsDefaults.reminderMinutes;
   bool _timerEnabled = SettingsDefaults.timerEnabled;
+  String _localeCode = SettingsDefaults.locale;
 
   bool get notifications => _notifications;
 
@@ -44,6 +46,11 @@ class SettingsController extends ChangeNotifier {
   bool get timerEnabled => _timerEnabled;
 
   KageTheme get theme => _theme;
+
+  String get localeCode => _localeCode;
+
+  AppLanguage get language =>
+      _localeCode == 'en' ? AppLanguage.english : AppLanguage.indonesia;
 
   /// Jam pengingat belajar harian.
   TimeOfDay get reminderTime =>
@@ -125,6 +132,13 @@ class SettingsController extends ChangeNotifier {
     if (_timerEnabled == value) return;
     _timerEnabled = value;
     _repository.saveTimerEnabled(value);
+    notifyListeners();
+  }
+
+  void setLanguage(AppLanguage language) {
+    if (language.code == _localeCode) return;
+    _localeCode = language.code;
+    _repository.saveLocale(_localeCode);
     notifyListeners();
   }
 }

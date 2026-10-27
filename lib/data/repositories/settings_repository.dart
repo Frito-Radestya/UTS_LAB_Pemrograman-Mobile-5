@@ -35,6 +35,11 @@ abstract interface class SettingsRepository {
   bool loadTimerEnabled();
 
   void saveTimerEnabled(bool value);
+
+  /// Bahasa aplikasi (R-03).
+  String loadLocale();
+
+  void saveLocale(String code);
 }
 
 /// Nilai bawaan preferensi.
@@ -51,6 +56,8 @@ class SettingsDefaults {
 
   /// Timer aktif secara default (bisa dimatikan di Pengaturan).
   static const bool timerEnabled = true;
+
+  static const String locale = 'id';
 }
 
 /// Penyimpanan sementara selama aplikasi berjalan.
@@ -61,6 +68,7 @@ class InMemorySettingsRepository implements SettingsRepository {
   KageTheme _theme = SettingsDefaults.theme;
   int _reminderMinutes = SettingsDefaults.reminderMinutes;
   bool _timerEnabled = SettingsDefaults.timerEnabled;
+  String _locale = SettingsDefaults.locale;
 
   @override
   bool loadNotifications() => _notifications;
@@ -109,6 +117,14 @@ class InMemorySettingsRepository implements SettingsRepository {
   void saveTimerEnabled(bool value) {
     _timerEnabled = value;
   }
+
+  @override
+  String loadLocale() => _locale;
+
+  @override
+  void saveLocale(String code) {
+    _locale = code;
+  }
 }
 
 /// Penyimpanan preferensi di `shared_preferences`.
@@ -121,6 +137,7 @@ class LocalSettingsRepository implements SettingsRepository {
   static const String _themeKey = 'settings.theme';
   static const String _reminderKey = 'settings.reminderMinutes';
   static const String _timerKey = 'settings.timerEnabled';
+  static const String _localeKey = 'settings.locale';
 
   final SharedPreferences _preferences;
 
@@ -180,5 +197,14 @@ class LocalSettingsRepository implements SettingsRepository {
   @override
   void saveTimerEnabled(bool value) {
     unawaited(_preferences.setBool(_timerKey, value));
+  }
+
+  @override
+  String loadLocale() =>
+      _preferences.getString(_localeKey) ?? SettingsDefaults.locale;
+
+  @override
+  void saveLocale(String code) {
+    unawaited(_preferences.setString(_localeKey, code));
   }
 }

@@ -26,6 +26,22 @@ enum KageTheme {
   };
 }
 
+/// Pilihan bahasa aplikasi (R-03).
+enum AppLanguage {
+  indonesia,
+  english;
+
+  String get code => switch (this) {
+        AppLanguage.indonesia => 'id',
+        AppLanguage.english => 'en',
+      };
+
+  String get label => switch (this) {
+        AppLanguage.indonesia => 'Bahasa Indonesia',
+        AppLanguage.english => 'English',
+      };
+}
+
 /// Pengaturan timer per soal (U-06).
 class QuizTimerConfig {
   const QuizTimerConfig._();
