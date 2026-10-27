@@ -55,9 +55,14 @@ class _KageBootstrapState extends State<KageBootstrap> {
   Widget build(BuildContext context) {
     final services = _services;
     if (services != null) return KageApp(services: services);
-    return _error == null
-        ? const _LoadingScreen()
-        : _ErrorScreen(onRetry: _load);
+    // Layar ini dibangun sebelum MaterialApp, jadi Directionality (biasanya
+    // disediakan WidgetsApp) harus dipasang di sini agar Scaffold tidak gagal.
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: _error == null
+          ? const _LoadingScreen()
+          : _ErrorScreen(onRetry: _load),
+    );
   }
 }
 
