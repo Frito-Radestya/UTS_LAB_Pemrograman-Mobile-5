@@ -6,6 +6,8 @@ import 'package:kage/data/repositories/quiz_repository.dart';
 import 'package:kage/models/models.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
 import 'package:kage/features/settings/haptics.dart';
+import 'package:kage/features/settings/settings_controller.dart';
+import 'package:kage/features/settings/sounds.dart';
 import 'package:kage/theme/app_colors.dart';
 import 'package:kage/theme/app_theme.dart';
 import 'package:kage/widgets/kage_widgets.dart';
@@ -17,20 +19,79 @@ class KuisPage extends StatefulWidget {
   State<KuisPage> createState() => _KuisPageState();
 }
 
-class _KuisPageState extends State<KuisPage> {
+class _KuisPageState extends State<KuisPage> with TickerProviderStateMixin {
   /// Diaktifkan sesaat sebelum keluar supaya _PopScope tidak menahan pop yang
   /// sudah dikonfirmasi pengguna.
   bool _leaving = false;
+  AnimationController? _timerController;
+  int _timerQuestionIndex = -1;
+
+  @override
+  void dispose() {
+    _timerController?.dispose();
+    super.dispose();
+  }
+
+  void _startTimer(
+    QuizController quiz,
+    SettingsController settings,
+    Difficulty difficulty,
+  ) {
+    if (!settings.timerEnabled) {
+      _timerController?.stop();
+      _timerController?.dispose();
+      _timerController = null;
+      _timerQuestionIndex = quiz.questionIndex;
+      return;
+    }
+    if (_timerQuestionIndex == quiz.questionIndex && _timerController != null) {
+      return;
+    }
+    _timerController?.dispose();
+    final seconds = QuizTimerConfig.secondsFor(difficulty);
+    final controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: seconds),
+    );
+    _timerController = controller;
+    _timerQuestionIndex = quiz.questionIndex;
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if (!mounted) return;
+        final q = context.read<QuizController>();
+        if (q.questionIndex == _timerQuestionIndex && !q.currentQuestionLocked) {
+          q.timeoutCurrent();
+          // Jika belum menjawab, kunci soal sebagai tidak terjawab lalu
+          // arahkan ke penjelasan agar pengguna bisa lanjut (U-06).
+          if (q.answers[q.questionIndex] == null) {
+            context.push('/penjelasan');
+          }
+        }
+      }
+    });
+    if (!MediaQuery.of(context).disableAnimations) {
+      controller.forward();
+    } else {
+      controller.value = 1.0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizController>();
+    final settings = context.watch<SettingsController>();
     final q = quiz.currentQuestion;
     final cat = quiz.activeCategory == null
         ? null
         : context.read<QuizRepository>().categoryById(quiz.activeCategory!);
     if (q == null || cat == null) {
+      _timerController?.stop();
       return const Scaffold(backgroundColor: AppColors.background);
+    }
+    if (!quiz.currentQuestionLocked) {
+      _startTimer(quiz, settings, quiz.selectedDifficulty);
+    } else {
+      _timerController?.stop();
     }
     final selected = quiz.answers[quiz.questionIndex];
     final locked = quiz.currentQuestionLocked;
@@ -58,6 +119,7 @@ class _KuisPageState extends State<KuisPage> {
         letters,
         total,
         diff,
+        settings,
       ),
     );
   }
@@ -72,7 +134,10 @@ class _KuisPageState extends State<KuisPage> {
     List<String> letters,
     int total,
     String diff,
+    SettingsController settings,
   ) {
+    final showTimer =
+        settings.timerEnabled && !locked && _timerController != null;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -189,6 +254,32 @@ class _KuisPageState extends State<KuisPage> {
                     ),
                   ),
                 ),
+                if (showTimer)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: Semantics(
+                      label: 'Waktu tersisa untuk soal ini',
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: AnimatedBuilder(
+                          animation: _timerController!,
+                          builder: (context, child) {
+                            final value = 1.0 - _timerController!.value;
+                            return LinearProgressIndicator(
+                              value: value,
+                              minHeight: 4,
+                              backgroundColor: AppColors.border,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                value > 0.25
+                                    ? AppColors.gold
+                                    : AppColors.primary,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
                 // Scrollable body so options never overflow
                 Expanded(
                   child: SingleChildScrollView(
@@ -215,6 +306,7 @@ class _KuisPageState extends State<KuisPage> {
                                 ? null
                                 : () {
                                     kageHaptic(context, KageHaptic.light);
+                                    kageSound(context, KageSound.tap);
                                     quiz.selectAnswer(i);
                                   },
                           ),
