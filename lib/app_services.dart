@@ -13,6 +13,7 @@ import 'package:kage/features/auth/auth_controller.dart';
 import 'package:kage/features/history/history_controller.dart';
 import 'package:kage/features/profile/progress_controller.dart';
 import 'package:kage/features/quiz/quiz_controller.dart';
+import 'package:kage/features/settings/reminder_service.dart';
 import 'package:kage/features/settings/settings_controller.dart';
 
 /// Titik komposisi seluruh state aplikasi.
@@ -27,7 +28,9 @@ class AppServices {
     QuizRepository? quizRepository,
     ProgressRepository? progressRepository,
     SettingsRepository? settingsRepository,
+    ReminderService? reminderService,
   }) {
+    this.reminderService = reminderService ?? NoopReminderService();
     this.authRepository = authRepository ?? InMemoryAuthRepository();
     this.historyRepository = historyRepository ?? InMemoryHistoryRepository();
     this.quizRepository = quizRepository ?? LocalQuizRepository.empty();
@@ -36,7 +39,10 @@ class AppServices {
     this.settingsRepository =
         settingsRepository ?? InMemorySettingsRepository();
     auth = AuthController(repository: this.authRepository);
-    settings = SettingsController(repository: this.settingsRepository);
+    settings = SettingsController(
+      repository: this.settingsRepository,
+      reminder: reminderService,
+    );
     history = HistoryController(repository: this.historyRepository);
     progress = ProgressController(repository: this.progressRepository);
     quiz = QuizController(
@@ -60,6 +66,7 @@ class AppServices {
     return AppServices(
       authRepository: LocalAuthRepository(preferences),
       settingsRepository: LocalSettingsRepository(preferences),
+      reminderService: LocalReminderService(),
       historyRepository: LocalHistoryRepository(box),
       progressRepository: LocalProgressRepository(box),
       quizRepository: LocalQuizRepository(bank),
@@ -76,6 +83,7 @@ class AppServices {
   late final QuizRepository quizRepository;
   late final ProgressRepository progressRepository;
   late final SettingsRepository settingsRepository;
+  late final ReminderService reminderService;
 
   /// Perubahan yang memengaruhi keputusan redirect router.
   late final Listenable routerListenable;
