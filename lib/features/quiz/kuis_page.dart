@@ -167,18 +167,22 @@ class _KuisPageState extends State<KuisPage> with TickerProviderStateMixin {
           const Positioned(
             left: 16,
             bottom: 100,
-            child: AnimatedLantern(
-              opacity: 0.75,
-              duration: Duration(milliseconds: 1900),
+            child: RepaintBoundary(
+              child: AnimatedLantern(
+                opacity: 0.75,
+                duration: Duration(milliseconds: 1900),
+              ),
             ),
           ),
           const Positioned(
             right: 16,
             bottom: 120,
-            child: AnimatedLantern(
-              opacity: 0.75,
-              duration: Duration(milliseconds: 2300),
-              delayFraction: 0.5,
+            child: RepaintBoundary(
+              child: AnimatedLantern(
+                opacity: 0.75,
+                duration: Duration(milliseconds: 2300),
+                delayFraction: 0.5,
+              ),
             ),
           ),
           // Main scrollable content
