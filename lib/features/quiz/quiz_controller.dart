@@ -287,6 +287,20 @@ class QuizController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Mengunci soal saat waktu habis (U-06). Soal yang belum dijawab tetap
+  /// dihitung sebagai tidak terjawab.
+  void timeoutCurrent() {
+    if (currentQuestionLocked) return;
+    if (questionIndex < _submitted.length) {
+      _submitted[questionIndex] = true;
+    }
+    final q = currentQuestion;
+    if (q != null) {
+      showingCorrect = answers[questionIndex] == q.correctIndex;
+    }
+    notifyListeners();
+  }
+
   bool get isLastQuestion {
     if (activeCategory == null) return true;
     return questionIndex >= _activeQuestions.length - 1;

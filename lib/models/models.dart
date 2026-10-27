@@ -6,6 +6,42 @@ enum CategoryId { sains, teknologi, sejarah, logika, umum }
 
 enum Difficulty { pemula, menengah, ahli }
 
+/// Pilihan tema di Pengaturan (U-08).
+///
+/// Palet KAGE dirancang gelap dan tetap dipakai pada kedua pilihan; yang berbeda
+/// adalah warna bilah sistem (status/navigasi), sehingga pengguna bisa meminta
+/// bilah sistem mengikuti mode perangkat.
+enum KageTheme {
+  gelap,
+  sistem;
+
+  String get label => switch (this) {
+    KageTheme.gelap => 'Gelap',
+    KageTheme.sistem => 'Sistem',
+  };
+
+  String get description => switch (this) {
+    KageTheme.gelap => 'Tampilan KAGE selalu gelap.',
+    KageTheme.sistem => 'Bilah sistem mengikuti mode perangkat.',
+  };
+}
+
+/// Pengaturan timer per soal (U-06).
+class QuizTimerConfig {
+  const QuizTimerConfig._();
+
+  /// Durasi default per tingkat kesulitan (detik).
+  static const int secondsPemula = 60;
+  static const int secondsMenengah = 45;
+  static const int secondsAhli = 30;
+
+  static int secondsFor(Difficulty difficulty) => switch (difficulty) {
+        Difficulty.pemula => secondsPemula,
+        Difficulty.menengah => secondsMenengah,
+        Difficulty.ahli => secondsAhli,
+      };
+}
+
 class QuizCategory {
   const QuizCategory({
     required this.id,
